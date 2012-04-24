@@ -3,3 +3,15 @@ pom.xml
 /lib/
 /classes/
 .lein-deps-sum
+/bin
+/native
+/.lein-failures
+/checkouts
+/.classpath
+/.project
+/metadactyl
+/metadactyl.spec
+/metadactyl*.tar.gz
+*~
+\#*
+
