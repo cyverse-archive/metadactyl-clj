@@ -2,7 +2,6 @@
   (:use [clojure-commons.cas-proxy-auth :only (validate-cas-proxy-ticket)]
         [metadactyl.beans]
         [metadactyl.config]
-        [metadactyl.notifications]
         [metadactyl.service]
         [metadactyl.transformers])
   (:import [com.mchange.v2.c3p0 ComboPooledDataSource]
@@ -319,11 +318,6 @@
       (.setSessionFactory (session-factory))
       (.setOsmClient (osm-job-request-client)))))
 
-(defn- notificationagent-url
-  "Builds a URL that can be used to connect to the notification agent."
-  [relative-url]
-  (build-url (notificationagent-base-url) relative-url))
-
 (defn get-workflow-elements
   "A service to get information about workflow elements."
   [element-type]
@@ -461,31 +455,6 @@
    the authenticated user."
   []
   (object->json-str (.getCurrentUserInfo (user-service))))
-
-(defn get-messages
-  "This service forwards requests to the notification agent in order to
-   retrieve notifications that the user may or may not have seen yet."
-  [req]
-  (let [url (notificationagent-url "get-messages")]
-    (add-app-details
-      (forward-post url req (add-username-to-json req))
-      (analysis-retriever))))
-
-(defn get-unseen-messages
-  "This service forwards requests to the notification agent in order to
-   retrieve notifications that the user hasn't seen yet."
-  [req]
-  (let [url (notificationagent-url "get-unseen-messages")]
-    (add-app-details
-      (forward-post url req (add-username-to-json req))
-      (analysis-retriever))))
-
-(defn delete-notifications
-  "This service forwards requests to the notification agent in order to delete
-   existing notifications."
-  [req]
-  (let [url (notificationagent-url "delete")]
-    (forward-post url req (add-username-to-json req))))
 
 (defn run-experiment
   "This service accepts a job submission from a user then reformats it and

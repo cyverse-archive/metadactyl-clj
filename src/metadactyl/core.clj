@@ -5,7 +5,6 @@
         [metadactyl.beans]
         [metadactyl.config]
         [metadactyl.metadactyl]
-        [metadactyl.notifications]
         [metadactyl.service]
         [ring.middleware keyword-params nested-params])
   (:require [compojure.route :as route]
@@ -27,15 +26,6 @@
 (defroutes secured-routes
   (GET "/bootstrap" []
        (trap #(bootstrap)))
-
-  (POST "/notifications/get-messages" [:as req]
-        (trap #(get-messages req)))
-
-  (POST "/notifications/get-unseen-messages" [:as req]
-        (trap #(get-unseen-messages req)))
-
-  (POST "/notifications/:params" [:as req]
-        (trap #(delete-notifications req)))
 
   (GET "/template/:app-id" [app-id]
        (trap #(get-app app-id)))

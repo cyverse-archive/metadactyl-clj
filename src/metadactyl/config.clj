@@ -213,10 +213,6 @@
   "The base URL to use when connecting to the JEX."
   "metadactyl.jex.base-url")
 
-(STR notificationagent-base-url
-  "The base URL to use when connecting to the notification agent."
-  "metadactyl.notificationagent.base-url")
-
 (STR workspace-root-app-group
   "The name of the root app group in each user's workspace."
   "metadactyl.workspace.root-app-group")
