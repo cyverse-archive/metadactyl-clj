@@ -75,10 +75,6 @@ metadactyl.workspace.default-app-groups        = [ "Applications Under Developme
 metadactyl.workspace.dev-app-group-index       = 0
 metadactyl.workspace.favorites-app-group-index = 1
 
-# CAS Settings
-metadactyl.cas.cas-server  = https://hostname.iplantcollaborative.org/cas/
-metadactyl.cas.server-name = http://hostname.iplantcollaborative.org:8888
-
 # The domain name to append to the user id to get the fully qualified user id.
 metadactyl.uid.domain = iplantcollaborative.org
 ```

@@ -147,8 +147,8 @@
   (GET "/get-property-values/:job-id" [job-id]
        (trap #(get-property-values job-id)))
 
-  (context "/secured" []
-           (store-current-user secured-routes #(cas-server) #(server-name)))
+  (context "/secured" [:as {params :params}]
+           (store-current-user secured-routes params))
 
   (route/not-found (unrecognized-path-response)))
 

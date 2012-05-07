@@ -231,14 +231,6 @@
   "The index of the category within a user's workspace for favorite apps."
   "metadactyl.workspace.favorites-app-group-index")
 
-(STR cas-server
-  "The base URL used to connect to the CAS server."
-  "metadactyl.cas.cas-server")
-
-(STR server-name
-  "The name of the local server."
-  "metadactyl.cas.server-name")
-
 (STR uid-domain
   "The domain name to append to the user identifier to get the fully qualified
    user identifier."
