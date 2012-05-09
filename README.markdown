@@ -160,13 +160,12 @@ services are defined in the file `metadactyl.clj`.
 
 ### Security
 
-Several services in metadactyl-clj require user authentication, which is managed
-by CAS service tickets that are passed to the service in the `proxyToken` query
-parameter.  For example, the first service that the Discovery Environment hits
-when a user logs in is the bootstrap service, which does require user
-authentication.  This service can be accessed using the URL,
-`/bootstrap?proxyToken={some-service-ticket}` where {some-service-ticket}
-refers to a service ticket string that has been obtained from CAS.
+Several services in metadactyl-clj require user credentials, which are passed to
+the service in query parameters.  For example, the first service that the
+Discovery Environment hits when a user logs in is the bootstrap service, which
+requires user credentials.  This service can be accessed using the URL,
+`/bootstrap?uid={username}&email={email}` where {username} refers to a user's
+login name, and {email} is that user's email address.
 
 Secured services can be distinguished from unsecured services by looking at
 the path in the URL.  The paths for all secured endpoints begin with
@@ -2088,17 +2087,6 @@ $ curl -s "http://by-tor:8888/secured/get-analyses-in-group/6A1B9EBD-4950-4F3F-9
     ]
 }
 ```
-
-#### Listing Analyses that may be Included in a Pipeline
-
-Secured Endpoint: GET /secured/list-analyses-for-pipeline/{group-id}
-
-This service is an alias for the `/get-analyses-in-group/{group-id}` service.
-At one time, this was a different service that returned additional information
-that was normally omitted for the sake of efficiency.  Some recent efficiency
-improvements have eliminated the need to omit this information from the more
-commonly used endpoint, however.  This endpoint is currently being retained
-for backward compatibility.
 
 #### Updating the Favorite Analyses List
 
