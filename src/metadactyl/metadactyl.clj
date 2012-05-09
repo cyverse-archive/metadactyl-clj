@@ -462,6 +462,22 @@
   []
   (object->json-str (.getCurrentUserInfo (user-service))))
 
+(defn- get-analysis
+  "Gets an app from the database."
+  [app-id]
+  (if (nil? app-id)
+    nil
+    (try 
+      (.getTransformationActivity (analysis-retriever) app-id)
+      (catch Exception e nil))))
+
+(defn get-app-description
+  "Gets an app description from the database."
+  [app-id]
+  (log/debug "looking up the description for app" app-id)
+  (let [app (get-analysis app-id)]
+    (if (nil? app) "" (.getDescription app))))
+
 (defn run-experiment
   "This service accepts a job submission from a user then reformats it and
    submits it to the JEX."

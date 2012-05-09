@@ -147,6 +147,9 @@
   (GET "/get-property-values/:job-id" [job-id]
        (trap #(get-property-values job-id)))
 
+  (GET "/get-app-description/:app-id" [app-id]
+       (trap #(get-app-description app-id)))
+
   (context "/secured" [:as {params :params}]
            (store-current-user secured-routes params))
 
