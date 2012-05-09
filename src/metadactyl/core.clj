@@ -144,6 +144,9 @@
   (POST "/import-workflow" [:as {body :body}]
         (trap #(import-workflow body)))
 
+  (POST "/import-tools" [:as {body :body}]
+        (trap #(import-tools body)))
+
   (GET "/get-property-values/:job-id" [job-id]
        (trap #(get-property-values job-id)))
 

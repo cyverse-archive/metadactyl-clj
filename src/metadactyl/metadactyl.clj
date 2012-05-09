@@ -1,5 +1,6 @@
 (ns metadactyl.metadactyl
-  (:use [metadactyl.beans]
+  (:use [clojure.data.json :only [read-json]]
+        [metadactyl.beans]
         [metadactyl.config]
         [metadactyl.service]
         [metadactyl.transformers])
@@ -413,6 +414,16 @@
   [body]
   (.importWorkflow (workflow-import-service) (slurp body))
   (empty-response))
+
+(defn import-tools
+  "This service will import deployed components into the DE and send
+   notifications if notification information is included and the deployed
+   components are successfully imported."
+  [body]
+  (let [json-str (slurp body)
+        json-obj (read-json json-str)]
+    (.importWorkflow (workflow-import-service) json-str))
+  (success-response))
 
 (defn update-template
   "This service will either update an existing template or import a new template."
