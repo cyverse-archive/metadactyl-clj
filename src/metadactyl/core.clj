@@ -51,9 +51,6 @@
   (GET "/get-analyses-in-group/:app-group-id" [app-group-id]
        (trap #(list-apps-in-group app-group-id)))
 
-  (GET "/list-analyses-for-pipeline/:app-group-id" [app-group-id]
-       (trap #(list-apps-in-group app-group-id)))
-
   (POST "/update-favorites" [:as {body :body}]
         (trap #(update-favorites body)))
 
