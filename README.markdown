@@ -1,23 +1,23 @@
-# Metadactyl
+# metadactyl-clj
 
-Metadactyl is a platform for hosting Services written in Clojure; it's intended
-to be the replacement for the Mule instance that used to run inside the
+metadactyl-clj is a platform for hosting Services written in Clojure; it's
+intended to be the replacement for the Mule instance that used to run inside the
 Discovery Environment web application.
 
 *Important Note:* All of the services that used to run inside Mule now run
-inside Metadactyl instead.  The Mule services no longer exist.
+inside metadactyl-clj instead.  The Mule services no longer exist.
 
-## Installing and Configuring Metadactyl
+## Installing and Configuring metadactyl-clj
 
-Metadactyl is packaged as an RPM and published in iPlant's YUM repositories.  It
-can be installed using `yum install metadactyl` and upgraded using `yum upgrade
-metadactyl`.
+metadactyl-clj is packaged as an RPM and published in iPlant's YUM repositories.
+It can be installed using `yum install metadactyl` and upgraded using
+`yum upgrade metadactyl`.
 
 ### Primary Configuration
 
-Metadactyl gets most of its configuration settings from Apache Zookeeper.  These
-configuration setting are uploaded to Zookeeper using Clavin, a command-line
-tool maintained by iPlant that allows configuration properties and access
+metadactyl-clj gets most of its configuration settings from Apache Zookeeper.
+These configuration setting are uploaded to Zookeeper using Clavin, a command-
+line tool maintained by iPlant that allows configuration properties and access
 control lists to easily be uploaded to Zookeeper.  Please see the Clavin
 documentation for information about how to upload configuration settings.
 Here's an example configuration file:
@@ -85,7 +85,7 @@ updated for each deployment.
 ### Zookeeper Connection Information
 
 One piece of information that can't be stored in Zookeeper is the information
-required to connect to Zookeeper.  For Metadactyl and most other iPlant
+required to connect to Zookeeper.  For metadactyl-clj and most other iPlant
 services, this information is stored in a single file:
 `/etc/iplant-services/zkhosts.properties`.  This file is automatically
 installed when the iplant-service-configs RPM is installed.  You may have to
@@ -103,7 +103,7 @@ log4j.rootLogger=WARN, A
 # log4j.category.org.iplantc=DEBUG, A
 # log4j.additivity.org.iplantc=false
 
-# Uncomment these lines to enable debugging in Metadactyl itself.
+# Uncomment these lines to enable debugging in metadactyl-clj itself.
 # log4j.category.metadactyl=DEBUG, A
 # log4j.additivity.metadactyl=false
 
@@ -112,11 +112,11 @@ log4j.rootLogger=WARN, A
 # log4j.additivity.clojure-commons=false
 
 # Either comment these lines out or change the appender to B when running
-# Metadactyl in the foreground.
+# metadactyl-clj in the foreground.
 log4j.logger.JsonLogger=debug, JSON
 log4j.additivity.JsonLogger=false
 
-# Use this appender for logging JSON when running Metadactyl in the background.
+# Use this appender for logging JSON when running metadactyl-clj in the background.
 log4j.appender.JSON=org.apache.log4j.RollingFileAppender
 log4j.appender.JSON.File=/var/log/metadactyl/json.log
 log4j.appender.JSON.layout=org.apache.log4j.PatternLayout
@@ -124,12 +124,12 @@ log4j.appender.JSON.layout.ConversionPattern=%d{MM-dd@HH:mm:ss} %-5p (%13F:%L) %
 log4j.appender.JSON.MaxFileSize=10MB
 log4j.appender.JSON.MaxBackupIndex=1
 
-# Use this appender when running Metadactyl in the foreground.
+# Use this appender when running metadactyl-clj in the foreground.
 log4j.appender.B=org.apache.log4j.ConsoleAppender
 log4j.appender.B.layout=org.apache.log4j.PatternLayout
 log4j.appender.B.layout.ConversionPattern=%d{MM-dd@HH:mm:ss} %-5p (%13F:%L) %3x - %m%n
 
-# Use this appender when running Metadactyl in the background.
+# Use this appender when running metadactyl-clj in the background.
 log4j.appender.A=org.apache.log4j.RollingFileAppender
 log4j.appender.A.File=/var/log/metadactyl/metadactyl.log
 log4j.appender.A.layout=org.apache.log4j.PatternLayout
@@ -140,28 +140,28 @@ log4j.appender.A.MaxBackupIndex=1
 
 The most useful configuration change here is to enable debugging for iPlant
 classes, which can be done by uncommenting two lines.  In rare cases, it may
-be helpful to enable debugging in Metadactyl and iPlant Clojure Commons.  Most
-of the logic in Metadactyl is implemented in Java classes that are underneath
-the org.iplantc package, however, so enabling debugging for those classes will
-be the most helpful.
+be helpful to enable debugging in metadactyl-clj and iPlant Clojure Commons.
+Most of the logic in metadactyl-clj is implemented in Java classes that are
+underneath the org.iplantc package, however, so enabling debugging for those
+classes will be the most helpful.
 
 See the [log4j documentation](http://logging.apache.org/log4j/1.2/manual.html)
 for additional logging configuration instructions.
 
 ## Services
 
-Of course, the primary reason for the existence of Metadactyl is to act as a
-platform for hosting services.  Metadactyl services are defined using Compojure,
-a framework for creating web services in Clojure.  Each service matches a
-specific HTTP method and URL pattern, which causes one or more function calls
-to be performed.  The services themselves are defined in the file `core.clj`
-and, in most cases, the functions that actually implement the services are
-defined in the file `metadactyl.clj`.
+Of course, the primary reason for the existence of metadactyl-clj is to act as a
+platform for hosting services.  metadactyl-clj services are defined using
+Compojure, a framework for creating web services in Clojure.  Each service
+matches a specific HTTP method and URL pattern, which causes one or more
+function calls to be performed.  The services themselves are defined in the
+file `core.clj` and, in most cases, the functions that actually implement the
+services are defined in the file `metadactyl.clj`.
 
 ### Security
 
-Several services in Metadactyl require user authentication, which is managed by
-CAS service tickets that are passed to the service in the `proxyToken` query
+Several services in metadactyl-clj require user authentication, which is managed
+by CAS service tickets that are passed to the service in the `proxyToken` query
 parameter.  For example, the first service that the Discovery Environment hits
 when a user logs in is the bootstrap service, which does require user
 authentication.  This service can be accessed using the URL,
@@ -182,7 +182,7 @@ even if the service normally has a response body.
 ### Errors
 
 If a service call causes an exception that is not caught by the service itself
-then Metadactyl will respond with a standardized error message:
+then metadactyl-clj will respond with a standardized error message:
 
 ```json
 {
@@ -194,9 +194,9 @@ then Metadactyl will respond with a standardized error message:
 The HTTP status code that is returned will either be a 400 or a 500, depending
 on which type of exception is caught.  In either case, the reason for the
 error should be examined.  If the logging level is set to _error_ or lower
-then the exception will be logged in Metadactyl's log file along with a stack
-trace.  This can be helpful in cases where the true cause of the error isn't
-obvious at first.
+then the exception will be logged in metadactyl-clj's log file along with a
+stack trace.  This can be helpful in cases where the true cause of the error
+isn't obvious at first.
 
 ### Endpoints
 
@@ -214,13 +214,13 @@ used to denote example values, example values in JSON bodies are not enclosed
 in braces, but instead listed as hyphen-separated names without enclosing
 quotes.
 
-#### Verifying that Metadactyl is Running
+#### Verifying that metadactyl-clj is Running
 
 Unsecured Endpoint: GET /
 
-The root path in Metadactyl can be used to verify that Metadactyl is actually
-running and is responding.  Currently, the response to this URL contains only a
-welcome message.  Here's an example:
+The root path in metadactyl-clj can be used to verify that metadactyl-clj is
+actually running and is responding.  Currently, the response to this URL
+contains only a welcome message.  Here's an example:
 
 ```
 $ curl -s http://by-tor:8888/
@@ -1601,8 +1601,9 @@ $ curl -s "http://by-tor:8888/secured/bootstrap?proxyToken=$(cas-ticket)" | pyth
 ```
 
 Note that the `cas-ticket` command is an alias to a command that produces a
-CAS service ticket.  All secured services in Metadactyl require the CAS service
-ticket to be sent to the service in the `proxyToken` query-string parameter.
+CAS service ticket.  All secured services in metadactyl-clj require the CAS
+service ticket to be sent to the service in the `proxyToken` query-string
+parameter.
 
 #### Getting Analyses in the JSON Format Required by the DE
 
@@ -1834,8 +1835,8 @@ This service produces no response body.
 It should be noted that this service does not fail if any of the job
 identifiers refers to a non-existent or deleted job.  If the identifier refers
 to a deleted job then the update is essentially a no-op.  If a job with the
-identifier can't be found then a warning message is logged in Metadactyl's log
-file, but the service does not indicate that a failure has occurred.
+identifier can't be found then a warning message is logged in metadactyl-clj's
+log file, but the service does not indicate that a failure has occurred.
 
 Here's an example:
 
