@@ -57,7 +57,7 @@
 
 (defroutes metadactyl-routes
   (GET "/" []
-       "Welcome to Metadactyl!  I've fallen and I can't get up!\n")
+       "Welcome to Metadactyl!\n")
 
   (GET "/get-workflow-elements/:element-type" [element-type]
        (trap #(get-workflow-elements element-type)))
