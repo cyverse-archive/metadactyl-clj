@@ -1,6 +1,7 @@
 (ns metadactyl.service
   (:use [clojure.data.json :only (json-str)]
-        [clojure.string :only (join)])
+        [clojure.string :only (join)]
+        [slingshot.slingshot :only [try+]])
   (:require [clj-http.client :as client]
             [clojure.tools.logging :as log]))
 
@@ -20,6 +21,10 @@
    :body (json-str {:success false :reason (.getMessage e)})
    :content-type json-content-type})
 
+(defn forbidden-response [e]
+  (log/error e "Not Authorized.")
+  {:status 401})
+
 (defn error-response [e]
   (log/error e "bad request")
   {:status 500
@@ -30,6 +35,19 @@
   "Builds the response to send for an unrecognized service path."
   (let [msg "unrecognized service path"]
     (json-str {:success false :reason msg})))
+
+(defn trap
+  "Traps any exception thrown by a service and returns an appropriate
+   repsonse."
+  [f]
+  (try+
+    (f)
+    (catch [:type ::unauthorized] {:keys [user message]}
+      (log/error message user)
+      (forbidden-response (:throwable &throw-context)))
+    (catch IllegalArgumentException e (failure-response e))
+    (catch IllegalStateException e (failure-response e))
+    (catch Throwable t (error-response t))))
 
 (defn build-url
   "Builds a URL from a base URL and one or more URL components."

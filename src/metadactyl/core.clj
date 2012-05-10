@@ -13,55 +13,45 @@
             [clojure-commons.clavin-client :as cl]
             [ring.adapter.jetty :as jetty]))
 
-(defn- trap
-  "Traps any exception thrown by a service and returns an appropriate
-   repsonse."
-  [f]
-  (try
-    (f)
-    (catch IllegalArgumentException e (failure-response e))
-    (catch IllegalStateException e (failure-response e))
-    (catch Throwable t (error-response t))))
-
 (defroutes secured-routes
   (GET "/bootstrap" []
-       (trap #(bootstrap)))
+       (bootstrap))
 
   (GET "/template/:app-id" [app-id]
-       (trap #(get-app app-id)))
+       (get-app app-id))
 
   (PUT "/workspaces/:workspace-id/newexperiment" [workspace-id :as {body :body}]
-       (trap #(run-experiment body workspace-id)))
+       (run-experiment body workspace-id))
 
   (GET "/workspaces/:workspace-id/executions/list" [workspace-id]
-       (trap #(get-experiments workspace-id)))
+       (get-experiments workspace-id))
 
   (PUT "/workspaces/:workspace-id/executions/delete" [workspace-id :as {body :body}]
-       (trap #(delete-experiments body workspace-id)))
+       (delete-experiments body workspace-id))
 
   (POST "/rate-analysis" [:as {body :body}]
-        (trap #(rate-app body)))
+        (rate-app body))
 
   (POST "/delete-rating" [:as {body :body}]
-        (trap #(delete-rating body)))
+        (delete-rating body))
 
   (GET "/search-analyses/:search-term" [search-term]
-       (trap #(search-apps search-term)))
+       (search-apps search-term))
 
   (GET "/get-analyses-in-group/:app-group-id" [app-group-id]
-       (trap #(list-apps-in-group app-group-id)))
+       (list-apps-in-group app-group-id))
 
   (POST "/update-favorites" [:as {body :body}]
-        (trap #(update-favorites body)))
+        (update-favorites body))
 
   (GET "/edit-template/:app-id" [app-id]
-       (trap #(edit-app app-id)))
+       (edit-app app-id))
 
   (GET "/copy-template/:app-id" [app-id]
-       (trap #(copy-app app-id)))
+       (copy-app app-id))
 
   (POST "/make-analysis-public" [:as {body :body}]
-        (trap #(make-app-public body)))
+        (make-app-public body))
 
   (route/not-found (unrecognized-path-response)))
 

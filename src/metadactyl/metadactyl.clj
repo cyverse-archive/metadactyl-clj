@@ -1,5 +1,6 @@
 (ns metadactyl.metadactyl
   (:use [clojure.data.json :only [read-json]]
+        [slingshot.slingshot :only [throw+]]
         [metadactyl.beans]
         [metadactyl.config]
         [metadactyl.service]
@@ -43,11 +44,16 @@
   "Creates an instance of org.iplantc.authn.user.User from the given map."
   [user-attributes]
   (log/debug user-attributes)
-  (doto (User.)
-    (.setUsername (str (user-attributes :uid) "@" (uid-domain)))
-    (.setPassword (user-attributes :password))
-    (.setEmail (user-attributes :email))
-    (.setShortUsername (user-attributes :uid))))
+  (let [uid (user-attributes :uid)]
+    (if (empty? uid)
+      (throw+ {:type :metadactyl.service/unauthorized,
+               :user user-attributes,
+               :message "Invalid user credentials provided."}))
+    (doto (User.)
+      (.setUsername (str uid "@" (uid-domain)))
+      (.setPassword (user-attributes :password))
+      (.setEmail (user-attributes :email))
+      (.setShortUsername uid))))
 
 (defn store-current-user
   "Creates a function that takes a request, binds current-user to a new instance
@@ -55,8 +61,9 @@
    in the given params map, then passes request to the given handler."
   [handler params]
   (fn [request]
-    (binding [current-user (user-from-attributes params)]
-      (handler request))))
+    (trap
+      #(binding [current-user (user-from-attributes params)]
+         (handler request)))))
 
 (register-bean
   (defbean db-url
