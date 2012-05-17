@@ -429,7 +429,7 @@
   [body]
   (let [json-str (slurp body)
         json-obj (read-json json-str)]
-    (.importWorkflow (workflow-import-service) json-str))
+    (.updateWorkflow (workflow-import-service) json-str))
   (success-response))
 
 (defn update-template
