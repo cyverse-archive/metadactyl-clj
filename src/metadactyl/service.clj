@@ -10,10 +10,13 @@
 (defn empty-response []
   {:status 200})
 
-(defn success-response [map]
-  {:status 200
-   :body (json-str (merge {:success true} map))
-   :content-type json-content-type})
+(defn success-response
+  ([map]
+     {:status 200
+      :body (json-str (merge {:success true} map))
+      :content-type json-content-type})
+  ([]
+     (success-response {})))
 
 (defn failure-response [e]
   (log/error e "bad request")

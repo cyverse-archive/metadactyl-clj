@@ -22,7 +22,7 @@
   :main metadactyl.core
   :ring {:handler metadactyl.core/app :init metadactyl.core/load-configuration}
   :iplant-rpm {:summary "iPlant Discovery Environment Metadata Services"
-               :release 2
+               :release 4
                :provides "metadactyl"
                :dependencies ["iplant-service-config >= 0.1.0-4"]
                :config-files ["log4j.properties" "reference_genomes.json"]
