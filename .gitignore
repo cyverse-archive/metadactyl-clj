@@ -3,6 +3,7 @@ pom.xml
 /lib/
 /classes/
 .lein-deps-sum
+.lein-plugins
 /bin
 /native
 /.lein-failures
@@ -12,6 +13,7 @@ pom.xml
 /metadactyl
 /metadactyl.spec
 /metadactyl*.tar.gz
+/target
 *~
 \#*
 
