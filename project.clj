@@ -1,4 +1,4 @@
-(defproject metadactyl "1.0.0-SNAPSHOT"
+(defproject metadactyl "1.1.0-SNAPSHOT"
   :description "Framework for hosting DiscoveryEnvironment metadata services."
   :dependencies [[org.clojure/clojure "1.4.0"]
                  [org.clojure/tools.logging "0.2.3"]
@@ -21,7 +21,7 @@
   :main metadactyl.core
   :ring {:handler metadactyl.core/app :init metadactyl.core/load-configuration}
   :iplant-rpm {:summary "iPlant Discovery Environment Metadata Services"
-               :release 2
+               :release 1
                :provides "metadactyl"
                :dependencies ["iplant-service-config >= 0.1.0-4"]
                :config-files ["log4j.properties" "reference_genomes.json"]
