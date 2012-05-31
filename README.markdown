@@ -160,8 +160,8 @@ services are defined in the file `metadactyl.clj`.
 
 ### Security
 
-Several services in metadactyl-clj require user credentials, which are passed to
-the service in query parameters.  For example, the first service that the
+Several services in metadactyl-clj require user credentials, which are passed
+to the service in query parameters.  For example, the first service that the
 Discovery Environment hits when a user logs in is the bootstrap service, which
 requires user credentials.  This service can be accessed using the URL,
 `/bootstrap?uid={username}&email={email}` where {username} refers to a user's
@@ -1593,16 +1593,11 @@ in the following format:
 Here's an example:
 
 ```
-$ curl -s "http://by-tor:8888/secured/bootstrap?proxyToken=$(cas-ticket)" | python -mjson.tool
+$ curl -s "http://by-tor:8888/secured/bootstrap?uid=snow-dog" | python -mjson.tool
 {
     "workspaceId": "4"
 }
 ```
-
-Note that the `cas-ticket` command is an alias to a command that produces a
-CAS service ticket.  All secured services in metadactyl-clj require the CAS
-service ticket to be sent to the service in the `proxyToken` query-string
-parameter.
 
 #### Getting Analyses in the JSON Format Required by the DE
 
@@ -1661,7 +1656,7 @@ response body for this service is in the following format:
 Here's an example:
 
 ```
-curl -s "http://by-tor:8888/secured/template/9BCCE2D3-8372-4BA5-A0CE-96E513B2693C?proxyToken=$(cas-ticket)" | python -mjson.tool
+curl -s "http://by-tor:8888/secured/template/9BCCE2D3-8372-4BA5-A0CE-96E513B2693C?uid=snow-dog" | python -mjson.tool
 {
     "groups": [
         {
@@ -1751,7 +1746,7 @@ $ curl -X PUT -sd '
     "description": ""
 }
 '
-"http://by-tor:8888/secured/workspaces/4/newexperiment?proxyToken=$(cas-ticket)"
+"http://by-tor:8888/secured/workspaces/4/newexperiment?uid=snow-dog"
 ```
 
 #### Listing Jobs
@@ -1787,7 +1782,7 @@ following format:
 Here's an example:
 
 ```
-$ curl -s http://by-tor:8888/secured/workspaces/4/executions/list?proxyToken=$(cas-ticket) | python -mjson.tool
+$ curl -s http://by-tor:8888/secured/workspaces/4/executions/list?uid=snow-dog | python -mjson.tool
 {
     "analyses": [
         {
@@ -1848,7 +1843,7 @@ $ curl -X PUT -sd '
         "FOO"
     ]
 }
-' "http://by-tor:8888/secured/workspaces/4/executions/delete?proxyToken=$(cas-ticket)"
+' "http://by-tor:8888/secured/workspaces/4/executions/delete?uid=snow-dog"
 ```
 
 #### Rating Analyses
@@ -1888,7 +1883,7 @@ $ curl -sd '
     "rating": 4,
     "comment_id": 27
 }
-' "http://by-tor:8888/secured/rate-analysis?proxyToken=$(cas-ticket)" | python -mjson.tool
+' "http://by-tor:8888/secured/rate-analysis?uid=snow-dog" | python -mjson.tool
 {
     "avg": 4
 }
@@ -1925,7 +1920,7 @@ $ curl -sd '
 {
     "analysis_id": "a65fa62bcebc0418cbb947485a63b30cd"
 }
-' "http://by-tor:8888/secured/delete-rating?proxyToken=$(cas-ticket)" | python -mjson.tool
+' "http://by-tor:8888/secured/delete-rating?uid=snow-dog" | python -mjson.tool
 {
     "avg": 0
 }
@@ -1964,7 +1959,7 @@ analysis name.  The response body is in the following format:
 Here's an example:
 
 ```
-$ curl -s "http://by-tor:8888/secured/search-analyses/ranger?proxyToken=$(cas-ticket)" | python -mjson.tool
+$ curl -s "http://by-tor:8888/secured/search-analyses/ranger?uid=snow-dog" | python -mjson.tool
 {
     "templates": [
         {
@@ -2044,7 +2039,7 @@ service is in the following format:
 Here's an example:
 
 ```
-$ curl -s "http://by-tor:8888/secured/get-analyses-in-group/6A1B9EBD-4950-4F3F-9CAB-DD12A1046D9A?proxyToken=$(cas-ticket)" | python -mjson.tool
+$ curl -s "http://by-tor:8888/secured/get-analyses-in-group/6A1B9EBD-4950-4F3F-9CAB-DD12A1046D9A?uid=snow-dog" | python -mjson.tool
 {
     "description": "", 
     "id": "C3DED4E2-EC99-4A54-B0D8-196112D1BB7B", 
@@ -2125,7 +2120,7 @@ $ curl -sd '
     "analysis_id": "F99526B9-CC88-46DA-84B3-0743192DCB7B",
     "user_favorite": true
 }
-' "http://by-tor:8888/secured/update-favorites?proxyToken=$(cas-ticket)" | python -mjson.tool
+' "http://by-tor:8888/secured/update-favorites?uid=snow-dog" | python -mjson.tool
 {
     "success": true
 }
@@ -2138,7 +2133,7 @@ $ curl -sd '
     "analysis_id": "F99526B9-CC88-46DA-84B3-0743192DCB7B",
     "user_favorite": true
 }
-' "http://by-tor:8888/secured/update-favorites?proxyToken=$(cas-ticket)" | python -mjson.tool
+' "http://by-tor:8888/secured/update-favorites?uid=snow-dog" | python -mjson.tool
 {
     "reason": "analysis, F99526B9-CC88-46DA-84B3-0743192DCB7B, is already a favorite", 
     "success": false
@@ -2152,7 +2147,7 @@ $ curl -sd '
     "analysis_id": "F99526B9-CC88-46DA-84B3-0743192DCB7B",
     "user_favorite": false
 }
-' "http://by-tor:8888/secured/update-favorites?proxyToken=$(cas-ticket)" | python -mjson.tool
+' "http://by-tor:8888/secured/update-favorites?uid=snow-dog" | python -mjson.tool
 {
     "success": true
 }
@@ -2165,7 +2160,7 @@ $ curl -sd '
     "analysis_id": "FOO",          
     "user_favorite": false
 }
-' "http://by-tor:8888/secured/update-favorites?proxyToken=$(cas-ticket)" | python -mjson.tool
+' "http://by-tor:8888/secured/update-favorites?uid=snow-dog" | python -mjson.tool
 {
     "reason": "analysis, FOO not found", 
     "success": false
@@ -2192,14 +2187,14 @@ which may be different from the analysis identifier that was provided:
 Here are some examples:
 
 ```
-$ curl -s "http://by-tor:8888/secured/edit-template/C720C42D-531A-164B-38CC-D2D6A337C5A5?proxyToken=$(cas-ticket)" | python -m json.tool
+$ curl -s "http://by-tor:8888/secured/edit-template/C720C42D-531A-164B-38CC-D2D6A337C5A5?uid=snow-dog" | python -m json.tool
 {
     "analysis_id": "DED7E03E-B011-4F3E-8750-3F903FB28137"
 }
 ```
 
 ```
-$ curl -s "http://by-tor:8888/secured/edit-template/DED7E03E-B011-4F3E-8750-3F903FB28137?proxyToken=$(cas-ticket)" | python -m json.tool
+$ curl -s "http://by-tor:8888/secured/edit-template/DED7E03E-B011-4F3E-8750-3F903FB28137?uid=snow-dog" | python -m json.tool
 {
     "analysis_id": "DED7E03E-B011-4F3E-8750-3F903FB28137"
 }
@@ -2216,7 +2211,7 @@ copy of an existing analysis, even if the user already owns the analysis.
 Here's an example:
 
 ```
-$ curl -s "http://by-tor:8888/secured/copy-template/C720C42D-531A-164B-38CC-D2D6A337C5A5?proxyToken=$(cas-ticket)" | python -m json.tool
+$ curl -s "http://by-tor:8888/secured/copy-template/C720C42D-531A-164B-38CC-D2D6A337C5A5?uid=snow-dog" | python -m json.tool
 {
     "analysis_id": "13FF6D0C-F6F7-4ACE-A6C7-635A17826383"
 }
@@ -2279,6 +2274,109 @@ $ curl -sd '
     "desc": "The foo is in the bar.",
     "wiki_url": "https://wiki.iplantcollaborative.org/docs/Foo+Foo"
 }
-' http://by-tor:8888/secured/make-analysis-public?proxyToken=$(cas-ticket)
+' http://by-tor:8888/secured/make-analysis-public?uid=snow-dog
 {}
+```
+
+#### Listing Collaborators
+
+Secured Endpoint: GET /secured/collaborators
+
+This service can be used to list all of the users that the current user has
+selected as collaborators.  The response body is in the following format:
+
+```json
+{
+    "success": true
+    "users": [
+        username-1,
+        username-2,
+        ...,
+        username-n
+    ]
+}
+```
+
+Here's an example:
+
+```
+$ curl -s http://by-tor:8888/secured/collaborators?uid=snow-dog | python -mjson.tool
+{
+    "success": true, 
+    "users": [
+        "ipctest", 
+        "bar", 
+        "foo"
+    ]
+}
+```
+
+#### Adding Collaborators
+
+Secured Endpoint: POST /secured/collaborators
+
+This service can be used to add one or more collaborators to the list of
+collaborators for the current user.  The request body is in the following
+format:
+
+```json
+{
+    "users": [
+        username-1,
+        username-2,
+        ...,
+        username-n
+    ]
+}
+```
+
+An attempt to add a user that is already listed as a collaborator to the list
+of collaborators will be silently ignored.
+
+Here's an example:
+
+```
+$ curl `-sd '
+{
+    "users": ["quux"]
+}
+' http://by-tor:8888/secured/collaborators?uid=snow-dog | python -mjson.tool
+{
+    "success": true
+}
+```
+
+#### Removing Collaborators
+
+Secured Endpoint: POST /secured/remove-collaborators
+
+This service can be used to remove one or more collaborators from the list of
+collaborators for the current user.  The request body is in the following
+format:
+
+```json
+{
+    "users": [
+        username-1,
+        username-2,
+        ...,
+        username-n
+    ]
+}
+```
+
+An attempt to remove a user who is not listed as a collaborator from the list
+of collaborators will be silently ignored.
+
+Here's an example:
+
+```
+$ curl -sd '
+{
+    "users": ["quux"]
+}
+' http://by-tor:8888/secured/remove-collaborators?uid=snow-dog | python -mjson.tool
+{
+    "success": true
+}
 ```
