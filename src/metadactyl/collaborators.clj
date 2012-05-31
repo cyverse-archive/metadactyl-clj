@@ -24,14 +24,16 @@
 (defn add-collaborators
   "Adds collaborators for the current user."
   [{:keys [uid]} body]
-  (let [collaborators (:users (read-json body))]
-    (queries/add-collaborators (add-domain uid) (map add-domain collaborators))
-    (success-response)))
+  (transaction
+   (let [collaborators (:users (read-json body))]
+     (queries/add-collaborators (add-domain uid) (map add-domain collaborators))
+     (success-response))))
 
 (defn remove-collaborators
   "Removes collaborators for the current user."
   [{:keys [uid]} body]
-  (let [collaborators (:users (read-json body))]
-    (queries/remove-collaborators (add-domain uid)
-                                  (map add-domain collaborators))
-    (success-response)))
+  (transaction
+   (let [collaborators (:users (read-json body))]
+     (queries/remove-collaborators (add-domain uid)
+                                   (map add-domain collaborators))
+     (success-response))))
