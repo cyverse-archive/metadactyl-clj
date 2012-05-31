@@ -18,23 +18,23 @@
 
 (defn get-collaborators
   "Gets the list of collaborators for the current user."
-  [{:keys [uid]}]
-  (let [collaborators (queries/get-collaborators (add-domain uid))]
+  [{:keys [user]}]
+  (let [collaborators (queries/get-collaborators (add-domain user))]
     (success-response {:users (map remove-domain collaborators)})))
 
 (defn add-collaborators
   "Adds collaborators for the current user."
-  [{:keys [uid]} body]
+  [{:keys [user]} body]
   (transaction
    (let [collaborators (:users (read-json body))]
-     (queries/add-collaborators (add-domain uid) (map add-domain collaborators))
+     (queries/add-collaborators (add-domain user) (map add-domain collaborators))
      (success-response))))
 
 (defn remove-collaborators
   "Removes collaborators for the current user."
-  [{:keys [uid]} body]
+  [{:keys [user]} body]
   (transaction
    (let [collaborators (:users (read-json body))]
-     (queries/remove-collaborators (add-domain uid)
+     (queries/remove-collaborators (add-domain user)
                                    (map add-domain collaborators))
      (success-response))))

@@ -44,7 +44,7 @@
   "Creates an instance of org.iplantc.authn.user.User from the given map."
   [user-attributes]
   (log/debug user-attributes)
-  (let [uid (user-attributes :uid)]
+  (let [uid (user-attributes :user)]
     (if (empty? uid)
       (throw+ {:type :metadactyl.service/unauthorized,
                :user user-attributes,
