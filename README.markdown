@@ -2287,7 +2287,7 @@ selected as collaborators.  The response body is in the following format:
 
 ```json
 {
-    "success": true
+    "success": true,
     "users": [
         username-1,
         username-2,
