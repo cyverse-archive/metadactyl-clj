@@ -3,7 +3,9 @@
   (:use [clojure-commons.query-params :only (wrap-query-params)]
         [compojure.core]
         [metadactyl.beans]
+        [metadactyl.collaborators]
         [metadactyl.config]
+        [metadactyl.kormadb]
         [metadactyl.metadactyl]
         [metadactyl.service]
         [ring.middleware keyword-params nested-params])
@@ -52,6 +54,12 @@
 
   (POST "/make-analysis-public" [:as {body :body}]
         (make-app-public body))
+
+  (GET "/collaborators" [:as {params :params}]
+       (get-collaborators params))
+
+  (POST "/collaborators" [:as {params :params body :body}]
+        (add-collaborators params (slurp body)))
 
   (route/not-found (unrecognized-path-response)))
 
@@ -159,7 +167,8 @@
   (init-registered-beans)
   (when (not (configuration-valid))
     (log/warn "THE CONFIGURATION IS INVALID - EXITING NOW")
-    (System/exit 1)))
+    (System/exit 1))
+  (define-database))
 
 (defn site-handler [routes]
   (-> routes
