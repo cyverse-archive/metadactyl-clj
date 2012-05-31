@@ -61,6 +61,9 @@
   (POST "/collaborators" [:as {params :params body :body}]
         (add-collaborators params (slurp body)))
 
+  (POST "/remove-collaborators" [:as {params :params body :body}]
+        (remove-collaborators params (slurp body)))
+
   (route/not-found (unrecognized-path-response)))
 
 (defroutes metadactyl-routes
