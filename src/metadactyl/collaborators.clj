@@ -1,5 +1,6 @@
 (ns metadactyl.collaborators
   (:use [clojure.data.json :only [read-json]]
+        [korma.db :only [transaction]]
         [metadactyl.config :only [uid-domain]]
         [metadactyl.service :only [success-response]])
   (:require [clojure.string :as string]
