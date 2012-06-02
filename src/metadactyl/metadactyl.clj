@@ -529,6 +529,11 @@
   [app-group-id]
   (.listAnalysesInGroup (analysis-listing-service) app-group-id))
 
+(defn list-deployed-components-in-app
+  "This service lists all of the deployed components in an app."
+  [app-id]
+  (.listDeployedComponentsInAnalysis (analysis-listing-service) app-id))
+
 (defn update-favorites
   "This service adds apps to or removes apps from a user's favorites list."
   [body]

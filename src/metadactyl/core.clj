@@ -43,6 +43,9 @@
   (GET "/get-analyses-in-group/:app-group-id" [app-group-id]
        (list-apps-in-group app-group-id))
 
+  (GET "/get-components-in-analysis/:app-id" [app-id]
+       (list-deployed-components-in-app app-id))
+
   (POST "/update-favorites" [:as {body :body}]
         (update-favorites body))
 
