@@ -10,10 +10,6 @@
            [org.iplantc.authn.service UserSessionService]
            [org.iplantc.authn.user User]
            [org.iplantc.workflow.client OsmClient ZoidbergClient]
-           [org.iplantc.files.service FileInfoService]
-           [org.iplantc.files.types
-            FileTypeHandler ReferenceAnnotationHandler ReferenceGenomeHandler
-            ReferenceSequenceHandler]
            [org.iplantc.workflow HibernateTemplateFetcher]
            [org.iplantc.workflow.experiment
             AnalysisRetriever AnalysisService ExperimentRunner
@@ -188,45 +184,9 @@
       (.setUserSessionService user-session-service))))
 
 (register-bean
-  (defbean reference-genome-handler
-    "Resolves paths to named reference genomes."
-    (doto (ReferenceGenomeHandler.)
-      (.setReferenceGenomeUrlMap (reference-genomes)))))
-
-(register-bean
-  (defbean reference-sequence-handler
-    "Resolves paths to named reference sequences."
-    (doto (ReferenceSequenceHandler.)
-      (.setReferenceGenomeUrlMap (reference-genomes)))))
-
-(register-bean
-  (defbean reference-annotation-handler
-    "Resolves paths to named reference annotations."
-    (doto (ReferenceAnnotationHandler.)
-      (.setReferenceGenomeUrlMap (reference-genomes)))))
-
-(def
-  ^{:doc "A placeholder service used to clearly indicate that automatically
-          saved barcode files are no longer supported."}
-   barcode-file-handler
-  (proxy [FileTypeHandler] []
-    (getFileAccessUrl [file-id]
-      (let [msg "barcode selectors are no longer supported"]
-        (throw (IllegalArgumentException. msg))))))
-
-(register-bean
-  (defbean file-type-handlers
-    "Maps property types to file type handlers."
-    (doto (HashMap.)
-      (.put "ReferenceGenome" (reference-genome-handler))
-      (.put "ReferenceAnnotation" (reference-annotation-handler))
-      (.put "ReferenceSequence" (reference-sequence-handler))
-      (.put "BarcodeSelector" barcode-file-handler))))
-
-(register-bean
   (defbean workflow-preview-service
     "Handles workflow/metadactyl related previews."
-    (WorkflowPreviewService. (session-factory) (reference-genome-handler))))
+    (WorkflowPreviewService. (session-factory))))
 
 (register-bean
   (defbean workflow-import-service
@@ -247,8 +207,7 @@
   (defbean app-fetcher
     "Retrieves apps from the database."
     (doto (HibernateTemplateFetcher.)
-      (.setSessionFactory (session-factory))
-      (.setRefGenomeHandler (reference-genome-handler)))))
+      (.setSessionFactory (session-factory)))))
 
 (register-bean
   (defbean notification-appender
@@ -292,12 +251,6 @@
       (.setConnectionTimeout (osm-connection-timeout)))))
 
 (register-bean
-  (defbean file-info-service
-    "Services used to resolve paths to named files."
-    (doto (FileInfoService.)
-      (.setFileTypeHandlerMap (file-type-handlers)))))
-
-(register-bean
   (defbean url-assembler
     "Used to assemble URLs."
     (IrodsUrlAssembler.)))
@@ -307,7 +260,6 @@
     "Services to submit jobs to the JEX for execution."
     (doto (ExperimentRunner.)
       (.setSessionFactory (session-factory))
-      (.setFileInfo (file-info-service))
       (.setUserService (user-service))
       (.setExecutionUrl (jex-base-url))
       (.setUrlAssembler (url-assembler))

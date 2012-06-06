@@ -26,7 +26,7 @@
                :release 1
                :provides "metadactyl"
                :dependencies ["iplant-service-config >= 0.1.0-4"]
-               :config-files ["log4j.properties" "reference_genomes.json"]
+               :config-files ["log4j.properties"]
                :config-path "conf/main"}
   :uberjar-exclusions [#"BCKEY.SF"]
   :repositories {"iplantCollaborative"

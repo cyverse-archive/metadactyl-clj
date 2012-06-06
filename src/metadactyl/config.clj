@@ -1,7 +1,6 @@
 (ns metadactyl.config
   (:use [clojure.string :only (blank? split)])
   (:require [clojure-commons.props :as cc-props]
-            [clojure.data.json :as json]
             [clojure.tools.logging :as log]))
 
 (defn- file-exists-on-classpath
@@ -116,20 +115,6 @@
   {:private true}
   [fname desc pname]
   `(defn ~fname ~desc [] (get-required-integer-prop ~pname)))
-
-(def ^:dynamic refgens (atom nil))
-
-(defn reference-genomes
-  "Pulls in reference_genomes.json from the classpath, parses it as JSON,
-   and returns a HashMap (for compatibility with metadactyl)."
-  []
-  (if (nil? @refgens)
-    (reset! refgens 
-            (java.util.HashMap. 
-              (json/read-json 
-                (slurp (cc-props/find-resources-file "reference_genomes.json")) 
-                false)))
-    @refgens))
 
 (INT listen-port 
   "The port that metadactyl listens to."
