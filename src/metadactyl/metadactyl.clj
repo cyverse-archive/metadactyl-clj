@@ -4,7 +4,8 @@
         [metadactyl.beans]
         [metadactyl.config]
         [metadactyl.service]
-        [metadactyl.transformers])
+        [metadactyl.transformers]
+        [ring.util.codec :only [url-decode]])
   (:import [com.mchange.v2.c3p0 ComboPooledDataSource]
            [java.util HashMap]
            [org.iplantc.authn.service UserSessionService]
@@ -473,7 +474,7 @@
 (defn search-apps
   "This service searches for apps based on a search term."
   [search-term]
-  (.searchAnalyses (analysis-listing-service) search-term))
+  (.searchAnalyses (analysis-listing-service) (url-decode search-term)))
 
 (defn list-apps-in-group
   "This service lists all of the apps in an app group and all of its
