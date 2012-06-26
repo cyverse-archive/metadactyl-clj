@@ -4,7 +4,8 @@
         [metadactyl.beans]
         [metadactyl.config]
         [metadactyl.service]
-        [metadactyl.transformers])
+        [metadactyl.transformers]
+        [ring.util.codec :only [url-decode]])
   (:import [com.mchange.v2.c3p0 ComboPooledDataSource]
            [java.util HashMap]
            [org.iplantc.authn.service UserSessionService]
@@ -379,9 +380,14 @@
    notifications if notification information is included and the deployed
    components are successfully imported."
   [body]
-  (let [json-str (slurp body)
-        json-obj (read-json json-str)]
-    (.updateWorkflow (workflow-import-service) json-str))
+  (.updateWorkflow (workflow-import-service) (slurp body))
+  (success-response))
+
+(defn update-app
+  "This service will update the information at the top level of an analysis.
+   It will not update any of the components of the analysis."
+  [body]
+  (.updateAnalysisOnly (workflow-import-service) (slurp body))
   (success-response))
 
 (defn update-template
@@ -473,7 +479,7 @@
 (defn search-apps
   "This service searches for apps based on a search term."
   [search-term]
-  (.searchAnalyses (analysis-listing-service) search-term))
+  (.searchAnalyses (analysis-listing-service) (url-decode search-term)))
 
 (defn list-apps-in-group
   "This service lists all of the apps in an app group and all of its
@@ -485,6 +491,14 @@
   "This service lists all of the deployed components in an app."
   [app-id]
   (.listDeployedComponentsInAnalysis (analysis-listing-service) app-id))
+
+(defn list-app
+  "This service lists a single application.  The response body contains a JSON
+   string representing an object containing a list of apps.  If an app with the
+   provided identifier exists then the list will contain that app.  Otherwise,
+   the list will be empty."
+  [app-id]
+  (.listAnalysis (analysis-listing-service) app-id))
 
 (defn update-favorites
   "This service adds apps to or removes apps from a user's favorites list."
