@@ -109,6 +109,9 @@
   (GET "/get-only-analysis-groups/:workspace-id" [workspace-id]
        (trap #(get-only-analysis-groups workspace-id)))
 
+  (GET "/list-analysis/:app-id" [app-id]
+       (list-app app-id))
+
   (GET "/export-template/:template-id" [template-id]
        (trap #(export-template template-id)))
 
@@ -147,6 +150,9 @@
 
   (POST "/import-tools" [:as {body :body}]
         (trap #(import-tools body)))
+
+  (POST "/update-analysis" [:as {body :body}]
+        (trap #(update-app body)))
 
   (GET "/get-property-values/:job-id" [job-id]
        (trap #(get-property-values job-id)))
