@@ -1,6 +1,7 @@
 (ns metadactyl.core
   (:gen-class)
-  (:use [clojure-commons.query-params :only (wrap-query-params)]
+  (:use [clojure.java.io :only [file]]
+        [clojure-commons.query-params :only (wrap-query-params)]
         [compojure.core]
         [metadactyl.beans]
         [metadactyl.collaborators]
@@ -13,6 +14,7 @@
             [compojure.handler :as handler]
             [clojure.tools.logging :as log]
             [clojure-commons.clavin-client :as cl]
+            [clojure-commons.props :as cp]
             [ring.adapter.jetty :as jetty]))
 
 (defroutes secured-routes
@@ -165,7 +167,27 @@
 
   (route/not-found (unrecognized-path-response)))
 
-(defn load-configuration
+(defn- init-service
+  "Initializes the service."
+  []
+  (log/warn @props)
+  (init-registered-beans)
+  (when (not (configuration-valid))
+    (log/warn "THE CONFIGURATION IS INVALID - EXITING NOW")
+    (System/exit 1))
+  (define-database))
+
+(defn load-configuration-from-props
+  "Loads the configuration from a properties file."
+  []
+  (let [filename "metadactyl.properties"
+        conf-dir (System/getenv "IPLANT_CONF_DIR")]
+    (if (nil? conf-dir)
+      (reset! props (cp/read-properties (file filename)))
+      (reset! props (cp/read-properties (file conf-dir filename)))))
+  (init-service))
+
+(defn load-configuration-from-zookeeper
   "Loads the configuration properties from Zookeeper."
   []
   (cl/with-zk
@@ -175,12 +197,7 @@
       (log/warn "THIS APPLICATION WILL NOT EXECUTE CORRECTLY.")
       (System/exit 1))
     (reset! props (cl/properties "metadactyl")))
-  (log/warn @props)
-  (init-registered-beans)
-  (when (not (configuration-valid))
-    (log/warn "THE CONFIGURATION IS INVALID - EXITING NOW")
-    (System/exit 1))
-  (define-database))
+  (init-service))
 
 (defn site-handler [routes]
   (-> routes
@@ -193,6 +210,6 @@
 
 (defn -main
   [& args]
-  (load-configuration)
+  (load-configuration-from-zookeeper)
   (log/warn "Listening on" (listen-port))
   (jetty/run-jetty app {:port (listen-port)}))
