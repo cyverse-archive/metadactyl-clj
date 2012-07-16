@@ -242,6 +242,7 @@ are currently supported:
     <tr><td>property-types</td><td>Known types of parameters</td></tr>
     <tr><td>rule-types</td><td>Known types of validation rules</td></tr>
     <tr><td>value-types</td><td>Known types of parameter values</td></tr>
+    <tr><td>data-sources</td><td>Known sources for data objects</td></tr>
     <tr><td>all</td><td>All workflow element types</td></tr>
 </table>
 
@@ -425,6 +426,27 @@ $ curl -s http://by-tor:8888/get-workflow-elements/value-types | python -mjson.t
 }
 ```
 
+Data sources are the known possible sources for data objects.  In most cases,
+data objects will come from a plain file.  The only other options that are
+currently available are redirected standard output and redirected standard
+error output.  Both of these options apply only to data objects that are
+associated with an output.  Here's an example:
+
+```
+$ curl -s http://by-tor:8888/get-workflow-elements/data-sources | python -mjson.tool
+{
+    "data_sources": [
+        {
+            "hid": 1, 
+            "id": "8D6B8247-F1E7-49DB-9FFE-13EAD7C1AED6", 
+            "label": "File", 
+            "name": "file"
+        },
+        ...
+    ]
+}
+```
+
 As a final option, it is possible to get all types of workflow elements at
 once using an element type of `all`.  Here's an example listing:
 
@@ -444,6 +466,15 @@ $ curl -s http://by-tor:8888/get-workflow-elements/all | python -mjson.tool
         },
         ...
     ], 
+    "data_sources": [
+        {
+            "hid": 1, 
+            "id": "8D6B8247-F1E7-49DB-9FFE-13EAD7C1AED6", 
+            "label": "File", 
+            "name": "file"
+        },
+        ...
+    ],
     "formats": [
         {
             "hid": 1, 
