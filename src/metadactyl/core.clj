@@ -167,10 +167,16 @@
 
   (route/not-found (unrecognized-path-response)))
 
+(defn- log-props
+  "Logs the configuration properties."
+  []
+  (dorun (map #(log/warn (key %) "=" (val %))
+              (sort-by key @props))))
+
 (defn- init-service
   "Initializes the service."
   []
-  (log/warn @props)
+  (log-props)
   (init-registered-beans)
   (when (not (configuration-valid))
     (log/warn "THE CONFIGURATION IS INVALID - EXITING NOW")
