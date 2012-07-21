@@ -3,6 +3,7 @@
   (:use [clojure.java.io :only [file]]
         [clojure-commons.query-params :only (wrap-query-params)]
         [compojure.core]
+        [metadactyl.app-listings]
         [metadactyl.beans]
         [metadactyl.collaborators]
         [metadactyl.config]
@@ -109,7 +110,7 @@
        (trap #(get-app app-id)))
 
   (GET "/get-only-analysis-groups/:workspace-id" [workspace-id]
-       (trap #(get-only-analysis-groups workspace-id)))
+       (trap #(get-only-app-groups workspace-id)))
 
   (GET "/list-analysis/:app-id" [app-id]
        (list-app app-id))

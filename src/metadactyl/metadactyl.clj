@@ -330,11 +330,6 @@
   (.appendNotificationToTemplate (notification-appender)
     (.fetchTemplateByName (app-fetcher) app-id)))
 
-(defn get-only-analysis-groups
-  "Retrieves the list of public analyses."
-  [workspace-id]
-  (.listAnalysisGroups (analysis-listing-service) workspace-id))
-
 (defn export-template
   "This service will export the template with the given identifier."
   [template-id]
