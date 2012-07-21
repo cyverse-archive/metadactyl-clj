@@ -4,6 +4,6 @@
   "Converts a string to a long integer."
   [s]
   (try
-    (Integer/parseInt s)
+    (Long/parseLong s)
     (catch Exception e
       (throw (IllegalArgumentException. e)))))
