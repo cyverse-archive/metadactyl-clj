@@ -139,8 +139,8 @@
   (POST "/update-template" [:as {body :body}]
         (trap #(update-template body)))
 
-  (POST "/force-update-workflow" [:as {body :body}]
-        (trap #(force-update-workflow body)))
+  (POST "/force-update-workflow" [:as {body :body params :params}]
+        (trap #(force-update-workflow body params)))
 
   (POST "/update-workflow" [:as {body :body}]
         (trap #(update-workflow body)))

@@ -3,6 +3,7 @@
         [korma.core]
         [kameleon.core]
         [kameleon.entities]
+        [kameleon.app-groups]
         [metadactyl.conversions :only [to-long]]))
 
 (defn- add-subgroups
@@ -18,25 +19,9 @@
   "Formats the app group hierarchy rooted at the app group with the given
    identifier."
   [root-id]
-  (let [groups (select (sqlfn :analysis_group_hierarchy root-id))
+  (let [groups (get-app-group-hierarchy root-id)
         root   (first (filter #(= root-id (:hid %)) groups))]
     (add-subgroups root groups)))
-
-(defn- get-root-app-group-ids
-  "Gets the internal identifiers for all app groups associated with workspaces
-   that satisfy the given condition."
-  [condition]
-  (map :app_group_id
-       (select workspace
-               (fields [:root_analysis_group_id :app_group_id])
-               (where condition))))
-
-(defn- get-visible-root-app-group-ids
-  "Gets the list of internal root app group identifiers that are visible to the
-   user with the given workspace identifier."
-  [workspace-id]
-  (concat (get-root-app-group-ids {:id workspace-id})
-          (get-root-app-group-ids {:is_public true})))
 
 (defn get-only-app-groups
   "Retrieves the list of app groups that are visible to the user with the given

@@ -399,8 +399,8 @@
 (defn force-update-workflow
   "This service will either update an existing workflow or import a new workflow.  
    Vetted workflows may be updated."
-  [body]
-  (.forceUpdateWorkflow (workflow-import-service) (slurp body))
+  [body {:keys [update-mode]}]
+  (.forceUpdateWorkflow (workflow-import-service) (slurp body) update-mode)
   (empty-response))
 
 (defn delete-workflow
