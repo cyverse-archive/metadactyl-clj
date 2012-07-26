@@ -223,8 +223,7 @@
       (.setSessionFactory (session-factory))
       (.setZoidbergClient (zoidberg-client))
       (.setUserService (user-service))
-      (.setWorkflowImportService (workflow-import-service))
-      (.setWorkflowExportService (workflow-export-service)))))
+      (.setWorkflowImportService (workflow-import-service)))))
 
 (register-bean
   (defbean analysis-retriever
@@ -305,11 +304,6 @@
   [app-id]
   (.getDataObjectsForAnalysis (pipeline-service) app-id))
 
-(defn categorize-apps
-  "A service used to recategorize apps."
-  [body]
-  (.categorizeAnalyses (analysis-categorization-service) (slurp body)))
-
 (defn get-app-categories
   "A service used to get a list of app categories."
   [category-set]
@@ -330,11 +324,6 @@
   [app-id]
   (.appendNotificationToTemplate (notification-appender)
     (.fetchTemplateByName (app-fetcher) app-id)))
-
-(defn get-only-analysis-groups
-  "Retrieves the list of public analyses."
-  [workspace-id]
-  (.listAnalysisGroups (analysis-listing-service) workspace-id))
 
 (defn export-template
   "This service will export the template with the given identifier."
@@ -405,8 +394,8 @@
 (defn force-update-workflow
   "This service will either update an existing workflow or import a new workflow.  
    Vetted workflows may be updated."
-  [body]
-  (.forceUpdateWorkflow (workflow-import-service) (slurp body))
+  [body {:keys [update-mode]}]
+  (.forceUpdateWorkflow (workflow-import-service) (slurp body) update-mode)
   (empty-response))
 
 (defn delete-workflow

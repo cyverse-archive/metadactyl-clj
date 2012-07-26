@@ -21,7 +21,8 @@
   :profiles {:dev {:resource-paths ["conf/test"]}}
   :aot [metadactyl.core]
   :main metadactyl.core
-  :ring {:handler metadactyl.core/app :init metadactyl.core/load-configuration}
+  :ring {:handler metadactyl.core/app
+         :init metadactyl.core/load-configuration-from-props}
   :iplant-rpm {:summary "iPlant Discovery Environment Metadata Services"
                :provides "metadactyl"
                :dependencies ["iplant-service-config >= 0.1.0-5"]

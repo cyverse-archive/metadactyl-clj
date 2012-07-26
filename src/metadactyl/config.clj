@@ -1,5 +1,6 @@
 (ns metadactyl.config
-  (:use [clojure.string :only (blank? split)])
+  (:use [clojure.data.json :only [read-json]]
+        [clojure.string :only (blank? split)])
   (:require [clojure-commons.props :as cc-props]
             [clojure.tools.logging :as log]))
 
@@ -224,6 +225,9 @@
   "The domain name to append to the user identifier to get the fully qualified
    user identifier."
   "metadactyl.uid.domain")
+
+(def get-default-app-groups
+  (memoize (fn [] (read-json (workspace-default-app-groups)))))
 
 (defn configuration-valid
   "Returns the value of the configuration validity flag.  This function should

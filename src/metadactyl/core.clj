@@ -1,7 +1,10 @@
 (ns metadactyl.core
   (:gen-class)
-  (:use [clojure-commons.query-params :only (wrap-query-params)]
+  (:use [clojure.java.io :only [file]]
+        [clojure-commons.query-params :only (wrap-query-params)]
         [compojure.core]
+        [metadactyl.app-categorization]
+        [metadactyl.app-listings]
         [metadactyl.beans]
         [metadactyl.collaborators]
         [metadactyl.config]
@@ -13,6 +16,7 @@
             [compojure.handler :as handler]
             [clojure.tools.logging :as log]
             [clojure-commons.clavin-client :as cl]
+            [clojure-commons.props :as cp]
             [ring.adapter.jetty :as jetty]))
 
 (defroutes secured-routes
@@ -40,8 +44,8 @@
   (GET "/search-analyses/:search-term" [search-term]
        (search-apps search-term))
 
-  (GET "/get-analyses-in-group/:app-group-id" [app-group-id]
-       (list-apps-in-group app-group-id))
+  (GET "/get-analyses-in-group/:app-group-id" [app-group-id :as {params :params}]
+       (get-apps-in-group app-group-id params))
 
   (GET "/get-components-in-analysis/:app-id" [app-id]
        (list-deployed-components-in-app app-id))
@@ -107,7 +111,7 @@
        (trap #(get-app app-id)))
 
   (GET "/get-only-analysis-groups/:workspace-id" [workspace-id]
-       (trap #(get-only-analysis-groups workspace-id)))
+       (trap #(get-only-app-groups workspace-id)))
 
   (GET "/list-analysis/:app-id" [app-id]
        (list-app app-id))
@@ -136,8 +140,8 @@
   (POST "/update-template" [:as {body :body}]
         (trap #(update-template body)))
 
-  (POST "/force-update-workflow" [:as {body :body}]
-        (trap #(force-update-workflow body)))
+  (POST "/force-update-workflow" [:as {body :body params :params}]
+        (trap #(force-update-workflow body params)))
 
   (POST "/update-workflow" [:as {body :body}]
         (trap #(update-workflow body)))
@@ -165,7 +169,33 @@
 
   (route/not-found (unrecognized-path-response)))
 
-(defn load-configuration
+(defn- log-props
+  "Logs the configuration properties."
+  []
+  (dorun (map #(log/warn (key %) "=" (val %))
+              (sort-by key @props))))
+
+(defn- init-service
+  "Initializes the service."
+  []
+  (log-props)
+  (init-registered-beans)
+  (when (not (configuration-valid))
+    (log/warn "THE CONFIGURATION IS INVALID - EXITING NOW")
+    (System/exit 1))
+  (define-database))
+
+(defn load-configuration-from-props
+  "Loads the configuration from a properties file."
+  []
+  (let [filename "metadactyl.properties"
+        conf-dir (System/getenv "IPLANT_CONF_DIR")]
+    (if (nil? conf-dir)
+      (reset! props (cp/read-properties (file filename)))
+      (reset! props (cp/read-properties (file conf-dir filename)))))
+  (init-service))
+
+(defn load-configuration-from-zookeeper
   "Loads the configuration properties from Zookeeper."
   []
   (cl/with-zk
@@ -175,12 +205,7 @@
       (log/warn "THIS APPLICATION WILL NOT EXECUTE CORRECTLY.")
       (System/exit 1))
     (reset! props (cl/properties "metadactyl")))
-  (log/warn @props)
-  (init-registered-beans)
-  (when (not (configuration-valid))
-    (log/warn "THE CONFIGURATION IS INVALID - EXITING NOW")
-    (System/exit 1))
-  (define-database))
+  (init-service))
 
 (defn site-handler [routes]
   (-> routes
@@ -193,6 +218,6 @@
 
 (defn -main
   [& args]
-  (load-configuration)
+  (load-configuration-from-zookeeper)
   (log/warn "Listening on" (listen-port))
   (jetty/run-jetty app {:port (listen-port)}))
