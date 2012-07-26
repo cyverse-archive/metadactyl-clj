@@ -44,8 +44,8 @@
   (GET "/search-analyses/:search-term" [search-term]
        (search-apps search-term))
 
-  (GET "/get-analyses-in-group/:app-group-id" [app-group-id]
-       (list-apps-in-group app-group-id))
+  (GET "/get-analyses-in-group/:app-group-id" [app-group-id :as {params :params}]
+       (get-apps-in-group app-group-id params))
 
   (GET "/get-components-in-analysis/:app-id" [app-id]
        (list-deployed-components-in-app app-id))
