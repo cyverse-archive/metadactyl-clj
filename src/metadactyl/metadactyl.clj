@@ -304,11 +304,6 @@
   [app-id]
   (.getDataObjectsForAnalysis (pipeline-service) app-id))
 
-(defn categorize-apps
-  "A service used to recategorize apps."
-  [body]
-  (.categorizeAnalyses (analysis-categorization-service) (slurp body)))
-
 (defn get-app-categories
   "A service used to get a list of app categories."
   [category-set]

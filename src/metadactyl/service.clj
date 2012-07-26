@@ -1,28 +1,33 @@
 (ns metadactyl.service
   (:use [clojure.data.json :only (json-str)]
-        [clojure.string :only (join)]
+        [clojure.string :only (join upper-case)]
         [slingshot.slingshot :only [try+]])
   (:require [clj-http.client :as client]
             [clojure.tools.logging :as log]))
-
-(def json-content-type "application/json")
 
 (defn empty-response []
   {:status 200})
 
 (defn success-response
   ([map]
-     {:status 200
-      :body (json-str (merge {:success true} map))
-      :content-type json-content-type})
+     {:status       200
+      :body         (json-str (merge {:success true} map))
+      :content-type :json})
   ([]
      (success-response {})))
 
 (defn failure-response [e]
   (log/error e "bad request")
-  {:status 400
-   :body (json-str {:success false :reason (.getMessage e)})
-   :content-type json-content-type})
+  {:status       400
+   :body         (json-str {:success false :reason (.getMessage e)})
+   :content-type :json})
+
+(defn slingshot-failure-response [m]
+  (log/error "bad request:" m)
+  {:status       400
+   :body         (json-str (assoc (dissoc m :type)
+                             :code (upper-case (name (:type m)))))
+   :content-type :json})
 
 (defn forbidden-response [e]
   (log/error e "unauthorized")
@@ -32,7 +37,7 @@
   (log/error e "internal error")
   {:status 500
    :body (json-str {:success false :reason (.getMessage e)})
-   :content-type json-content-type})
+   :content-type :json})
 
 (defn unrecognized-path-response []
   "Builds the response to send for an unrecognized service path."
@@ -48,6 +53,7 @@
     (catch [:type ::unauthorized] {:keys [user message]}
       (log/error message user)
       (forbidden-response (:throwable &throw-context)))
+    (catch map? m (slingshot-failure-response m))
     (catch IllegalArgumentException e (failure-response e))
     (catch IllegalStateException e (failure-response e))
     (catch Throwable t (error-response t))))

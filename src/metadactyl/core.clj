@@ -3,6 +3,7 @@
   (:use [clojure.java.io :only [file]]
         [clojure-commons.query-params :only (wrap-query-params)]
         [compojure.core]
+        [metadactyl.app-categorization]
         [metadactyl.app-listings]
         [metadactyl.beans]
         [metadactyl.collaborators]
