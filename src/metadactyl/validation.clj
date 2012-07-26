@@ -26,7 +26,7 @@
   "Thrown when a string is expected in a JSON request body and something else
    is found."
   [path]
-  {:type ::string_expected-in_request_body_field
+  {:type ::string_expected_in_request_body_field
    :path path})
 
 (defn blank-json-field-value-exception
@@ -144,7 +144,7 @@
 
 (defn validate-json-object-field
   "Validates a field in a JSON object that is expected to contain another JSON
-   object.  The first parameter containsw a map representing a JSON object."
+   object.  The first parameter contains a map representing a JSON object."
   ([m k]
      (validate-json-object-field m k ""))
   ([m k path]

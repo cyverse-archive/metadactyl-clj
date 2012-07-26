@@ -222,7 +222,7 @@
 
 (defn- decategorize-app
   "Removes an app from all categories in the database."
-  [{{app-id :analysis} :id}]
+  [{{app-id :id} :analysis}]
   (delete :template_group_template
           (where {:template_id (subselect transformation_activity
                                           (fields :hid)
