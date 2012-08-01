@@ -100,14 +100,17 @@
   [app_group_id params]
   (let [workspace (get-or-create-workspace (.getUsername current-user))
         app_group (first (select analysis_group_listing (where {:id app_group_id})))
-        apps_in_group (map
-                        #(-> %
-                           (format-app-timestamps)
-                           (format-app-ratings)
-                           (format-app-pipeline-eligibility))
-                        (get-apps-in-group-for-user
-                          app_group_id workspace
-                          (workspace-favorites-app-group-index)
-                          params))
-        total (count-apps-in-group-for-user app_group_id)]
-    (json-str (assoc app_group :total total :templates apps_in_group))))
+        total (count-apps-in-group-for-user app_group_id)
+        apps_in_group (get-apps-in-group-for-user
+                        app_group_id
+                        workspace
+                        (workspace-favorites-app-group-index)
+                        params)
+        apps_in_group (map #(-> %
+                              (format-app-timestamps)
+                              (format-app-ratings)
+                              (format-app-pipeline-eligibility))
+                           apps_in_group)]
+    (json-str (assoc app_group
+                     :template_count total
+                     :templates apps_in_group))))
