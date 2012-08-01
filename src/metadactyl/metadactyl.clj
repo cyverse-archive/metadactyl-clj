@@ -1,6 +1,7 @@
 (ns metadactyl.metadactyl
   (:use [clojure.data.json :only [read-json]]
         [slingshot.slingshot :only [throw+]]
+        [metadactyl.app-validation]
         [metadactyl.beans]
         [metadactyl.config]
         [metadactyl.service]
@@ -15,6 +16,9 @@
            [org.iplantc.workflow.experiment
             AnalysisRetriever AnalysisService ExperimentRunner
             IrodsUrlAssembler]
+           [org.iplantc.workflow.integration.validation
+            ChainingTemplateValidator OutputRedirectionTemplateValidator
+            TemplateValidator]
            [org.iplantc.workflow.service
             AnalysisCategorizationService AnalysisEditService CategoryService
             ExportService InjectableWorkspaceInitializer PipelineService
@@ -27,6 +31,14 @@
             AnnotationSessionFactoryBean])
   (:require [clojure.tools.logging :as log]))
 
+(defn- get-property-type-validator
+  "Gets an implementation of the TemplateValidator interface that can be used
+   to verify that the property types in the templates are all compatible with
+   the selected deployed component."
+  []
+  (proxy [TemplateValidator] []
+    (validate [template] (validate-template-property-types template))))
+
 (def
   ^{:doc "The authenticated user or nil if the service is unsecured."
     :dynamic true}
@@ -36,6 +48,15 @@
   ^{:doc "The service used to get information about the authenticated user."}
    user-session-service (proxy [UserSessionService] []
                           (getUser [] current-user)))
+
+(defn- build-template-validator
+  "Builds an object that will be used by the workflow import services
+  to to validate incoming templates."
+  []
+  (doto (ChainingTemplateValidator.)
+    (.addValidator (OutputRedirectionTemplateValidator. "stdout"))
+    (.addValidator (OutputRedirectionTemplateValidator. "stderr"))
+    (.addValidator (get-property-type-validator))))
 
 (defn- user-from-attributes
   "Creates an instance of org.iplantc.authn.user.User from the given map."
@@ -190,13 +211,14 @@
     (WorkflowPreviewService. (session-factory))))
 
 (register-bean
-  (defbean workflow-import-service
-    "Handles workflow/metadactyl import actions."
-    (WorkflowImportService. 
-      (session-factory) 
-      (Integer/toString (workspace-dev-app-group-index)) 
-      (Integer/toString (workspace-favorites-app-group-index)) 
-      (workspace-initializer))))
+ (defbean workflow-import-service
+   "Handles workflow/metadactyl import actions."
+   (doto (WorkflowImportService.
+          (session-factory)
+          (Integer/toString (workspace-dev-app-group-index))
+          (Integer/toString (workspace-favorites-app-group-index))
+          (workspace-initializer))
+     (.setTemplateValidator (build-template-validator)))))
 
 (register-bean
   (defbean analysis-deletion-service
