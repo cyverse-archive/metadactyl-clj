@@ -99,7 +99,7 @@
    descendents."
   [app_group_id params]
   (let [workspace (get-or-create-workspace (.getUsername current-user))
-        app_group (first (select analysis_group_listing (where {:id app_group_id})))
+        app_group (get-app-group app_group_id)
         total (count-apps-in-group-for-user app_group_id)
         apps_in_group (get-apps-in-group-for-user
                         app_group_id
