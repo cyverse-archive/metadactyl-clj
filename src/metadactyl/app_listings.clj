@@ -94,7 +94,7 @@
         integration_date (date->long (:integration_date app))]
     (assoc app :edited_date edited_date :integration_date integration_date)))
 
-(defn get-apps-in-group
+(defn list-apps-in-group
   "This service lists all of the apps in an app group and all of its
    descendents."
   [app_group_id params]
