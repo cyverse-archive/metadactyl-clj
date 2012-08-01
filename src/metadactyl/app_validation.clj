@@ -32,7 +32,6 @@
 (defn validate-template-property-types
   "Validates the property types in a template that is being imported."
   [template]
-  (println "validating template:" (.getName template))
   (let [tool-type    (get-tool-type (.getComponent template))
         valid-ptypes (into #{} (get-valid-ptype-names tool-type))
         properties   (mapcat #(.getProperties %) (.getPropertyGroups template))]
