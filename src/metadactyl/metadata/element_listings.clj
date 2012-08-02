@@ -13,7 +13,8 @@
   (-> (select* property_type)
       (fields :property_type.hid :property_type.id :property_type.name
               [:value_type.name :value_type] :property_type.description)
-      (join value_type)))
+      (join value_type)
+      (where {:deprecated false})))
 
 (defn- get-tool-type-id
   "Gets the internal identifier associated with a tool type name."
