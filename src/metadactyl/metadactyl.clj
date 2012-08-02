@@ -4,6 +4,7 @@
         [metadactyl.app-validation]
         [metadactyl.beans]
         [metadactyl.config]
+        [metadactyl.metadata.element-listings :only [list-elements]]
         [metadactyl.service]
         [metadactyl.transformers]
         [ring.util.codec :only [url-decode]])
@@ -297,8 +298,10 @@
 
 (defn get-workflow-elements
   "A service to get information about workflow elements."
-  [element-type]
-  (.getElements (workflow-element-service) element-type))
+  [element-type params]
+  (let [handler-fn #(.getElements (workflow-element-service) element-type)
+        listings   (list-elements element-type params handler-fn)]
+    (success-response listings)))
 
 (defn search-deployed-components
   "A service to search information about deployed components."

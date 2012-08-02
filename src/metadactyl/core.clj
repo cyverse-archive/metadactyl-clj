@@ -77,8 +77,8 @@
   (GET "/" []
        "Welcome to Metadactyl!\n")
 
-  (GET "/get-workflow-elements/:element-type" [element-type]
-       (trap #(get-workflow-elements element-type)))
+  (GET "/get-workflow-elements/:element-type" [element-type :as {params :params}]
+       (trap #(get-workflow-elements element-type params)))
 
   (GET "/search-deployed-components/:search-term" [search-term]
        (trap #(search-deployed-components search-term)))
