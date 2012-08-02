@@ -431,7 +431,8 @@ tool type name will result in an error:
 $ curl -s http://by-tor:8888/get-workflow-elements/property-types?component-id=foo | python -mjson.tool
 {
     "code": "UNKNOWN_DEPLOYED_COMPONENT", 
-    "id": "foo"
+    "id": "foo",
+    "success": false
 }
 ```
 
@@ -439,7 +440,8 @@ $ curl -s http://by-tor:8888/get-workflow-elements/property-types?component-id=f
 $ curl -s http://by-tor:8888/get-workflow-elements/property-types?tool-type=foo | python -mjson.tool
 {
     "code": "UNKNOWN_TOOL_TYPE", 
-    "name": "foo"
+    "name": "foo",
+    "success": false
 }
 ```
 
