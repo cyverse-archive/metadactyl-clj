@@ -2238,8 +2238,51 @@ Secured Endpoint: GET /secured/get-analyses-in-group/{group-id}
 
 This service lists all of the analyses within an analysis group or any of its
 descendents.  The DE uses this service to obtain the list of analyses when a
-user clicks on a group in the _Apps_ window.  The response body for this
-service is in the following format:
+user clicks on a group in the _Apps_ window.
+
+This endpoint accepts optional URL query parameters to limit and sort Apps,
+which will allow pagination of results.
+
+<table "border=1">
+    <tr><th>Parameter</th><th>Description</th></tr>
+    <tr>
+        <td>limit=X</td>
+        <td>
+            Limits the response to X number of results in the "templates" array.
+            See
+            http://www.postgresql.org/docs/8.4/interactive/queries-limit.html
+        </td>
+    </tr>
+    <tr>
+        <td>offset=X</td>
+        <td>
+            Skips the first X number of results in the "templates" array. See
+            http://www.postgresql.org/docs/8.4/interactive/queries-limit.html
+        </td>
+    </tr>
+    <tr>
+        <td>sortField=X</td>
+        <td>
+            Sorts the results in the "templates" array by the field X, before
+            limits and offsets are applied. This field can be any one of the
+            simple fields of the "templates" objects, or `average_rating` or
+            `user_rating` for ratings sorting. See
+            http://www.postgresql.org/docs/8.4/interactive/queries-order.html
+        </td>
+    </tr>
+    <tr>
+        <td>sortDir=[ASC|DESC]</td>
+        <td>
+            Only used when sortField is present. Sorts the results in either
+            ascending (`ASC`) or descending (`DESC`) order, before limits and
+            offsets are applied. Defaults to `ASC`.
+            See
+            http://www.postgresql.org/docs/8.4/interactive/queries-order.html
+        </td>
+    </tr>
+</table>
+
+The response body for this service is in the following format:
 
 ```json
 {
@@ -2278,13 +2321,13 @@ service is in the following format:
 Here's an example:
 
 ```
-$ curl -s "http://by-tor:8888/secured/get-analyses-in-group/6A1B9EBD-4950-4F3F-9CAB-DD12A1046D9A?user=snow-dog" | python -mjson.tool
+$ curl -s "http://by-tor:8888/secured/get-analyses-in-group/6A1B9EBD-4950-4F3F-9CAB-DD12A1046D9A?user=snow-dog&limit=1&sortField=name&sortDir=DESC" | python -mjson.tool
 {
     "description": "", 
     "id": "C3DED4E2-EC99-4A54-B0D8-196112D1BB7B", 
     "is_public": true, 
     "name": "Some Group", 
-    "template_count": 1, 
+    "template_count": 100, 
     "templates": [
         {
             "deleted": false, 
@@ -2295,7 +2338,7 @@ $ curl -s "http://by-tor:8888/secured/get-analyses-in-group/6A1B9EBD-4950-4F3F-9
             "integrator_name": "Nobody", 
             "is_favorite": false, 
             "is_public": true, 
-            "name": "SomeAppName", 
+            "name": "Z-AppName", 
             "pipeline_eligibility": {
                 "is_valid": true, 
                 "reason": ""
