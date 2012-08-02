@@ -243,6 +243,7 @@ are currently supported:
     <tr><td>rule-types</td><td>Known types of validation rules</td></tr>
     <tr><td>value-types</td><td>Known types of parameter values</td></tr>
     <tr><td>data-sources</td><td>Known sources for data objects</td></tr>
+    <tr><td>tool-types</td><td>Known types of deployed components</td></tr>
     <tr><td>all</td><td>All workflow element types</td></tr>
 </table>
 
@@ -268,7 +269,8 @@ $ curl -s http://by-tor:8888/get-workflow-elements/components | python -mjson.to
             "version": "0.0.1"
         }, 
         ...
-    ]
+    ],
+    "success": true
 }
 ```
 
@@ -294,7 +296,8 @@ $ curl -s http://by-tor:8888/get-workflow-elements/formats | python -mjson.tool
             "name": "Barcode-0"
         }, 
         ...
-    ]
+    ],
+    "success": true
 }
 ```
 
@@ -326,7 +329,8 @@ $ curl -s http://by-tor:8888/get-workflow-elements/info-types | python -mjson.to
             "name": "ReferenceGenome"
         }, 
         ...
-    ]
+    ],
+    "success": true
 }
 ```
 
@@ -336,7 +340,12 @@ command-line option and the property type represents the type of data required
 by the command-line option.  For example a `Boolean` property generally
 corresponds to a single command-line flag that takes no arguments.  A `Text`
 property, on the other hand, generally represents some sort of textual
-information.  Here's an example listing:
+information.  Some property types are not supported by all tool types, so it
+is helpful in some cases to filter property types either by the tool type or
+optionally by the deployed component (which is used to determine the tool
+type).
+
+Here's an example that is not filtered by tool type:
 
 ```
 $ curl -s http://by-tor:8888/get-workflow-elements/property-types | python -mjson.tool
@@ -357,7 +366,80 @@ $ curl -s http://by-tor:8888/get-workflow-elements/property-types | python -mjso
             "value_type": "Number"
         }, 
         ...
-    ]
+    ],
+    "success": true
+}
+```
+
+Here's an example that is filtered by tool type explicitly:
+
+```
+$ curl -s http://by-tor:8888/get-workflow-elements/property-types?tool-type=fAPI | python -mjson.tool
+{
+    "property_types": [
+        {
+            "description": "A text box that checks for valid number input", 
+            "hid": 1, 
+            "id": "ptd2340f11-d260-41b4-93fd-c1d695bf6fef", 
+            "name": "Number", 
+            "value_type": "Number"
+        }, 
+        {
+            "description": "", 
+            "hid": 2, 
+            "id": "pt2cf37b0d-5463-4aef-98a2-4db63d2f3dbc", 
+            "name": "ClipperSelector", 
+            "value_type": null
+        }, 
+        ...
+    ],
+    "success": true
+}
+```
+
+Here's an example that is filtered by component identifier:
+
+```
+$ curl -s http://by-tor:8888/get-workflow-elements/property-types?component-id=c1b9f95a766b64454a2570f5ddb255931 | python -mjson.tool
+{
+    "property_types": [
+        {
+            "description": "A text box that checks for valid number input", 
+            "hid": 1, 
+            "id": "ptd2340f11-d260-41b4-93fd-c1d695bf6fef", 
+            "name": "Number", 
+            "value_type": "Number"
+        }, 
+        {
+            "description": "", 
+            "hid": 2, 
+            "id": "pt2cf37b0d-5463-4aef-98a2-4db63d2f3dbc", 
+            "name": "ClipperSelector", 
+            "value_type": null
+        },
+        ...
+    ],
+    "success": true
+}
+```
+
+If you filter by both tool type and deployed component ID then the tool type
+will take precedence.  Including either an undefined tool type or an undefined
+tool type name will result in an error:
+
+```
+$ curl -s http://by-tor:8888/get-workflow-elements/property-types?component-id=foo | python -mjson.tool
+{
+    "code": "UNKNOWN_DEPLOYED_COMPONENT", 
+    "id": "foo"
+}
+```
+
+```
+$ curl -s http://by-tor:8888/get-workflow-elements/property-types?tool-type=foo | python -mjson.tool
+{
+    "code": "UNKNOWN_TOOL_TYPE", 
+    "name": "foo"
 }
 ```
 
@@ -393,7 +475,8 @@ $ curl -s http://by-tor:8888/get-workflow-elements/rule-types | python -mjson.to
                 "Number"
             ]
         },
-    ]
+    ],
+    "success": true
 }
 ```
 
@@ -422,7 +505,8 @@ $ curl -s http://by-tor:8888/get-workflow-elements/value-types | python -mjson.t
             "name": "Boolean"
         }, 
         ...
-    ]
+    ],
+    "success": true
 }
 ```
 
@@ -441,6 +525,28 @@ $ curl -s http://by-tor:8888/get-workflow-elements/data-sources | python -mjson.
             "id": "8D6B8247-F1E7-49DB-9FFE-13EAD7C1AED6", 
             "label": "File", 
             "name": "file"
+        },
+        ...
+    ],
+    "success": true
+}
+```
+
+Tool types are known types of deployed components in the Discovery
+Environment.  Generally, there's a different tool type for each execution
+environment that is supported by the Discovery Environment.  Here's an
+example:
+
+```
+$ curl -s http://by-tor:8888/get-workflow-elements/tool-types | python -mjson.tool
+{
+    "success": true, 
+    "tool_types": [
+        {
+            "description": "Run at the University of Arizona", 
+            "id": 1, 
+            "label": "UA", 
+            "name": "executable"
         },
         ...
     ]
@@ -516,7 +622,17 @@ $ curl -s http://by-tor:8888/get-workflow-elements/all | python -mjson.tool
             ]
         },
         ...
-    ], 
+    ],
+    "success": true,
+    "tool_types": [
+        {
+            "description": "Run at the University of Arizona", 
+            "id": 1, 
+            "label": "UA", 
+            "name": "executable"
+        },
+        ...
+    ],
     "value_types": [
         {
             "description": "Arbitrary text", 
