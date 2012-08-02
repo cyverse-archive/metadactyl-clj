@@ -38,7 +38,8 @@
    the selected deployed component."
   []
   (proxy [TemplateValidator] []
-    (validate [template] (validate-template-property-types template))))
+    (validate [template registry]
+      (validate-template-property-types template registry))))
 
 (def
   ^{:doc "The authenticated user or nil if the service is unsecured."
