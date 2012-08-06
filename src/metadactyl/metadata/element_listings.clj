@@ -19,8 +19,7 @@
 (defn- get-tool-type-id
   "Gets the internal identifier associated with a tool type name."
   [tool-type-name]
-  (let [result (first (select tool_types
-                              (where {:name tool-type-name})))]
+  (let [result (get-tool-type-by-name tool-type-name)]
     (when (nil? result)
       (throw+ {:type ::unknown_tool_type
                :name tool-type-name}))
@@ -29,14 +28,11 @@
 (defn- get-tool-type-for-component-id
   "Gets the tool type associated with the given deployed component identifier."
   [component-id]
-  (let [result (first (select deployed_components
-                              (fields [:tool_types.id :type-id])
-                              (join tool_types)
-                              (where {:deployed_components.id component-id})))]
+  (let [result (get-tool-type-by-component-id component-id)]
     (when (nil? result)
       (throw+ {:type ::unknown_deployed_component
                :id   component-id}))
-    (:type-id result)))
+    (:id result)))
 
 (defn- get-tool-type
   "Gets the tool type to use when listing property types.  If the tool type is
