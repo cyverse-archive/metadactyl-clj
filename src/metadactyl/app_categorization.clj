@@ -4,6 +4,8 @@
         [kameleon.core]
         [kameleon.entities]
         [kameleon.app-groups]
+        [kameleon.queries :only
+         [get-or-create-user get-or-create-workspace-for-user]]
         [metadactyl.config]
         [metadactyl.json :only [to-json from-json]]
         [metadactyl.service :only [success-response]]
@@ -145,48 +147,18 @@
       (add-workspace-and-categories hierarchy username root path)
       (add-missing-category-to-workspace hierarchy username workspace path))))
 
-(defn- get-or-create-user
-  "Gets a user from the database, creating the user if necessary."
-  [username]
-  (if-let [user (first (select users (where {:username username})))]
-    user
-    (insert users (values {:username username}))))
-
-(defn- get-or-create-workspace
-  "Gets a workspace from the database, creating it if necessary."
-  [username]
-  (let [user-id (:id (get-or-create-user username))]
-    (if-let [workspace (first (select workspace (where {:user_id user-id})))]
-      workspace
-      (insert workspace (values {:user_id user-id})))))
-
-(defn- insert-category
-  "Inserts an app category into the database."
-  [workspace-id category]
-  (insert template_group
-          (values {:id           (:id category)
-                   :name         (:name category)
-                   :description  ""
-                   :workspace_id workspace-id})))
-
 (defn- associate-subcategory
   "Associates a subcategory with its parent category in the database."
-  [parent child index]
-  (let [association (first (select :template_group_group
-                                   (where {:parent_group_id (:hid parent)
-                                           :subgroup_id     (:hid child)})))]
-    (when (nil? association)
-      (insert :template_group_group
-              (values {:parent_group_id (:hid parent)
-                       :subgroup_id     (:hid child)
-                       :hid             index})))))
+  [{parent-group-id :hid} {subgroup-id :hid} index]
+  (when-not (is-subgroup? parent-group-id subgroup-id)
+    (add-subgroup parent-group-id index subgroup-id)))
 
 (defn- insert-category-if-missing
   "Inserts a category into the database if it doesn't exist already."
   [workspace-id category]
   (let [category (if-not (:hid category)
                    (assoc category
-                     :hid (:hid (insert-category workspace-id category)))
+                     :hid (:hid (create-app-group workspace-id category)))
                    category)
         category (assoc category
                    :subgroups (map #(insert-category-if-missing workspace-id %)
@@ -199,7 +171,8 @@
   "Inserts a workspace into the database if it doesn't exist already."
   [username root-group]
   (if-not (:workspace_id root-group)
-    (assoc root-group :workspace_id (:id (get-or-create-workspace username)))
+    (assoc root-group :workspace_id
+           (:id (get-or-create-workspace-for-user username)))
     root-group))
 
 (defn- insert-workspace-and-categories
@@ -209,9 +182,7 @@
   (let [root-group   (insert-workspace-if-missing username root-group)
         workspace-id (:workspace_id root-group)
         root-group   (insert-category-if-missing workspace-id root-group)]
-    (update workspace
-            (set-fields {:root_analysis_group_id (:hid root-group)})
-            (where      {:id workspace-id}))
+    (set-root-app-group workspace-id (:hid root-group))
     [username root-group]))
 
 (defn- insert-workspaces-and-categories
@@ -220,21 +191,11 @@
   [hierarchy]
   (into {} (map insert-workspace-and-categories hierarchy)))
 
-(defn- decategorize-app
-  "Removes an app from all categories in the database."
-  [{{app-id :id} :analysis}]
-  (delete :template_group_template
-          (where {:template_id (subselect transformation_activity
-                                          (fields :hid)
-                                          (where {:id app-id}))})))
-
 (defn- get-app-hid
   "Gets the internal identifier of an app, throwing an exception if the app
    doesn't exist."
   [id]
-  (let [hid (:hid (first (select transformation_activity
-                                 (fields :hid)
-                                 (where {:id id}))))]
+  (let [hid (:hid (get-app-by-id id))]
     (when (nil? hid)
       (throw+ {:type   ::app_not_found
                :app-id id}))
@@ -247,14 +208,13 @@
         workspace     (resolve-workspace hierarchy username root)
         category      (resolve-category workspace path)
         cat-hid       (:hid category)
-        app-hid       (get-app-hid (:id app))
-        association   (first (select :template_group_template
-                                     (where {:template_group_id cat-hid
-                                             :template_id       app-hid})))]
-    (when (nil? association)
-      (insert :template_group_template
-              (values {:template_group_id cat-hid
-                       :template_id       app-hid})))))
+        app-hid       (get-app-hid (:id app))]
+    (add-app-to-group cat-hid app-hid)))
+
+(defn- extract-app-id
+  "Extracts an app ID from a category definition."
+  [{{app-id :id} :analysis}]
+  app-id)
 
 (defn- do-categorization
   "Categorizes one or more apps in the database."
@@ -262,7 +222,7 @@
   (let [hierarchy (load-app-group-hierarchies-from-database)
         hierarchy (reduce add-missing-category hierarchy categories)
         hierarchy (insert-workspaces-and-categories hierarchy)]
-    (dorun (map decategorize-app categories))
+    (dorun (map #(decategorize-app (extract-app-id %)) categories))
     (dorun (map #(categorize-app hierarchy %) categories))))
 
 (defn- validate-app-info

@@ -1,8 +1,10 @@
 (ns metadactyl.metadactyl
   (:use [clojure.data.json :only [read-json]]
         [slingshot.slingshot :only [throw+]]
+        [metadactyl.app-validation]
         [metadactyl.beans]
         [metadactyl.config]
+        [metadactyl.metadata.element-listings :only [list-elements]]
         [metadactyl.service]
         [metadactyl.transformers]
         [ring.util.codec :only [url-decode]])
@@ -15,6 +17,9 @@
            [org.iplantc.workflow.experiment
             AnalysisRetriever AnalysisService ExperimentRunner
             IrodsUrlAssembler]
+           [org.iplantc.workflow.integration.validation
+            ChainingTemplateValidator OutputRedirectionTemplateValidator
+            TemplateValidator]
            [org.iplantc.workflow.service
             AnalysisCategorizationService AnalysisEditService CategoryService
             ExportService InjectableWorkspaceInitializer PipelineService
@@ -27,6 +32,15 @@
             AnnotationSessionFactoryBean])
   (:require [clojure.tools.logging :as log]))
 
+(defn- get-property-type-validator
+  "Gets an implementation of the TemplateValidator interface that can be used
+   to verify that the property types in the templates are all compatible with
+   the selected deployed component."
+  []
+  (proxy [TemplateValidator] []
+    (validate [template registry]
+      (validate-template-property-types template registry))))
+
 (def
   ^{:doc "The authenticated user or nil if the service is unsecured."
     :dynamic true}
@@ -36,6 +50,15 @@
   ^{:doc "The service used to get information about the authenticated user."}
    user-session-service (proxy [UserSessionService] []
                           (getUser [] current-user)))
+
+(defn- build-template-validator
+  "Builds an object that will be used by the workflow import services
+  to to validate incoming templates."
+  []
+  (doto (ChainingTemplateValidator.)
+    (.addValidator (OutputRedirectionTemplateValidator. "stdout"))
+    (.addValidator (OutputRedirectionTemplateValidator. "stderr"))
+    (.addValidator (get-property-type-validator))))
 
 (defn- user-from-attributes
   "Creates an instance of org.iplantc.authn.user.User from the given map."
@@ -190,13 +213,14 @@
     (WorkflowPreviewService. (session-factory))))
 
 (register-bean
-  (defbean workflow-import-service
-    "Handles workflow/metadactyl import actions."
-    (WorkflowImportService. 
-      (session-factory) 
-      (Integer/toString (workspace-dev-app-group-index)) 
-      (Integer/toString (workspace-favorites-app-group-index)) 
-      (workspace-initializer))))
+ (defbean workflow-import-service
+   "Handles workflow/metadactyl import actions."
+   (doto (WorkflowImportService.
+          (session-factory)
+          (Integer/toString (workspace-dev-app-group-index))
+          (Integer/toString (workspace-favorites-app-group-index))
+          (workspace-initializer))
+     (.setTemplateValidator (build-template-validator)))))
 
 (register-bean
   (defbean analysis-deletion-service
@@ -275,8 +299,10 @@
 
 (defn get-workflow-elements
   "A service to get information about workflow elements."
-  [element-type]
-  (.getElements (workflow-element-service) element-type))
+  [element-type params]
+  (let [handler-fn #(.getElements (workflow-element-service) element-type)
+        listings   (list-elements element-type params handler-fn)]
+    (success-response listings)))
 
 (defn search-deployed-components
   "A service to search information about deployed components."
@@ -469,12 +495,6 @@
   "This service searches for apps based on a search term."
   [search-term]
   (.searchAnalyses (analysis-listing-service) (url-decode search-term)))
-
-(defn list-apps-in-group
-  "This service lists all of the apps in an app group and all of its
-   descendents."
-  [app-group-id]
-  (.listAnalysesInGroup (analysis-listing-service) app-group-id))
 
 (defn list-deployed-components-in-app
   "This service lists all of the deployed components in an app."

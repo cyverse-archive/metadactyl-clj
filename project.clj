@@ -17,7 +17,7 @@
                  [net.sf.json-lib/json-lib "2.4" :classifier "jdk15"]]
   :plugins [[org.iplantc/lein-iplant-rpm "1.3.0-SNAPSHOT"]
             [lein-ring "0.7.1"]
-            [swank-clojure "1.4.2"]]
+            [lein-swank "1.4.4"]]
   :profiles {:dev {:resource-paths ["conf/test"]}}
   :aot [metadactyl.core]
   :main metadactyl.core

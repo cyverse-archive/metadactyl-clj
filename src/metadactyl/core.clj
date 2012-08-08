@@ -45,7 +45,7 @@
        (search-apps search-term))
 
   (GET "/get-analyses-in-group/:app-group-id" [app-group-id :as {params :params}]
-       (get-apps-in-group app-group-id params))
+       (list-apps-in-group app-group-id params))
 
   (GET "/get-components-in-analysis/:app-id" [app-id]
        (list-deployed-components-in-app app-id))
@@ -77,8 +77,8 @@
   (GET "/" []
        "Welcome to Metadactyl!\n")
 
-  (GET "/get-workflow-elements/:element-type" [element-type]
-       (trap #(get-workflow-elements element-type)))
+  (GET "/get-workflow-elements/:element-type" [element-type :as {params :params}]
+       (trap #(get-workflow-elements element-type params)))
 
   (GET "/search-deployed-components/:search-term" [search-term]
        (trap #(search-deployed-components search-term)))

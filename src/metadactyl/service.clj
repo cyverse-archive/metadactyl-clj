@@ -26,7 +26,8 @@
   (log/error "bad request:" m)
   {:status       400
    :body         (json-str (assoc (dissoc m :type)
-                             :code (upper-case (name (:type m)))))
+                             :code    (upper-case (name (:type m)))
+                             :success false))
    :content-type :json})
 
 (defn forbidden-response [e]
