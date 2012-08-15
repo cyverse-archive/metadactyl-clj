@@ -2,6 +2,7 @@
   (:use [clojure.data.json :only [read-json]]
         [clojure.string :only (blank? split)])
   (:require [clojure-commons.props :as cc-props]
+            [clojure.string :as str]
             [clojure.tools.logging :as log]))
 
 (defn- file-exists-on-classpath
@@ -227,7 +228,9 @@
   "metadactyl.uid.domain")
 
 (def get-default-app-groups
-  (memoize (fn [] (read-json (workspace-default-app-groups)))))
+  (memoize
+   (fn []
+     (read-json (str/replace (workspace-default-app-groups) #"\\," ",")))))
 
 (defn configuration-valid
   "Returns the value of the configuration validity flag.  This function should
