@@ -114,3 +114,22 @@
     (json-str (assoc app_group
                      :template_count total
                      :templates apps_in_group))))
+
+(defn search-apps
+  "This service searches for apps in the user's workspace and all public app
+   groups, based on a search term."
+  [search_term params]
+  (let [workspace (get-or-create-workspace (.getUsername current-user))
+        total (count-search-apps-for-user search_term (:id workspace))
+        search_results (search-apps-for-user
+                         search_term
+                         workspace
+                         (workspace-favorites-app-group-index)
+                         params)
+        search_results (map #(-> %
+                               (format-app-timestamps)
+                               (format-app-ratings)
+                               (format-app-pipeline-eligibility))
+                            search_results)]
+    (json-str {:template_count total
+               :templates search_results})))
