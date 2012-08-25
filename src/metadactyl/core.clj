@@ -71,6 +71,12 @@
   (POST "/remove-collaborators" [:as {params :params body :body}]
         (remove-collaborators params (slurp body)))
 
+  (GET "/reference-genomes" []
+       (list-reference-genomes))
+
+  (PUT "/reference-genomes" [:as {body :body}]
+       (replace-reference-genomes (slurp body)))
+
   (route/not-found (unrecognized-path-response)))
 
 (defroutes metadactyl-routes

@@ -16,7 +16,7 @@
                  [org.slf4j/slf4j-log4j12 "1.5.8"]
                  [net.sf.json-lib/json-lib "2.4" :classifier "jdk15"]]
   :plugins [[org.iplantc/lein-iplant-rpm "1.3.0-SNAPSHOT"]
-            [lein-ring "0.7.1"]
+            [lein-ring "0.7.4"]
             [lein-swank "1.4.4"]]
   :profiles {:dev {:resource-paths ["conf/test"]}}
   :aot [metadactyl.core]

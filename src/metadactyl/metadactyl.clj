@@ -4,6 +4,8 @@
         [metadactyl.app-validation]
         [metadactyl.beans]
         [metadactyl.config]
+        [metadactyl.metadata.reference-genomes
+         :only [get-reference-genomes put-reference-genomes]]
         [metadactyl.metadata.element-listings :only [list-elements]]
         [metadactyl.service]
         [metadactyl.transformers]
@@ -534,3 +536,15 @@
   "Gets the property values for a previously submitted job."
   [job-id]
   (.getPropertyValues (property-value-service) job-id))
+
+(defn list-reference-genomes
+  "Lists the reference genomes in the database."
+  []
+  (success-response {:genomes (get-reference-genomes)}))
+
+(defn replace-reference-genomes
+  "Replaces teh reference genomes in the database with a new set of reference
+   genomes."
+  [body]
+  (put-reference-genomes (:genomes (read-json body)))
+  (success-response))

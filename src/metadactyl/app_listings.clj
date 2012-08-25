@@ -6,10 +6,10 @@
         [kameleon.entities]
         [kameleon.app-groups]
         [kameleon.app-listing]
-        [metadactyl.conversions :only [to-long date->long]]
         [metadactyl.metadactyl :only [current-user]]
         [metadactyl.workspace]
-        [metadactyl.config]))
+        [metadactyl.config]
+        [metadactyl.util.conversions :only [to-long date->long]]))
 
 (defn- add-subgroups
   [group groups]
