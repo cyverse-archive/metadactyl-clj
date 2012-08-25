@@ -41,8 +41,8 @@
   (POST "/delete-rating" [:as {body :body}]
         (delete-rating body))
 
-  (GET "/search-analyses/:search-term" [search-term]
-       (search-apps search-term))
+  (GET "/search-analyses/:search-term" [search-term :as {params :params}]
+       (search-apps search-term params))
 
   (GET "/get-analyses-in-group/:app-group-id" [app-group-id :as {params :params}]
        (list-apps-in-group app-group-id params))
