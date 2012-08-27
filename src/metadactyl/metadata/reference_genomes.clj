@@ -6,7 +6,8 @@
         [korma.core]
         [korma.db]
         [metadactyl.util.conversions :only [date->long long->timestamp]]
-        [slingshot.slingshot :only [throw+]]))
+        [slingshot.slingshot :only [throw+]])
+  (:import [java.sql Timestamp]))
 
 (defn- format-reference-genome
   "Formats a reference genome for the reference genome listing service."
@@ -26,6 +27,12 @@
                (join created_by)
                (join last_modified_by))))
 
+(def ^:prvate required-fields
+  [:uuid :name :path :created_by :last_modified_by])
+
+(def ^:private username-fields
+  [:created_by :last_modified_by])
+
 (defn- validate-field
   "Validates a single field in a reference genome."
   [genome field]
@@ -44,9 +51,7 @@
   "Validates a username field in a reference genome."
   [genome field]
   (let [username (genome field)]
-    (when-not (or (blank? username)
-                  (= "<public>" username)
-                  (re-find #"@" username))
+    (when-not (or (= "<public>" username) (re-find #"@" username))
       (throw+ {:action ::insert_reference_genome
                :type   ::username_not_fully_qualified
                :genome genome
@@ -55,24 +60,24 @@
 (defn- validate-reference-genome
   "Validates a reference genome for the reference genome replacement service."
   [genome]
-  (dorun (map #(validate-field genome %) [:uuid :name :path :created_by]))
-  (dorun (map #(validate-username genome %) [:created_by :last_modified_by]))
+  (dorun (map #(validate-field genome %) required-fields))
+  (dorun (map #(validate-username genome %) username-fields))
   genome)
 
 (defn- get-user-ids
   "Gets the user IDs for the provided usernames."
   [genome]
-  (letfn [(get-id [nm] (when-not (blank? nm) (get-user-id nm)))]
-    (assoc genome
-      :created_by       (get-id (:created_by genome))
-      :last_modified_by (get-id (:last_modified_by genome)))))
+  (assoc genome
+    :created_by       (get-user-id (:created_by genome))
+    :last_modified_by (get-user-id (:last_modified_by genome))))
 
 (defn- parse-timestamps
   "Parses the timestamps in a reference genome."
   [genome]
-  (assoc genome
-    :created_on       (long->timestamp (:created_on genome))
-    :last_modified_on (long->timestamp (:last_modified_on genome))))
+  (let [now (Timestamp. (System/currentTimeMillis))]
+    (assoc genome
+      :created_on       (or (long->timestamp (:created_on genome)) now)
+      :last_modified_on (or (long->timestamp (:last_modified_on genome)) now))))
 
 (defn- extract-known-fields
   "Extracts only the fields that we know about from a reference genome
