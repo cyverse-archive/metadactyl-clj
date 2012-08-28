@@ -2179,10 +2179,10 @@ $ curl -sd '
 
 #### Searching for Analyses
 
-Secured Endpoint: GET /secured/search-analyses/{search-term}
+Secured Endpoint: GET /secured/search-analyses
 
 This service allows users to search for analyses based on a part of the
-analysis name.  The response body is in the following format:
+analysis name or description.  The response body is in the following format:
 
 ```json
 {
@@ -2210,7 +2210,7 @@ analysis name.  The response body is in the following format:
 Here's an example:
 
 ```
-$ curl -s "http://by-tor:8888/secured/search-analyses/ranger?user=snow-dog&email=sd@example.org" | python -mjson.tool
+$ curl -s "http://by-tor:8888/secured/search-analyses?user=snow-dog&email=sd@example.org&search=ranger" | python -mjson.tool
 {
     "templates": [
         {

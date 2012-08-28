@@ -52,7 +52,7 @@
                     (str "Analysis, "
                          app_id
                          ", has too many steps for a pipeline.")}))
-    (if (not (= overall_job_type "executable"))
+    (if-not (= overall_job_type "executable")
            (throw+ {:reason
                     (str "Job type, "
                          overall_job_type
@@ -118,8 +118,9 @@
 (defn search-apps
   "This service searches for apps in the user's workspace and all public app
    groups, based on a search term."
-  [search_term params]
-  (let [workspace (get-or-create-workspace (.getUsername current-user))
+  [params]
+  (let [search_term (:search params)
+        workspace (get-or-create-workspace (.getUsername current-user))
         total (count-search-apps-for-user search_term (:id workspace))
         search_results (search-apps-for-user
                          search_term
