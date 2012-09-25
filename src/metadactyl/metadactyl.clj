@@ -493,11 +493,6 @@
   [body]
   (.deleteRating (rating-service) (slurp body)))
 
-(defn search-apps
-  "This service searches for apps based on a search term."
-  [search-term]
-  (.searchAnalyses (analysis-listing-service) (url-decode search-term)))
-
 (defn list-deployed-components-in-app
   "This service lists all of the deployed components in an app."
   [app-id]

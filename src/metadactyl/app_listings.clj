@@ -52,7 +52,7 @@
                     (str "Analysis, "
                          app_id
                          ", has too many steps for a pipeline.")}))
-    (if (not (= overall_job_type "executable"))
+    (if-not (= overall_job_type "executable")
            (throw+ {:reason
                     (str "Job type, "
                          overall_job_type
@@ -114,3 +114,23 @@
     (json-str (assoc app_group
                      :template_count total
                      :templates apps_in_group))))
+
+(defn search-apps
+  "This service searches for apps in the user's workspace and all public app
+   groups, based on a search term."
+  [params]
+  (let [search_term (:search params)
+        workspace (get-or-create-workspace (.getUsername current-user))
+        total (count-search-apps-for-user search_term (:id workspace))
+        search_results (search-apps-for-user
+                         search_term
+                         workspace
+                         (workspace-favorites-app-group-index)
+                         params)
+        search_results (map #(-> %
+                               (format-app-timestamps)
+                               (format-app-ratings)
+                               (format-app-pipeline-eligibility))
+                            search_results)]
+    (json-str {:template_count total
+               :templates search_results})))
