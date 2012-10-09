@@ -5,7 +5,7 @@
         [metadactyl.beans]
         [metadactyl.config]
         [metadactyl.metadata.analyses
-         :only [get-analyses-for-workspace-id]]
+         :only [get-analyses-for-workspace-id get-selected-analyses]]
         [metadactyl.metadata.reference-genomes
          :only [get-reference-genomes put-reference-genomes]]
         [metadactyl.metadata.element-listings :only [list-elements]]
@@ -477,6 +477,17 @@
   (success-response
    {:analyses
     (get-analyses-for-workspace-id (string->long workspace-id) params)}))
+
+(defn get-selected-experiments
+  "This service retrieves information about selected jobs that the user has
+   submitted."
+  [workspace-id body]
+  (let [ids (:ids (read-json (slurp body)))]
+    (when (empty? ids)
+      (throw+ {:type   ::illegal-request-body
+               :reason "JSON request body missing identifier list"}))
+    (success-response
+     {:analyses (get-selected-analyses (string->long workspace-id) ids)})))
 
 (defn delete-experiments
   "This service marks experiments as deleted so that they no longer show up

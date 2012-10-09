@@ -96,6 +96,18 @@
                                {:state.workspace_id (str workspace-id)
                                 :state.deleted      {:$exists false}}))))))
 
+(defn- selected-analyses
+  "Retrieves information about the analyses with the given identifiers provided
+   that they're associated with the given workspace ID."
+  [workspace-id ids]
+  (let [osm-client (create-osm-client)]
+    (map (comp analysis-from-state :state)
+         (:objects (json/read-json
+                    (osm/query osm-client
+                               {:state.workspace_id (str workspace-id)
+                                :state.deleted      {:$exists false}
+                                :state.uuid         {:$in ids}}))))))
+
 (defn- add-extra-app-fields
   "Adds extra fields from the app metadata in the database to the analysis
    listing."
@@ -142,5 +154,13 @@
         analyses   (filter-analyses filter analyses)
         analyses   (if (> offset 0) (drop offset analyses) analyses)
         analyses   (if (> limit 0) (take limit analyses) analyses)
+        app-fields (load-app-fields (set (map :analysis_id analyses)))]
+    (map (partial add-extra-app-fields app-fields) analyses)))
+
+(defn get-selected-analyses
+  "Retrieves information about selected analyses."
+  [workspace-id ids]
+  (validate-workspace-id workspace-id)
+  (let [analyses   (selected-analyses workspace-id ids)
         app-fields (load-app-fields (set (map :analysis_id analyses)))]
     (map (partial add-extra-app-fields app-fields) analyses)))
