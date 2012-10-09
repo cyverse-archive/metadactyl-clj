@@ -29,8 +29,8 @@
   (PUT "/workspaces/:workspace-id/newexperiment" [workspace-id :as {body :body}]
        (run-experiment body workspace-id))
 
-  (GET "/workspaces/:workspace-id/executions/list" [workspace-id]
-       (get-experiments workspace-id))
+  (GET "/workspaces/:workspace-id/executions/list" [workspace-id :as {params :params}]
+       (get-experiments workspace-id params))
 
   (PUT "/workspaces/:workspace-id/executions/delete" [workspace-id :as {body :body}]
        (delete-experiments body workspace-id))

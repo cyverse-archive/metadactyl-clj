@@ -4,6 +4,8 @@
         [metadactyl.app-validation]
         [metadactyl.beans]
         [metadactyl.config]
+        [metadactyl.metadata.analyses
+         :only [get-analyses-for-workspace-id]]
         [metadactyl.metadata.reference-genomes
          :only [get-reference-genomes put-reference-genomes]]
         [metadactyl.metadata.element-listings :only [list-elements]]
@@ -471,9 +473,10 @@
 
 (defn get-experiments
   "This service retrieves information about jobs that a user has submitted."
-  [workspace-id]
-  (.retrieveExperimentsByWorkspaceId
-    (analysis-service) (string->long workspace-id)))
+  [workspace-id params]
+  (success-response
+   {:analyses
+    (get-analyses-for-workspace-id (string->long workspace-id) params)}))
 
 (defn delete-experiments
   "This service marks experiments as deleted so that they no longer show up
