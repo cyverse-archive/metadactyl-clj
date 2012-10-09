@@ -60,8 +60,8 @@
   [state]
   {:id               (:uuid state nil)
    :name             (:name state nil)
-   :startdate        (format-timestamp (:submission_date state ""))
-   :enddate          (format-timestamp (:completion_date state ""))
+   :startdate        (str (format-timestamp (:submission_date state "")))
+   :enddate          (str (format-timestamp (:completion_date state "")))
    :analysis_id      (:analysis_id state "")
    :analysis_name    (:analysis_name state "")
    :analysis_details (:analysis_details state "")
