@@ -259,15 +259,15 @@ $ curl -s http://by-tor:8888/get-workflow-elements/components | python -mjson.to
 {
     "components": [
         {
-            "attribution": "Insane Membranes, Inc.", 
-            "description": "You'll find out!", 
-            "hid": 320, 
-            "id": "c718a4715484949a1bf0892e28324f64f", 
-            "location": "/usr/blah/bin", 
-            "name": "foo.pl", 
-            "type": "executable", 
+            "attribution": "Insane Membranes, Inc.",
+            "description": "You'll find out!",
+            "hid": 320,
+            "id": "c718a4715484949a1bf0892e28324f64f",
+            "location": "/usr/blah/bin",
+            "name": "foo.pl",
+            "type": "executable",
             "version": "0.0.1"
-        }, 
+        },
         ...
     ],
     "success": true
@@ -284,17 +284,17 @@ $ curl -s http://by-tor:8888/get-workflow-elements/formats | python -mjson.tool
 {
     "formats": [
         {
-            "hid": 1, 
-            "id": "E806880B-383D-4AD6-A4AB-8CDD88810A33", 
-            "label": "Unspecified Data Format", 
+            "hid": 1,
+            "id": "E806880B-383D-4AD6-A4AB-8CDD88810A33",
+            "label": "Unspecified Data Format",
             "name": "Unspecified"
-        }, 
+        },
         {
-            "hid": 3, 
-            "id": "6C4D09B3-0108-4DD3-857A-8225E0645A0A", 
-            "label": "FASTX toolkit barcode file", 
+            "hid": 3,
+            "id": "6C4D09B3-0108-4DD3-857A-8225E0645A0A",
+            "label": "FASTX toolkit barcode file",
             "name": "Barcode-0"
-        }, 
+        },
         ...
     ],
     "success": true
@@ -317,17 +317,17 @@ $ curl -s http://by-tor:8888/get-workflow-elements/info-types | python -mjson.to
 {
     "info_types": [
         {
-            "hid": 3, 
-            "id": "0900E992-3BBD-4F4B-8D2D-ED289CA4E4F1", 
-            "label": "Unspecified", 
+            "hid": 3,
+            "id": "0900E992-3BBD-4F4B-8D2D-ED289CA4E4F1",
+            "label": "Unspecified",
             "name": "File"
-        }, 
+        },
         {
-            "hid": 6, 
-            "id": "0E3343E3-C59A-44C4-B5EE-D4501EC3A898", 
-            "label": "Reference Sequence and Annotations", 
+            "hid": 6,
+            "id": "0E3343E3-C59A-44C4-B5EE-D4501EC3A898",
+            "label": "Reference Sequence and Annotations",
             "name": "ReferenceGenome"
-        }, 
+        },
         ...
     ],
     "success": true
@@ -352,19 +352,19 @@ $ curl -s http://by-tor:8888/get-workflow-elements/property-types | python -mjso
 {
     "property_types": [
         {
-            "description": "A text box (no caption or number check)", 
-            "hid": 12, 
-            "id": "ptffeca61a-f1b9-43ba-b6ff-fa77bb34f396", 
-            "name": "Text", 
+            "description": "A text box (no caption or number check)",
+            "hid": 12,
+            "id": "ptffeca61a-f1b9-43ba-b6ff-fa77bb34f396",
+            "name": "Text",
             "value_type": "String"
-        }, 
+        },
         {
-            "description": "A text box that checks for valid number input", 
-            "hid": 1, 
-            "id": "ptd2340f11-d260-41b4-93fd-c1d695bf6fef", 
-            "name": "Number", 
+            "description": "A text box that checks for valid number input",
+            "hid": 1,
+            "id": "ptd2340f11-d260-41b4-93fd-c1d695bf6fef",
+            "name": "Number",
             "value_type": "Number"
-        }, 
+        },
         ...
     ],
     "success": true
@@ -378,19 +378,19 @@ $ curl -s http://by-tor:8888/get-workflow-elements/property-types?tool-type=fAPI
 {
     "property_types": [
         {
-            "description": "A text box that checks for valid number input", 
-            "hid": 1, 
-            "id": "ptd2340f11-d260-41b4-93fd-c1d695bf6fef", 
-            "name": "Number", 
+            "description": "A text box that checks for valid number input",
+            "hid": 1,
+            "id": "ptd2340f11-d260-41b4-93fd-c1d695bf6fef",
+            "name": "Number",
             "value_type": "Number"
-        }, 
+        },
         {
-            "description": "", 
-            "hid": 2, 
-            "id": "pt2cf37b0d-5463-4aef-98a2-4db63d2f3dbc", 
-            "name": "ClipperSelector", 
+            "description": "",
+            "hid": 2,
+            "id": "pt2cf37b0d-5463-4aef-98a2-4db63d2f3dbc",
+            "name": "ClipperSelector",
             "value_type": null
-        }, 
+        },
         ...
     ],
     "success": true
@@ -404,17 +404,17 @@ $ curl -s http://by-tor:8888/get-workflow-elements/property-types?component-id=c
 {
     "property_types": [
         {
-            "description": "A text box that checks for valid number input", 
-            "hid": 1, 
-            "id": "ptd2340f11-d260-41b4-93fd-c1d695bf6fef", 
-            "name": "Number", 
+            "description": "A text box that checks for valid number input",
+            "hid": 1,
+            "id": "ptd2340f11-d260-41b4-93fd-c1d695bf6fef",
+            "name": "Number",
             "value_type": "Number"
-        }, 
+        },
         {
-            "description": "", 
-            "hid": 2, 
-            "id": "pt2cf37b0d-5463-4aef-98a2-4db63d2f3dbc", 
-            "name": "ClipperSelector", 
+            "description": "",
+            "hid": 2,
+            "id": "pt2cf37b0d-5463-4aef-98a2-4db63d2f3dbc",
+            "name": "ClipperSelector",
             "value_type": null
         },
         ...
@@ -430,7 +430,7 @@ tool type name will result in an error:
 ```
 $ curl -s http://by-tor:8888/get-workflow-elements/property-types?component-id=foo | python -mjson.tool
 {
-    "code": "UNKNOWN_DEPLOYED_COMPONENT", 
+    "code": "UNKNOWN_DEPLOYED_COMPONENT",
     "id": "foo",
     "success": false
 }
@@ -439,7 +439,7 @@ $ curl -s http://by-tor:8888/get-workflow-elements/property-types?component-id=f
 ```
 $ curl -s http://by-tor:8888/get-workflow-elements/property-types?tool-type=foo | python -mjson.tool
 {
-    "code": "UNKNOWN_TOOL_TYPE", 
+    "code": "UNKNOWN_TOOL_TYPE",
     "name": "foo",
     "success": false
 }
@@ -456,23 +456,23 @@ $ curl -s http://by-tor:8888/get-workflow-elements/rule-types | python -mjson.to
 {
     "rule_types": [
         {
-            "description": "Has a range of integers allowed", 
-            "hid": 3, 
-            "id": "rte04fb2c6-d5fd-47e4-ae89-a67390ccb67e", 
-            "name": "IntRange", 
-            "rule_description_format": "Value must be between: {Number} and {Number}.", 
-            "subtype": "Integer", 
+            "description": "Has a range of integers allowed",
+            "hid": 3,
+            "id": "rte04fb2c6-d5fd-47e4-ae89-a67390ccb67e",
+            "name": "IntRange",
+            "rule_description_format": "Value must be between: {Number} and {Number}.",
+            "subtype": "Integer",
             "value_types": [
                 "Number"
             ]
-        }, 
+        },
         {
-            "description": "Has a range of values allowed (non-integer)", 
-            "hid": 6, 
-            "id": "rt58cd8b75-5598-4490-a9c9-a6d7a8cd09dd", 
-            "name": "DoubleRange", 
-            "rule_description_format": "Value must be between: {Number} and {Number}.", 
-            "subtype": "Double", 
+            "description": "Has a range of values allowed (non-integer)",
+            "hid": 6,
+            "id": "rt58cd8b75-5598-4490-a9c9-a6d7a8cd09dd",
+            "name": "DoubleRange",
+            "rule_description_format": "Value must be between: {Number} and {Number}.",
+            "subtype": "Double",
             "value_types": [
                 "Number"
             ]
@@ -495,17 +495,17 @@ $ curl -s http://by-tor:8888/get-workflow-elements/value-types | python -mjson.t
 {
     "value_types": [
         {
-            "description": "Arbitrary text", 
-            "hid": 1, 
-            "id": "0115898A-F81A-4598-B1A8-06E538F1D774", 
+            "description": "Arbitrary text",
+            "hid": 1,
+            "id": "0115898A-F81A-4598-B1A8-06E538F1D774",
             "name": "String"
-        }, 
+        },
         {
-            "description": "True or false value", 
-            "hid": 2, 
-            "id": "E8E05E6C-5002-48C0-9167-C9733F0A9716", 
+            "description": "True or false value",
+            "hid": 2,
+            "id": "E8E05E6C-5002-48C0-9167-C9733F0A9716",
             "name": "Boolean"
-        }, 
+        },
         ...
     ],
     "success": true
@@ -523,9 +523,9 @@ $ curl -s http://by-tor:8888/get-workflow-elements/data-sources | python -mjson.
 {
     "data_sources": [
         {
-            "hid": 1, 
-            "id": "8D6B8247-F1E7-49DB-9FFE-13EAD7C1AED6", 
-            "label": "File", 
+            "hid": 1,
+            "id": "8D6B8247-F1E7-49DB-9FFE-13EAD7C1AED6",
+            "label": "File",
             "name": "file"
         },
         ...
@@ -542,12 +542,12 @@ example:
 ```
 $ curl -s http://by-tor:8888/get-workflow-elements/tool-types | python -mjson.tool
 {
-    "success": true, 
+    "success": true,
     "tool_types": [
         {
-            "description": "Run at the University of Arizona", 
-            "id": 1, 
-            "label": "UA", 
+            "description": "Run at the University of Arizona",
+            "id": 1,
+            "label": "UA",
             "name": "executable"
         },
         ...
@@ -563,62 +563,62 @@ $ curl -s http://by-tor:8888/get-workflow-elements/all | python -mjson.tool
 {
     "components": [
         {
-            "attribution": "Insane Membranes, Inc.", 
-            "description": "You'll find out!", 
-            "hid": 320, 
-            "id": "c718a4715484949a1bf0892e28324f64f", 
-            "location": "/usr/local2/bin", 
-            "name": "foo.pl", 
-            "type": "executable", 
+            "attribution": "Insane Membranes, Inc.",
+            "description": "You'll find out!",
+            "hid": 320,
+            "id": "c718a4715484949a1bf0892e28324f64f",
+            "location": "/usr/local2/bin",
+            "name": "foo.pl",
+            "type": "executable",
             "version": "0.0.1"
         },
         ...
-    ], 
+    ],
     "data_sources": [
         {
-            "hid": 1, 
-            "id": "8D6B8247-F1E7-49DB-9FFE-13EAD7C1AED6", 
-            "label": "File", 
+            "hid": 1,
+            "id": "8D6B8247-F1E7-49DB-9FFE-13EAD7C1AED6",
+            "label": "File",
             "name": "file"
         },
         ...
     ],
     "formats": [
         {
-            "hid": 1, 
-            "id": "E806880B-383D-4AD6-A4AB-8CDD88810A33", 
-            "label": "Unspecified Data Format", 
+            "hid": 1,
+            "id": "E806880B-383D-4AD6-A4AB-8CDD88810A33",
+            "label": "Unspecified Data Format",
             "name": "Unspecified"
         },
         ...
-    ], 
+    ],
     "info_types": [
         {
-            "hid": 3, 
-            "id": "0900E992-3BBD-4F4B-8D2D-ED289CA4E4F1", 
-            "label": "Unspecified", 
+            "hid": 3,
+            "id": "0900E992-3BBD-4F4B-8D2D-ED289CA4E4F1",
+            "label": "Unspecified",
             "name": "File"
         },
         ...
-    ], 
+    ],
     "property_types": [
         {
-            "description": "A text box (no caption or number check)", 
-            "hid": 12, 
-            "id": "ptffeca61a-f1b9-43ba-b6ff-fa77bb34f396", 
-            "name": "Text", 
+            "description": "A text box (no caption or number check)",
+            "hid": 12,
+            "id": "ptffeca61a-f1b9-43ba-b6ff-fa77bb34f396",
+            "name": "Text",
             "value_type": "String"
         },
         ...
-    ], 
+    ],
     "rule_types": [
         {
-            "description": "Has a range of integers allowed", 
-            "hid": 3, 
-            "id": "rte04fb2c6-d5fd-47e4-ae89-a67390ccb67e", 
-            "name": "IntRange", 
-            "rule_description_format": "Value must be between: {Number} and {Number}.", 
-            "subtype": "Integer", 
+            "description": "Has a range of integers allowed",
+            "hid": 3,
+            "id": "rte04fb2c6-d5fd-47e4-ae89-a67390ccb67e",
+            "name": "IntRange",
+            "rule_description_format": "Value must be between: {Number} and {Number}.",
+            "subtype": "Integer",
             "value_types": [
                 "Number"
             ]
@@ -628,18 +628,18 @@ $ curl -s http://by-tor:8888/get-workflow-elements/all | python -mjson.tool
     "success": true,
     "tool_types": [
         {
-            "description": "Run at the University of Arizona", 
-            "id": 1, 
-            "label": "UA", 
+            "description": "Run at the University of Arizona",
+            "id": 1,
+            "label": "UA",
             "name": "executable"
         },
         ...
     ],
     "value_types": [
         {
-            "description": "Arbitrary text", 
-            "hid": 1, 
-            "id": "0115898A-F81A-4598-B1A8-06E538F1D774", 
+            "description": "Arbitrary text",
+            "hid": 1,
+            "id": "0115898A-F81A-4598-B1A8-06E538F1D774",
             "name": "String"
         },
         ...
@@ -663,15 +663,15 @@ $ curl -s http://by-tor:8888/search-deployed-components/example | python -mjson.
 {
     "components": [
         {
-            "name": "foo-example.pl", 
-            "description": "You'll find out!", 
+            "name": "foo-example.pl",
+            "description": "You'll find out!",
             ...
         },
         {
-            "name": "foo-bar.pl", 
-            "description": "Another Example Script", 
+            "name": "foo-bar.pl",
+            "description": "Another Example Script",
             ...
-        }, 
+        },
         ...
     ]
 }
@@ -689,7 +689,7 @@ that information.  Here's an example listing:
 $ curl -s http://by-tor:8888/get-all-analysis-ids | python -mjson.tool
 {
     "analysis_ids": [
-        "19F78CC1-7E14-481B-9D80-85EBCCBFFCAF", 
+        "19F78CC1-7E14-481B-9D80-85EBCCBFFCAF",
         "C5FF73E8-157F-47F0-978C-D4FAA12C2D58",
         ...
     ]
@@ -768,7 +768,7 @@ Here are some examples:
 ```
 $ curl -s http://by-tor:8888/validate-analysis-for-pipelines/9A39F7FA-4025-40E2-A720-489FA93C6A93 | python -mjson.tool
 {
-    "is_valid": true, 
+    "is_valid": true,
     "reason": ""
 }
 ```
@@ -776,7 +776,7 @@ $ curl -s http://by-tor:8888/validate-analysis-for-pipelines/9A39F7FA-4025-40E2-
 ```
 $ curl -s http://by-tor:8888/validate-analysis-for-pipelines/BDB011B6-1F6B-443E-B94E-400930619978 | python -mjson.tool
 {
-    "is_valid": false, 
+    "is_valid": false,
     "reason": "analysis, BDB011B6-1F6B-443E-B94E-400930619978, has too many steps for a pipeline"
 }
 ```
@@ -850,51 +850,51 @@ Here's an example:
 ```
 $ curl -s http://by-tor:8888/analysis-data-objects/19F78CC1-7E14-481B-9D80-85EBCCBFFCAF | python -mjson.tool
 {
-    "id": "19F78CC1-7E14-481B-9D80-85EBCCBFFCAF", 
+    "id": "19F78CC1-7E14-481B-9D80-85EBCCBFFCAF",
     "inputs": [
         {
             "data_object": {
-                "cmdSwitch": "", 
-                "description": "", 
-                "file_info_type": "File", 
-                "format": "Unspecified", 
-                "id": "A6210636-E3EC-4CD3-97B4-CAD15CAC0913", 
-                "multiplicity": "One", 
-                "name": "Input File", 
-                "order": 1, 
-                "required": true, 
+                "cmdSwitch": "",
+                "description": "",
+                "file_info_type": "File",
+                "format": "Unspecified",
+                "id": "A6210636-E3EC-4CD3-97B4-CAD15CAC0913",
+                "multiplicity": "One",
+                "name": "Input File",
+                "order": 1,
+                "required": true,
                 "retain": false
-            }, 
-            "description": "", 
-            "id": "A6210636-E3EC-4CD3-97B4-CAD15CAC0913", 
-            "isVisible": true, 
-            "label": "Input File", 
-            "name": "", 
-            "type": "Input", 
+            },
+            "description": "",
+            "id": "A6210636-E3EC-4CD3-97B4-CAD15CAC0913",
+            "isVisible": true,
+            "label": "Input File",
+            "name": "",
+            "type": "Input",
             "value": ""
         }
-    ], 
-    "name": "Jills Extract First Line", 
+    ],
+    "name": "Jills Extract First Line",
     "outputs": [
         {
             "data_object": {
-                "cmdSwitch": "", 
-                "description": "", 
-                "file_info_type": "File", 
-                "format": "Unspecified", 
-                "id": "FE5ACC01-0B31-4611-B81E-26E532B459E3", 
-                "multiplicity": "One", 
-                "name": "head_output.txt", 
-                "order": 3, 
-                "required": true, 
+                "cmdSwitch": "",
+                "description": "",
+                "file_info_type": "File",
+                "format": "Unspecified",
+                "id": "FE5ACC01-0B31-4611-B81E-26E532B459E3",
+                "multiplicity": "One",
+                "name": "head_output.txt",
+                "order": 3,
+                "required": true,
                 "retain": true
-            }, 
-            "description": "", 
-            "id": "FE5ACC01-0B31-4611-B81E-26E532B459E3", 
-            "isVisible": false, 
-            "label": "head_output.txt", 
-            "name": "", 
-            "type": "Output", 
+            },
+            "description": "",
+            "id": "FE5ACC01-0B31-4611-B81E-26E532B459E3",
+            "isVisible": false,
+            "label": "head_output.txt",
+            "name": "",
+            "type": "Output",
             "value": ""
         }
     ]
@@ -975,13 +975,13 @@ $ curl -sd '
     "categories": [
         {
             "analysis": {
-                "id": "Foo", 
+                "id": "Foo",
                 "name": "Foo"
-            }, 
+            },
             "category_path": {
-                "username": "nobody@iplantcollaborative.org", 
+                "username": "nobody@iplantcollaborative.org",
                 "path": [
-                    "Public Applications", 
+                    "Public Applications",
                     "Foo"
                 ]
             }
@@ -994,17 +994,17 @@ $ curl -sd '
         {
             "categorization": {
                 "analysis": {
-                    "id": "Foo", 
+                    "id": "Foo",
                     "name": "Foo"
-                }, 
+                },
                 "category_path": {
                     "path": [
-                        "Public Applications", 
+                        "Public Applications",
                         "Foo"
-                    ], 
+                    ],
                     "username": "nobody@iplantcollaborative.org"
                 }
-            }, 
+            },
             "reason": "analysis Foo not found"
         }
     ]
@@ -1064,14 +1064,14 @@ $ curl -s http://by-tor:8888/get-analysis-categories/public | python -mjson.tool
     "categories": [
         {
             "analysis": {
-                "id": "839E7AFA-031E-4DB8-82A6-AEBD56E9E0B9", 
+                "id": "839E7AFA-031E-4DB8-82A6-AEBD56E9E0B9",
                 "name": "hariolf-test-12"
-            }, 
+            },
             "category_path": {
                 "path": [
-                    "Public Applications", 
+                    "Public Applications",
                     "Beta"
-                ], 
+                ],
                 "username": "<public>"
             }
         },
@@ -1119,7 +1119,7 @@ Here are some examples:
 ```
 $ curl -sd '{"analysis_id": "BDB011B6-1F6B-443E-B94E-400930619978"}' http://by-tor:8888/can-export-analysis | python -mjson.tool
 {
-    "can-export": false, 
+    "can-export": false,
     "cause": "Multi-step applications cannot be copied or modified at this time."
 }
 ```
@@ -1234,31 +1234,31 @@ $ curl -s http://by-tor:8888/get-analysis/9BCCE2D3-8372-4BA5-A0CE-96E513B2693C |
 {
     "groups": [
         {
-            "id": "idPanelData1", 
-            "label": "Select FASTQ file", 
-            "name": "FASTX Trimmer - Select data:", 
+            "id": "idPanelData1",
+            "label": "Select FASTQ file",
+            "name": "FASTX Trimmer - Select data:",
             "properties": [
                 {
-                    "description": "", 
-                    "id": "step_1_ta2eed78a0e924e6ba4fec03d929d905b_DE79E631-A10A-9C36-8764-506E3B2D59BD", 
-                    "isVisible": true, 
-                    "label": "Select FASTQ file:", 
-                    "name": "-i ", 
-                    "type": "FileInput", 
+                    "description": "",
+                    "id": "step_1_ta2eed78a0e924e6ba4fec03d929d905b_DE79E631-A10A-9C36-8764-506E3B2D59BD",
+                    "isVisible": true,
+                    "label": "Select FASTQ file:",
+                    "name": "-i ",
+                    "type": "FileInput",
                     "validator": {
-                        "label": "", 
-                        "name": "", 
+                        "label": "",
+                        "name": "",
                         "required": true
                     }
                 }
-            ], 
+            ],
             "type": "step"
         },
         ...
-    ], 
-    "id": "9BCCE2D3-8372-4BA5-A0CE-96E513B2693C", 
-    "label": "FASTX Workflow", 
-    "name": "FASTX Workflow", 
+    ],
+    "id": "9BCCE2D3-8372-4BA5-A0CE-96E513B2693C",
+    "label": "FASTX Workflow",
+    "name": "FASTX Workflow",
     "type": ""
 }
 ```
@@ -1302,26 +1302,26 @@ $ curl -s http://by-tor:8888/get-only-analysis-groups/4 | python -mjson.tool
 {
     "groups": [
         {
-            "description": "", 
+            "description": "",
             "groups": [
                 {
-                    "description": "", 
-                    "id": "b9a1a3b8-fef6-4576-bbfe-9ad17eb4c2ab", 
-                    "is_public": false, 
-                    "name": "Applications Under Development", 
+                    "description": "",
+                    "id": "b9a1a3b8-fef6-4576-bbfe-9ad17eb4c2ab",
+                    "is_public": false,
+                    "name": "Applications Under Development",
                     "template_count": 0
-                }, 
+                },
                 {
-                    "description": "", 
-                    "id": "2948ed96-9564-489f-ad73-e099b171a9a5", 
-                    "is_public": false, 
-                    "name": "Favorite Applications", 
+                    "description": "",
+                    "id": "2948ed96-9564-489f-ad73-e099b171a9a5",
+                    "is_public": false,
+                    "name": "Favorite Applications",
                     "template_count": 0
                 }
-            ], 
-            "id": "57a39832-3577-4ee3-8ff4-3fc9d1cf9e34", 
-            "is_public": false, 
-            "name": "Workspace", 
+            ],
+            "id": "57a39832-3577-4ee3-8ff4-3fc9d1cf9e34",
+            "is_public": false,
+            "name": "Workspace",
             "template_count": 0
         },
         ...
@@ -1336,26 +1336,26 @@ $ curl -s http://by-tor:8888/get-only-analysis-groups/nobody@iplantcollaborative
 {
     "groups": [
         {
-            "description": "", 
+            "description": "",
             "groups": [
                 {
-                    "description": "", 
-                    "id": "b9a1a3b8-fef6-4576-bbfe-9ad17eb4c2ab", 
-                    "is_public": false, 
-                    "name": "Applications Under Development", 
+                    "description": "",
+                    "id": "b9a1a3b8-fef6-4576-bbfe-9ad17eb4c2ab",
+                    "is_public": false,
+                    "name": "Applications Under Development",
                     "template_count": 0
-                }, 
+                },
                 {
-                    "description": "", 
-                    "id": "2948ed96-9564-489f-ad73-e099b171a9a5", 
-                    "is_public": false, 
-                    "name": "Favorite Applications", 
+                    "description": "",
+                    "id": "2948ed96-9564-489f-ad73-e099b171a9a5",
+                    "is_public": false,
+                    "name": "Favorite Applications",
                     "template_count": 0
                 }
-            ], 
-            "id": "57a39832-3577-4ee3-8ff4-3fc9d1cf9e34", 
-            "is_public": false, 
-            "name": "Workspace", 
+            ],
+            "id": "57a39832-3577-4ee3-8ff4-3fc9d1cf9e34",
+            "is_public": false,
+            "name": "Workspace",
             "template_count": 0
         },
         ...
@@ -1375,24 +1375,24 @@ $ curl -s http://by-tor:8888/list-analysis/00102BE0-A7D7-4CC8-89F0-B1DB84B79018 
 {
     "analyses": [
         {
-            "deleted": false, 
-            "description": "", 
-            "disabled": false, 
-            "edited_date": "", 
-            "id": "00102BE0-A7D7-4CC8-89F0-B1DB84B79018", 
-            "integration_date": "", 
-            "integrator_email": "mherde@iplantcollaborative.org", 
-            "integrator_name": "mherde", 
-            "is_favorite": false, 
-            "is_public": false, 
-            "name": "Copy of FASTX Barcode Splitter (Single End)", 
+            "deleted": false,
+            "description": "",
+            "disabled": false,
+            "edited_date": "",
+            "id": "00102BE0-A7D7-4CC8-89F0-B1DB84B79018",
+            "integration_date": "",
+            "integrator_email": "mherde@iplantcollaborative.org",
+            "integrator_name": "mherde",
+            "is_favorite": false,
+            "is_public": false,
+            "name": "Copy of FASTX Barcode Splitter (Single End)",
             "pipeline_eligibility": {
-                "is_valid": true, 
+                "is_valid": true,
                 "reason": ""
-            }, 
+            },
             "rating": {
                 "average": 0
-            }, 
+            },
             "wiki_url": ""
         }
     ]
@@ -1495,20 +1495,20 @@ $ curl -sd '
 {
     "components": [
         {
-            "attribution": "Insane Membranes, Inc.", 
-            "description": "Print command-line arguments.", 
-            "id": "c49bccf303e7f46e0bbf4c05fd4b2d9a7", 
+            "attribution": "Insane Membranes, Inc.",
+            "description": "Print command-line arguments.",
+            "id": "c49bccf303e7f46e0bbf4c05fd4b2d9a7",
             "implementation": {
-                "implementor": "Nobody", 
-                "implementor_email": "nobody@iplantcollaborative.org", 
+                "implementor": "Nobody",
+                "implementor_email": "nobody@iplantcollaborative.org",
                 "test": {
-                    "input_files": [], 
+                    "input_files": [],
                     "output_files": []
                 }
-            }, 
-            "location": "/usr/local2/bin", 
-            "name": "printargs", 
-            "type": "executable", 
+            },
+            "location": "/usr/local2/bin",
+            "name": "printargs",
+            "type": "executable",
             "version": "0.0.1"
         }
     ]
@@ -1525,20 +1525,20 @@ $ curl -sd '
 {
     "components": [
         {
-            "attribution": "Insane Membranes, Inc.", 
-            "description": "Print command-line arguments.", 
-            "id": "c49bccf303e7f46e0bbf4c05fd4b2d9a7", 
+            "attribution": "Insane Membranes, Inc.",
+            "description": "Print command-line arguments.",
+            "id": "c49bccf303e7f46e0bbf4c05fd4b2d9a7",
             "implementation": {
-                "implementor": "Nobody", 
-                "implementor_email": "nobody@iplantcollaborative.org", 
+                "implementor": "Nobody",
+                "implementor_email": "nobody@iplantcollaborative.org",
                 "test": {
-                    "input_files": [], 
+                    "input_files": [],
                     "output_files": []
                 }
-            }, 
-            "location": "/usr/local2/bin", 
-            "name": "printargs", 
-            "type": "executable", 
+            },
+            "location": "/usr/local2/bin",
+            "name": "printargs",
+            "type": "executable",
             "version": "0.0.1"
         }
     ]
@@ -1762,63 +1762,63 @@ $ curl -s http://by-tor:8888/get-property-values/jebf8120d-0ccb-45d1-bae6-849620
 {
     "parameters": [
         {
-            "data_format": "Unspecified", 
-            "info_type": "File", 
-            "is_default_value": false, 
-            "is_visible": true, 
-            "param_id": "38950035-8F31-0A27-1BE1-8E55F5C30B54", 
-            "param_name": "Select an SRA or SRAlite file:", 
-            "param_type": "Input", 
+            "data_format": "Unspecified",
+            "info_type": "File",
+            "is_default_value": false,
+            "is_visible": true,
+            "param_id": "38950035-8F31-0A27-1BE1-8E55F5C30B54",
+            "param_name": "Select an SRA or SRAlite file:",
+            "param_type": "Input",
             "param_value": "/iplant/home/nobody/SRR001355.lite.sra"
-        }, 
+        },
         {
-            "data_format": "", 
-            "info_type": "", 
-            "is_default_value": true, 
-            "is_visible": true, 
-            "param_id": "B962E548-4023-E40C-48E5-6484AF55E5DD", 
-            "param_name": "Optional accession override", 
-            "param_type": "Text", 
+            "data_format": "",
+            "info_type": "",
+            "is_default_value": true,
+            "is_visible": true,
+            "param_id": "B962E548-4023-E40C-48E5-6484AF55E5DD",
+            "param_name": "Optional accession override",
+            "param_type": "Text",
             "param_value": ""
-        }, 
+        },
         {
-            "data_format": "", 
-            "info_type": "", 
-            "is_default_value": true, 
-            "is_visible": true, 
-            "param_id": "DCFC3CD9-FB31-E0F8-C4CB-78F66FF368D2", 
-            "param_name": "File contains paired-end data", 
-            "param_type": "Flag", 
+            "data_format": "",
+            "info_type": "",
+            "is_default_value": true,
+            "is_visible": true,
+            "param_id": "DCFC3CD9-FB31-E0F8-C4CB-78F66FF368D2",
+            "param_name": "File contains paired-end data",
+            "param_type": "Flag",
             "param_value": "true"
-        }, 
+        },
         {
-            "data_format": "", 
-            "info_type": "", 
-            "is_default_value": true, 
-            "is_visible": true, 
-            "param_id": "0E21A202-EC8A-7BFD-913B-FA73FE86F58E", 
-            "param_name": "Offset to use for quality scale conversion", 
-            "param_type": "Number", 
+            "data_format": "",
+            "info_type": "",
+            "is_default_value": true,
+            "is_visible": true,
+            "param_id": "0E21A202-EC8A-7BFD-913B-FA73FE86F58E",
+            "param_name": "Offset to use for quality scale conversion",
+            "param_type": "Number",
             "param_value": "33"
-        }, 
+        },
         {
-            "data_format": "", 
-            "info_type": "", 
-            "is_default_value": true, 
-            "is_visible": true, 
-            "param_id": "F9AD602D-38E3-8C90-9DD7-E1BB4971CD70", 
-            "param_name": "Emit only FASTA records without quality scores", 
-            "param_type": "Flag", 
+            "data_format": "",
+            "info_type": "",
+            "is_default_value": true,
+            "is_visible": true,
+            "param_id": "F9AD602D-38E3-8C90-9DD7-E1BB4971CD70",
+            "param_name": "Emit only FASTA records without quality scores",
+            "param_type": "Flag",
             "param_value": "false"
-        }, 
+        },
         {
-            "data_format": "", 
-            "info_type": "", 
-            "is_default_value": true, 
-            "is_visible": false, 
-            "param_id": "6BAD8D7F-3EE2-A52A-93D1-1329D1565E4F", 
-            "param_name": "Verbose", 
-            "param_type": "Flag", 
+            "data_format": "",
+            "info_type": "",
+            "is_default_value": true,
+            "is_visible": false,
+            "param_id": "6BAD8D7F-3EE2-A52A-93D1-1329D1565E4F",
+            "param_name": "Verbose",
+            "param_type": "Flag",
             "param_value": "true"
         }
     ]
@@ -1911,31 +1911,31 @@ curl -s "http://by-tor:8888/secured/template/9BCCE2D3-8372-4BA5-A0CE-96E513B2693
 {
     "groups": [
         {
-            "id": "idPanelData1", 
-            "label": "Select FASTQ file", 
-            "name": "FASTX Trimmer - Select data:", 
+            "id": "idPanelData1",
+            "label": "Select FASTQ file",
+            "name": "FASTX Trimmer - Select data:",
             "properties": [
                 {
-                    "description": "", 
-                    "id": "step_1_ta2eed78a0e924e6ba4fec03d929d905b_DE79E631-A10A-9C36-8764-506E3B2D59BD", 
-                    "isVisible": true, 
-                    "label": "Select FASTQ file:", 
-                    "name": "-i ", 
-                    "type": "FileInput", 
+                    "description": "",
+                    "id": "step_1_ta2eed78a0e924e6ba4fec03d929d905b_DE79E631-A10A-9C36-8764-506E3B2D59BD",
+                    "isVisible": true,
+                    "label": "Select FASTQ file:",
+                    "name": "-i ",
+                    "type": "FileInput",
                     "validator": {
-                        "label": "", 
-                        "name": "", 
+                        "label": "",
+                        "name": "",
                         "required": true
                     }
                 }
-            ], 
+            ],
             "type": "step"
         },
         ...
-    ], 
-    "id": "9BCCE2D3-8372-4BA5-A0CE-96E513B2693C", 
-    "label": "FASTX Workflow", 
-    "name": "FASTX Workflow", 
+    ],
+    "id": "9BCCE2D3-8372-4BA5-A0CE-96E513B2693C",
+    "label": "FASTX Workflow",
+    "name": "FASTX Workflow",
     "type": ""
 }
 ```
@@ -2092,18 +2092,18 @@ $ curl -s "http://by-tor:8888/secured/workspaces/4/executions/list?user=snow-dog
 {
     "analyses": [
         {
-            "analysis_details": "Find significant changes in transcript expression, splicing, and promoter use across RNAseq alignment data files", 
-            "analysis_id": "516ED301-E250-40BC-B2BC-31DD7B64D3BA", 
-            "analysis_name": "CuffDiff", 
-            "description": "Selecting a non-default file for output. ", 
-            "enddate": "1329252482000", 
-            "id": "BD421AF3-2C6E-4A92-A215-D380CD6FECC8", 
-            "name": "CuffDiffTest1", 
-            "resultfolderid": "/iplant/home/nobody/analyses/CuffDiff/", 
-            "startdate": "1329252412998", 
-            "status": "Failed", 
+            "analysis_details": "Find significant changes in transcript expression, splicing, and promoter use across RNAseq alignment data files",
+            "analysis_id": "516ED301-E250-40BC-B2BC-31DD7B64D3BA",
+            "analysis_name": "CuffDiff",
+            "description": "Selecting a non-default file for output. ",
+            "enddate": "1329252482000",
+            "id": "BD421AF3-2C6E-4A92-A215-D380CD6FECC8",
+            "name": "CuffDiffTest1",
+            "resultfolderid": "/iplant/home/nobody/analyses/CuffDiff/",
+            "startdate": "1329252412998",
+            "status": "Failed",
             "wiki_url": "https://pods.iplantcollaborative.org/wiki/some/doc/link/CuffDiff"
-        }, 
+        },
         ...
     ]
 }
@@ -2116,19 +2116,19 @@ $ curl -s "http://by-tor:8888/secured/workspaces/4/executions/list?user=snow-dog
 {
     "analyses": [
         {
-            "analysis_details": "Maximum likelihood ancestral character estimation for continuous traits", 
-            "analysis_id": "4BA117B1-0BFB-F4B2-C5B0-AABE56CF8406", 
-            "analysis_name": "CACE", 
-            "description": "", 
-            "enddate": 1346444723000, 
-            "id": "j34b7dd71-1a72-45fb-9569-c68a71f0b58d", 
-            "name": "analysis1", 
-            "resultfolderid": "/iplant/home/ipctest/analyses/analysis1-2012-08-31-13-25-03.493", 
-            "startdate": 1346444703493, 
-            "status": "Failed", 
+            "analysis_details": "Maximum likelihood ancestral character estimation for continuous traits",
+            "analysis_id": "4BA117B1-0BFB-F4B2-C5B0-AABE56CF8406",
+            "analysis_name": "CACE",
+            "description": "",
+            "enddate": 1346444723000,
+            "id": "j34b7dd71-1a72-45fb-9569-c68a71f0b58d",
+            "name": "analysis1",
+            "resultfolderid": "/iplant/home/ipctest/analyses/analysis1-2012-08-31-13-25-03.493",
+            "startdate": 1346444703493,
+            "status": "Failed",
             "wiki_url": "https://pods.iplantcollaborative.org/wiki/display/DEapps/CACE"
         }
-    ], 
+    ],
     "success": true
 }
 ```
@@ -2246,7 +2246,7 @@ the analysis and is in the following format:
 Here's an example:
 
 ```
-$ curl -sd '                       
+$ curl -sd '
 {
     "analysis_id": "a65fa62bcebc0418cbb947485a63b30cd"
 }
@@ -2293,16 +2293,16 @@ $ curl -s "http://by-tor:8888/secured/search-analyses?user=snow-dog&email=sd@exa
 {
     "templates": [
         {
-            "deleted": false, 
-            "description": "Some Description", 
-            "disabled": false, 
-            "group_id": "99F2E2FE-9931-4154-ADDB-28386027B19F", 
-            "group_name": "Some Group Name", 
-            "id": "9D221848-1D12-4A31-8E93-FA069EEDC151", 
-            "integrator_name": "Nobody", 
-            "is_favorite": false, 
-            "is_public": false, 
-            "name": "Ranger", 
+            "deleted": false,
+            "description": "Some Description",
+            "disabled": false,
+            "group_id": "99F2E2FE-9931-4154-ADDB-28386027B19F",
+            "group_name": "Some Group Name",
+            "id": "9D221848-1D12-4A31-8E93-FA069EEDC151",
+            "integrator_name": "Nobody",
+            "is_favorite": false,
+            "is_public": false,
+            "name": "Ranger",
             "rating": {
                 "average": 4
             }
@@ -2402,31 +2402,31 @@ Here's an example:
 ```
 $ curl -s "http://by-tor:8888/secured/get-analyses-in-group/6A1B9EBD-4950-4F3F-9CAB-DD12A1046D9A?user=snow-dog&email=sd@example.org&limit=1&sortField=name&sortDir=DESC" | python -mjson.tool
 {
-    "description": "", 
-    "id": "C3DED4E2-EC99-4A54-B0D8-196112D1BB7B", 
-    "is_public": true, 
-    "name": "Some Group", 
-    "template_count": 100, 
+    "description": "",
+    "id": "C3DED4E2-EC99-4A54-B0D8-196112D1BB7B",
+    "is_public": true,
+    "name": "Some Group",
+    "template_count": 100,
     "templates": [
         {
-            "deleted": false, 
-            "description": "Some app description.", 
-            "disabled": false, 
-            "id": "81C0CCEE-439C-4516-805F-3E260E336EE4", 
-            "integrator_email": "nobody@iplantcollaborative.org", 
-            "integrator_name": "Nobody", 
-            "is_favorite": false, 
-            "is_public": true, 
-            "name": "Z-AppName", 
+            "deleted": false,
+            "description": "Some app description.",
+            "disabled": false,
+            "id": "81C0CCEE-439C-4516-805F-3E260E336EE4",
+            "integrator_email": "nobody@iplantcollaborative.org",
+            "integrator_name": "Nobody",
+            "is_favorite": false,
+            "is_public": true,
+            "name": "Z-AppName",
             "pipeline_eligibility": {
-                "is_valid": true, 
+                "is_valid": true,
                 "reason": ""
-            }, 
+            },
             "rating": {
-                "average": 4, 
-                "comment_id": 27, 
+                "average": 4,
+                "comment_id": 27,
                 "user": 4
-            }, 
+            },
             "wiki_url": "https://pods.iplantcollaborative.org/wiki/some/doc/link"
         }
     ]
@@ -2465,21 +2465,21 @@ $ curl -s "http://by-tor:8888/secured/get-components-in-analysis/0BA04303-F0CB-4
 {
     "deployed_components": [
         {
-            "attribution": "", 
-            "description": "", 
-            "id": "c73ef66158ef94f1bb90689ff813629f5", 
-            "location": "/usr/local2/muscle3.8.31", 
-            "name": "muscle", 
-            "type": "executable", 
+            "attribution": "",
+            "description": "",
+            "id": "c73ef66158ef94f1bb90689ff813629f5",
+            "location": "/usr/local2/muscle3.8.31",
+            "name": "muscle",
+            "type": "executable",
             "version": ""
-        }, 
+        },
         {
-            "attribution": "", 
-            "description": "", 
-            "id": "c2d79e93d83044a659b907764275248ef", 
-            "location": "/usr/local2/phyml-20110304", 
-            "name": "phyml", 
-            "type": "executable", 
+            "attribution": "",
+            "description": "",
+            "id": "c2d79e93d83044a659b907764275248ef",
+            "location": "/usr/local2/phyml-20110304",
+            "name": "phyml",
+            "type": "executable",
             "version": ""
         }
     ]
@@ -2538,7 +2538,7 @@ $ curl -sd '
 }
 ' "http://by-tor:8888/secured/update-favorites?user=snow-dog&email=sd@example.org" | python -mjson.tool
 {
-    "reason": "analysis, F99526B9-CC88-46DA-84B3-0743192DCB7B, is already a favorite", 
+    "reason": "analysis, F99526B9-CC88-46DA-84B3-0743192DCB7B, is already a favorite",
     "success": false
 }
 ```
@@ -2560,12 +2560,12 @@ $ curl -sd '
 $ curl -sd '
 {
     "workspace_id": 4,
-    "analysis_id": "FOO",          
+    "analysis_id": "FOO",
     "user_favorite": false
 }
 ' "http://by-tor:8888/secured/update-favorites?user=snow-dog&email=sd@example.org" | python -mjson.tool
 {
-    "reason": "analysis, FOO not found", 
+    "reason": "analysis, FOO not found",
     "success": false
 }
 ```
@@ -2669,7 +2669,7 @@ $ curl -sd '
     "email": "nobody@iplantcollaborative.org",
     "integrator": "Nobody",
     "references": [
-        "http://foo.bar.baz.org" 
+        "http://foo.bar.baz.org"
     ],
     "groups": [
         "0A687324-099B-4EEF-A82C-C1A60B970487"
@@ -2705,10 +2705,10 @@ Here's an example:
 ```
 $ curl -s "http://by-tor:8888/secured/collaborators?user=snow-dog&email=sd@example.org" | python -mjson.tool
 {
-    "success": true, 
+    "success": true,
     "users": [
-        "ipctest", 
-        "bar", 
+        "ipctest",
+        "bar",
         "foo"
     ]
 }
