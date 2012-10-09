@@ -482,7 +482,7 @@
   "This service retrieves information about selected jobs that the user has
    submitted."
   [workspace-id body]
-  (let [ids (:ids (read-json (slurp body)))]
+  (let [ids (:executions (read-json (slurp body)))]
     (when (empty? ids)
       (throw+ {:type   ::illegal-request-body
                :reason "JSON request body missing identifier list"}))
