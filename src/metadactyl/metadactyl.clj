@@ -466,10 +466,15 @@
   "This service accepts a job submission from a user then reformats it and
    submits it to the JEX."
   [body workspace-id]
-  (let [json-str (add-workspace-id (slurp body) workspace-id)
-        json-obj (object->json-obj json-str)]
-    (.runExperiment (experiment-runner) json-obj))
-  (empty-response))
+  (->> (add-workspace-id (slurp body) workspace-id)
+       object->json-obj
+       (.runExperiment (experiment-runner))
+       read-json
+       :job_id
+       vector
+       (get-selected-analyses (string->long workspace-id))
+       first
+       success-response))
 
 (defn get-experiments
   "This service retrieves information about jobs that a user has submitted."
