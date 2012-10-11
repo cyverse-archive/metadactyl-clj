@@ -5,12 +5,14 @@
         [metadactyl.beans]
         [metadactyl.config]
         [metadactyl.metadata.analyses
-         :only [get-analyses-for-workspace-id get-selected-analyses]]
+         :only [get-analyses-for-workspace-id get-selected-analyses
+                delete-analyses]]
         [metadactyl.metadata.reference-genomes
          :only [get-reference-genomes put-reference-genomes]]
         [metadactyl.metadata.element-listings :only [list-elements]]
         [metadactyl.service]
         [metadactyl.transformers]
+        [metadactyl.validation :only [validate-json-array-field]]
         [ring.util.codec :only [url-decode]])
   (:import [com.mchange.v2.c3p0 ComboPooledDataSource]
            [java.util HashMap]
@@ -19,8 +21,7 @@
            [org.iplantc.workflow.client OsmClient ZoidbergClient]
            [org.iplantc.workflow HibernateTemplateFetcher]
            [org.iplantc.workflow.experiment
-            AnalysisRetriever AnalysisService ExperimentRunner
-            IrodsUrlAssembler]
+            AnalysisRetriever ExperimentRunner IrodsUrlAssembler]
            [org.iplantc.workflow.integration.validation
             ChainingTemplateValidator OutputRedirectionTemplateValidator
             TemplateValidator]
@@ -269,16 +270,6 @@
       (.setAnalysisRetriever (analysis-retriever)))))
 
 (register-bean
-  (defbean analysis-service
-    "Services to retrieve information about analyses that a user has
-     submitted."
-    (doto (AnalysisService.)
-      (.setSessionFactory (session-factory))
-      (.setOsmBaseUrl (osm-base-url))
-      (.setOsmBucket (osm-jobs-bucket))
-      (.setConnectionTimeout (osm-connection-timeout)))))
-
-(register-bean
   (defbean url-assembler
     "Used to assemble URLs."
     (IrodsUrlAssembler.)))
@@ -479,28 +470,31 @@
 (defn get-experiments
   "This service retrieves information about jobs that a user has submitted."
   [workspace-id params]
-  (success-response
-   {:analyses
-    (get-analyses-for-workspace-id (string->long workspace-id) params)}))
+  (let [workspace-id (string->long workspace-id)
+        analyses     (get-analyses-for-workspace-id workspace-id params)
+        timestamp    (str (System/currentTimeMillis))]
+    (success-response {:analyses  analyses
+                     :timestamp timestamp})))
 
 (defn get-selected-experiments
   "This service retrieves information about selected jobs that the user has
    submitted."
   [workspace-id body]
-  (let [ids (:executions (read-json (slurp body)))]
-    (when (empty? ids)
-      (throw+ {:type   ::illegal-request-body
-               :reason "JSON request body missing identifier list"}))
-    (success-response
-     {:analyses (get-selected-analyses (string->long workspace-id) ids)})))
+  (let [m            (read-json (slurp body))
+        _            (validate-json-array-field m :executions)
+        workspace-id (string->long workspace-id)
+        analyses     (get-selected-analyses workspace-id (:executions m))
+        timestamp    (str (System/currentTimeMillis))]
+    (success-response {:analyses  analyses
+                       :timestamp timestamp})))
 
 (defn delete-experiments
   "This service marks experiments as deleted so that they no longer show up
    in the Analyses window."
   [body workspace-id]
-  (let [json-str (add-workspace-id (slurp body) workspace-id)]
-    (.deleteExecutionSet (analysis-service) (object->json-obj json-str)))
-  (empty-response))
+  (let [ids (:executions (read-json (slurp body)))]
+    (delete-analyses workspace-id ids)
+    (success-response)))
 
 (defn rate-app
   "This service adds a user's rating to an app."

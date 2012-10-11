@@ -70,6 +70,11 @@
    :description      (:description state "")
    :resultfolderid   (:output_dir state "")})
 
+(def ^:private analysis-from-object
+  "Converts a job status information object from the OSM to an analysis object
+   in the format provided by the listing services."
+  (comp analysis-from-state :state))
+
 (defn- load-app-fields
   "Loads extra app fields for the given app ID from the database."
   [app-ids]
@@ -85,28 +90,30 @@
   (log/error "unable to add extra analysis fields from app: app ID" app-id
              "not found"))
 
-(defn- get-analyses
-  "Retrieves information about the analyses associated with the given workspace
-   ID from the OSM."
-  [workspace-id]
-  (let [osm-client (create-osm-client)]
-    (map (comp analysis-from-state :state)
-         (:objects (json/read-json
-                    (osm/query osm-client
-                               {:state.workspace_id (str workspace-id)
-                                :state.deleted      {:$exists false}}))))))
+(defn- analysis-query
+  "Builds an OSM query that can be used to retrieve analyses."
+  ([workspace-id]
+     {:state.workspace_id (str workspace-id)
+      :state.deleted      {:$exists false}})
+  ([workspace-id ids]
+     (assoc (analysis-query workspace-id)
+       :state.uuid {:$in ids})))
 
-(defn- selected-analyses
-  "Retrieves information about the analyses with the given identifiers provided
-   that they're associated with the given workspace ID."
-  [workspace-id ids]
-  (let [osm-client (create-osm-client)]
-    (map (comp analysis-from-state :state)
-         (:objects (json/read-json
-                    (osm/query osm-client
-                               {:state.workspace_id (str workspace-id)
-                                :state.deleted      {:$exists false}
-                                :state.uuid         {:$in ids}}))))))
+(defn- id-only-analysis-query
+  "Builds an OSM query that can be used to retrieve analyses by ID only."
+  [ids]
+  {:state.uuid {:$in ids}})
+
+(defn- load-analyses
+  "Retrieves information about analyses from teh OSM."
+  ([query]
+     (load-analyses query identity))
+  ([query f]
+     (->> query
+          (osm/query (create-osm-client))
+          json/read-json
+          :objects
+          (map f))))
 
 (defn- add-extra-app-fields
   "Adds extra fields from the app metadata in the database to the analysis
@@ -150,7 +157,9 @@
         offset     (if (string? offset) (to-long offset) offset)
         sort-field (keyword sort-field)
         sort-fn    (get-sort-fn (keyword sort-order))
-        analyses   (sort-by sort-field sort-fn (get-analyses workspace-id))
+        query      (analysis-query workspace-id)
+        analyses   (load-analyses query analysis-from-object)
+        analyses   (sort-by sort-field sort-fn analyses)
         analyses   (filter-analyses filter analyses)
         analyses   (if (> offset 0) (drop offset analyses) analyses)
         analyses   (if (> limit 0) (take limit analyses) analyses)
@@ -161,6 +170,39 @@
   "Retrieves information about selected analyses."
   [workspace-id ids]
   (validate-workspace-id workspace-id)
-  (let [analyses   (selected-analyses workspace-id ids)
+  (let [query      (analysis-query workspace-id ids)
+        analyses   (load-analyses query analysis-from-object)
         app-fields (load-app-fields (set (map :analysis_id analyses)))]
     (map (partial add-extra-app-fields app-fields) analyses)))
+
+(defn- delete-analysis
+  "Deletes a single analysis in the OSM."
+  [{osm-id :object_persistence_uuid
+    state  :state}]
+  (if (:deleted state false)
+    (log/warn "job" (:uuid state) "is already deleted")
+    ((comp clojure.pprint/pprint json/read-json)
+     (osm/update-object (create-osm-client) osm-id
+                        (assoc state :deleted true)))))
+
+(defn- delete-analyses-for-job
+  "Marks all analyses associated with a job and a workspace as deleted."
+  [workspace-id analyses-by-job-id id]
+  (let [workspace-id       (str workspace-id)
+        get-workspace-id   #(get-in % [:state :workspace_id])
+        right-workspace-id #(= workspace-id (get-workspace-id %))
+        analyses           (filter right-workspace-id (analyses-by-job-id id))]
+    (if (empty? analyses)
+      (println "attempt to delete non-existent job" id "for workspace"
+                workspace-id "ignored")
+      (dorun (map delete-analysis analyses)))))
+
+(defn delete-analyses
+  "Marks analyses as deleted, provided that they exist and are associated with
+   the given workspace ID."
+  [workspace-id ids]
+  (validate-workspace-id workspace-id)
+  (let [extract-fn #(select-keys % [:object_persistence_uuid :state])
+        analyses   (load-analyses (id-only-analysis-query ids) extract-fn)
+        analyses   (group-by #(get-in % [:state :uuid]) analyses)]
+    (dorun (map (partial delete-analyses-for-job workspace-id analyses) ids))))
