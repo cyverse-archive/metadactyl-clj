@@ -29,10 +29,16 @@
   (PUT "/workspaces/:workspace-id/newexperiment" [workspace-id :as {body :body}]
        (run-experiment body workspace-id))
 
-  (GET "/workspaces/:workspace-id/executions/list" [workspace-id]
-       (get-experiments workspace-id))
+  (GET "/workspaces/:workspace-id/executions/list"
+       [workspace-id :as {params :params}]
+       (get-experiments workspace-id params))
 
-  (PUT "/workspaces/:workspace-id/executions/delete" [workspace-id :as {body :body}]
+  (POST "/workspaces/:workspace-id/executions/list"
+        [workspace-id :as {body :body}]
+        (get-selected-experiments workspace-id body))
+
+  (PUT "/workspaces/:workspace-id/executions/delete"
+       [workspace-id :as {body :body}]
        (delete-experiments body workspace-id))
 
   (POST "/rate-analysis" [:as {body :body}]
@@ -44,7 +50,8 @@
   (GET "/search-analyses" [:as {params :params}]
        (search-apps params))
 
-  (GET "/get-analyses-in-group/:app-group-id" [app-group-id :as {params :params}]
+  (GET "/get-analyses-in-group/:app-group-id"
+       [app-group-id :as {params :params}]
        (list-apps-in-group app-group-id params))
 
   (GET "/get-components-in-analysis/:app-id" [app-id]
