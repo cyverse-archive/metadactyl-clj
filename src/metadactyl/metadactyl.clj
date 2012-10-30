@@ -493,7 +493,7 @@
    in the Analyses window."
   [body workspace-id]
   (let [ids (:executions (read-json (slurp body)))]
-    (delete-analyses workspace-id ids)
+    (delete-analyses (string->long workspace-id) ids)
     (success-response)))
 
 (defn rate-app
