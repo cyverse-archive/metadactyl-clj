@@ -53,11 +53,6 @@ metadactyl.hibernate.packages = org.iplantc.persistence.dto.step, \
 # The Hibernate dialect to use.
 metadactyl.hibernate.dialect = org.hibernate.dialect.PostgreSQLDialect
 
-# Zoidberg connection settings.
-metadactyl.zoidberg.base-url           = http://hostname.iplantcollaborative.org:8888
-metadactyl.zoidberg.connection-timeout = 5000
-metadactyl.zoidberg.encoding           = UTF-8
-
 # OSM connection settings.
 metadactyl.osm.base-url           = http://hostname.iplantcollaborative.org:8888
 metadactyl.osm.connection-timeout = 5000

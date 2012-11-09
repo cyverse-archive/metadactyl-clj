@@ -166,18 +166,6 @@
   "The dialect that Hibernate should use when generating SQL."
   "metadactyl.hibernate.dialect")
 
-(STR zoidberg-base-url
-  "The base URL to use when connecting to Zoidberg."
-  "metadactyl.zoidberg.base-url")
-
-(INT zoidberg-connection-timeout
-  "The maximum number of milliseconds to wait for a connection to Zoidberg."
-  "metadactyl.zoidberg.connection-timeout")
-
-(STR zoidberg-encoding
-  "The character encoding to use when communicating with Zoidberg."
-  "metadactyl.zoidberg.encoding")
-
 (STR osm-base-url
   "The base URL to use when connecting to the OSM."
   "metadactyl.osm.base-url")

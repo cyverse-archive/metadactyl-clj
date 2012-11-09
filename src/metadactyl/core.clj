@@ -66,6 +66,9 @@
   (GET "/copy-template/:app-id" [app-id]
        (copy-app app-id))
 
+  (PUT "/import-template" [:as {body :body}]
+        (trap #(import-template body)))
+
   (POST "/make-analysis-public" [:as {body :body}]
         (make-app-public body))
 

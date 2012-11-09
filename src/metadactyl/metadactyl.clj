@@ -18,7 +18,7 @@
            [java.util HashMap]
            [org.iplantc.authn.service UserSessionService]
            [org.iplantc.authn.user User]
-           [org.iplantc.workflow.client OsmClient ZoidbergClient]
+           [org.iplantc.workflow.client OsmClient]
            [org.iplantc.workflow HibernateTemplateFetcher]
            [org.iplantc.workflow.experiment
             AnalysisRetriever ExperimentRunner IrodsUrlAssembler]
@@ -156,14 +156,6 @@
       (.setSessionFactory (session-factory)))))
 
 (register-bean
-  (defbean zoidberg-client
-    "The client used to communicate with Zoidberg services."
-    (doto (ZoidbergClient.)
-      (.setBaseUrl (zoidberg-base-url))
-      (.setConnectionTimeout (zoidberg-connection-timeout))
-      (.setEncoding (zoidberg-encoding)))))
-
-(register-bean
   (defbean osm-job-request-client
     "The client used to communicate with OSM services."
     (doto (OsmClient.)
@@ -209,7 +201,6 @@
     "Services used to place apps in app groups."
     (doto (TemplateGroupService.)
       (.setSessionFactory (session-factory))
-      (.setZoidbergClient (zoidberg-client))
       (.setUserSessionService user-session-service))))
 
 (register-bean
@@ -230,8 +221,7 @@
 (register-bean
   (defbean analysis-deletion-service
     "Handles workflow/metadactyl deletion actions."
-    (doto (AnalysisDeletionService. (session-factory))
-      (.setZoidbergClient (zoidberg-client)))))
+    (AnalysisDeletionService. (session-factory))))
 
 (register-bean
   (defbean app-fetcher
@@ -250,7 +240,6 @@
     "Services to make apps available for editing in Tito."
     (doto (AnalysisEditService.)
       (.setSessionFactory (session-factory))
-      (.setZoidbergClient (zoidberg-client))
       (.setUserService (user-service))
       (.setWorkflowImportService (workflow-import-service)))))
 

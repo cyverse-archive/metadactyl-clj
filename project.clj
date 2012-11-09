@@ -9,7 +9,7 @@
                  [compojure "1.0.1"]
                  [org.iplantc/clojure-commons "1.2.0-SNAPSHOT"]
                  [org.iplantc/kameleon "0.0.1-SNAPSHOT"]
-                 [org.iplantc.core/metadactyl "1.4-SNAPSHOT"]
+                 [org.iplantc.core/metadactyl "dev-SNAPSHOT"]
                  [org.springframework/spring-orm "3.1.0.RELEASE"]
                  [korma "0.3.0-beta10"]
                  [ring/ring-jetty-adapter "1.0.1"]
