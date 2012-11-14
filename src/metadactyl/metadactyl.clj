@@ -395,6 +395,12 @@
   (.updateTemplate (workflow-import-service) (slurp body))
   (empty-response))
 
+(defn update-template-secured
+  "This service will either update an existing template or import a new template.  The template
+   ID is returned in the response body."
+  [body]
+  (.updateTemplate (workflow-import-service) (slurp body)))
+
 (defn update-workflow
   "This service will either update an existing workflow or import a new workflow."
   [body]
