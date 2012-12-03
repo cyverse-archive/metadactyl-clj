@@ -147,20 +147,20 @@
 (defn get-analyses-for-workspace-id
   "Retrieves information about the analyses that were submitted by the user with
    the given workspace ID."
-  [workspace-id {:keys [limit offset filter sortfield sortdir]
+  [workspace-id {:keys [limit offset filter sort-field sort-order]
                  :or   {limit      0
                         offset     0
-                        sortfield :startdate
-                        sortdir :DESC}}]
+                        sort-field :startdate
+                        sort-order :DESC}}]
   (validate-workspace-id workspace-id)
   (let [limit      (if (string? limit) (to-long limit) limit)
         offset     (if (string? offset) (to-long offset) offset)
-        sortfield  (keyword sortfield)
-        sort-fn    (get-sort-fn (keyword sortdir))
+        sort-field (keyword sort-field)
+        sort-fn    (get-sort-fn (keyword sort-order))
         query      (analysis-query workspace-id)
         analyses   (load-analyses query analysis-from-object)
         total      (count analyses)
-        analyses   (sort-by sortfield sort-fn analyses)
+        analyses   (sort-by sort-field sort-fn analyses)
         analyses   (filter-analyses filter analyses)
         analyses   (if (> offset 0) (drop offset analyses) analyses)
         analyses   (if (> limit 0) (take limit analyses) analyses)
