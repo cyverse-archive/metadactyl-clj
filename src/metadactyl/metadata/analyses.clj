@@ -139,28 +139,28 @@
   "Obtains the sort function to use for the specified sort order."
   [sort-order]
   (condp = sort-order
-    :desc (comp - compare)
-    :asc  compare
+    :DESC (comp - compare)
+    :ASC  compare
     (throw+ {:type       ::invalid-sort-order
              :sort-order sort-order})))
 
 (defn get-analyses-for-workspace-id
   "Retrieves information about the analyses that were submitted by the user with
    the given workspace ID."
-  [workspace-id {:keys [limit offset filter sort-field sort-order]
+  [workspace-id {:keys [limit offset filter sortfield sortdir]
                  :or   {limit      0
                         offset     0
-                        sort-field :startdate
-                        sort-order :desc}}]
+                        sortfield :startdate
+                        sortdir :DESC}}]
   (validate-workspace-id workspace-id)
   (let [limit      (if (string? limit) (to-long limit) limit)
         offset     (if (string? offset) (to-long offset) offset)
-        sort-field (keyword sort-field)
-        sort-fn    (get-sort-fn (keyword sort-order))
+        sortfield  (keyword sortfield)
+        sort-fn    (get-sort-fn (keyword sortdir))
         query      (analysis-query workspace-id)
         analyses   (load-analyses query analysis-from-object)
         total      (count analyses)
-        analyses   (sort-by sort-field sort-fn analyses)
+        analyses   (sort-by sortfield sort-fn analyses)
         analyses   (filter-analyses filter analyses)
         analyses   (if (> offset 0) (drop offset analyses) analyses)
         analyses   (if (> limit 0) (take limit analyses) analyses)
