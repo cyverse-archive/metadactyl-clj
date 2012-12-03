@@ -468,8 +468,7 @@
   (let [workspace-id (string->long workspace-id)
         analyses     (get-analyses-for-workspace-id workspace-id params)
         timestamp    (str (System/currentTimeMillis))]
-    (success-response {:analyses  analyses
-                     :timestamp timestamp})))
+    (success-response (assoc analyses :timestamp timestamp))))
 
 (defn get-selected-experiments
   "This service retrieves information about selected jobs that the user has

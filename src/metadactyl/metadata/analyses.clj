@@ -159,12 +159,14 @@
         sort-fn    (get-sort-fn (keyword sort-order))
         query      (analysis-query workspace-id)
         analyses   (load-analyses query analysis-from-object)
+        total      (count analyses)
         analyses   (sort-by sort-field sort-fn analyses)
         analyses   (filter-analyses filter analyses)
         analyses   (if (> offset 0) (drop offset analyses) analyses)
         analyses   (if (> limit 0) (take limit analyses) analyses)
         app-fields (load-app-fields (set (map :analysis_id analyses)))]
-    (map (partial add-extra-app-fields app-fields) analyses)))
+    {:analyses  (map (partial add-extra-app-fields app-fields) analyses)
+     :total total}))
 
 (defn get-selected-analyses
   "Retrieves information about selected analyses."
