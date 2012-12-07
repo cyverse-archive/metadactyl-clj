@@ -539,6 +539,23 @@
   [job-id]
   (.getPropertyValues (property-value-service) job-id))
 
+(defn get-app-rerun-info
+  "Obtains analysis JSON with the property values from a previous experiment
+   plugged into the appropriate properties."
+  [job-id]
+  (let [values        (read-json (get-property-values job-id))
+        app           (read-json (get-app (:analysis_id values)))
+        pval-to-entry #(vector (:full_param_id %) (:param_value %))
+        values        (into {} (map pval-to-entry (:parameters values)))
+        update-prop   #(let [id (:id %)]
+                         (if (contains? values id)
+                           (assoc % :value (values id))
+                           %))
+        update-props  #(map update-prop %)
+        update-group  #(update-in % [:properties] update-props)
+        update-groups #(map update-group %)]
+    (success-response (update-in app [:groups] update-groups))))
+
 (defn list-reference-genomes
   "Lists the reference genomes in the database."
   []
