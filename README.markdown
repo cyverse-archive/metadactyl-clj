@@ -2842,8 +2842,12 @@ $ curl -sd '
 Secured Endpoint: GET /secured/edit-template/{analysis-id}
 
 Tito uses this service to obtain the analysis description JSON so that the
-analysis can be edited.  The response body contains the analysis description in
-the format that is required by Tito.  Here's an example:
+analysis can be edited. The Analysis must have been integrated by the requesting
+user, and it must not already be public. Currently, Analyses with more than 1
+step can not be edited.
+
+The response body contains the analysis description in the format that is
+required by Tito.  Here's an example:
 
 ```
 $ curl -s "http://by-tor:8888/secured/edit-template/F29C156C-E286-4BBD-9033-0075C09E0D70?user=snow-dog&email=sd@example.org" | python -mjson.tool
