@@ -138,9 +138,9 @@
 (defn- get-sort-fn
   "Obtains the sort function to use for the specified sort order."
   [sort-order]
-  (condp = sort-order
-    :DESC (comp - compare)
-    :ASC  compare
+  (condp contains? sort-order
+    #{:desc :DESC} (comp - compare)
+    #{:asc  :ASC}  compare
     (throw+ {:type       ::invalid-sort-order
              :sort-order sort-order})))
 
@@ -151,7 +151,7 @@
                  :or   {limit      0
                         offset     0
                         sort-field :startdate
-                        sort-order :DESC}}]
+                        sort-order :desc}}]
   (validate-workspace-id workspace-id)
   (let [limit      (if (string? limit) (to-long limit) limit)
         offset     (if (string? offset) (to-long offset) offset)
