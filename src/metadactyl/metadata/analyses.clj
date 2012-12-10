@@ -132,7 +132,7 @@
   (if-not (nil? filt)
     (let [[k v] (string/split filt #"=" 2)
           k     (keyword k)]
-      (filter #(= (k %) v) analyses))
+      (filter #(.contains (k %) v) analyses))
     analyses))
 
 (defn- get-sort-fn
@@ -159,9 +159,9 @@
         sort-fn    (get-sort-fn (keyword sort-order))
         query      (analysis-query workspace-id)
         analyses   (load-analyses query analysis-from-object)
-        total      (count analyses)
         analyses   (sort-by sort-field sort-fn analyses)
         analyses   (filter-analyses filter analyses)
+        total      (count analyses)
         analyses   (if (> offset 0) (drop offset analyses) analyses)
         analyses   (if (> limit 0) (take limit analyses) analyses)
         app-fields (load-app-fields (set (map :analysis_id analyses)))]
