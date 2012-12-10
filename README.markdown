@@ -2088,7 +2088,9 @@ this service behaves:
         </tr>
         <tr>
             <td>sort-order</td>
-            <td>`asc` for ascending or `desc` for descending.</td>
+            <td>
+                `asc` or `ASC` for ascending and `desc` or `DESC` for descending.
+            </td>
             <td>desc</td>
         </tr>
     </tbody>
