@@ -126,13 +126,27 @@
     (do (log-missing-app app-id)
         analysis)))
 
+(defn- analysis-contains-filter?
+  "Returns true if the filter value is contained in the value of the analysis
+   field that matches the filter field. The comparison is case-insensitive."
+  [{:keys [field value]} analysis]
+  (let [analysis-value (.toLowerCase ((keyword field) analysis))
+        filter-value (.toLowerCase value)]
+    (.contains analysis-value filter-value)))
+
+(defn- analysis-matches-filters?
+  "Returns a non-nil value if one of the analysis fields contains the value in
+   the corresponding field of one of the given filters."
+  [filters analysis]
+  (some
+    #(analysis-contains-filter? % analysis)
+    filters))
+
 (defn- filter-analyses
   "Filters analyses according to a filter specification."
   [filt analyses]
   (if-not (nil? filt)
-    (let [[k v] (string/split filt #"=" 2)
-          k     (keyword k)]
-      (filter #(.contains (k %) v) analyses))
+    (filter #(analysis-matches-filters? (json/read-json filt) %) analyses)
     analyses))
 
 (defn- get-sort-fn

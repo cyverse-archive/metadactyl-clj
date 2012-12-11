@@ -2238,14 +2238,17 @@ this service behaves:
         <tr>
             <td>filter</td>
             <td>
-                Allows results to be filtered based on the value of a single
-                result field.  The format of this parameter is `field=value`,
+                Allows results to be filtered based on the value of some
+                result field.  The format of this parameter is
+                `[{"field":"some_field", "value":"search-term"}, ...]`,
                 where `field` is the mame of the field on which the filter is
-                based and `value` is the desired value to include in the result
-                set.  For example, to obtain the list of all jobs that were
-                executed using the application, `CACE`, you the parameter value
-                would be `analysis_name=CACE`.  Equality is the only type of
-                comparison available for this field at this time.
+                based and `value` is the search value that can be contained
+                anywhere, case-insensitive, in the corresponding analysis field.
+                For example, to obtain the list of all jobs that were
+                executed using the application, `CACE`, the parameter value
+                can be `[{"field":"analysis_name","value":"cace"}]`.
+                Additional filters may be provided in the query array, and any
+                analysis that matches any filter will be returned.
             </td>
             <td>No filtering</td>
         </tr>
