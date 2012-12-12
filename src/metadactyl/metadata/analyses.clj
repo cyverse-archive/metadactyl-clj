@@ -126,21 +126,35 @@
     (do (log-missing-app app-id)
         analysis)))
 
+(defn- analysis-contains-filter?
+  "Returns true if the filter value is contained in the value of the analysis
+   field that matches the filter field. The comparison is case-insensitive."
+  [{:keys [field value]} analysis]
+  (let [analysis-value (.toLowerCase ((keyword field) analysis))
+        filter-value (.toLowerCase value)]
+    (.contains analysis-value filter-value)))
+
+(defn- analysis-matches-filters?
+  "Returns a non-nil value if one of the analysis fields contains the value in
+   the corresponding field of one of the given filters."
+  [filters analysis]
+  (some
+    #(analysis-contains-filter? % analysis)
+    filters))
+
 (defn- filter-analyses
   "Filters analyses according to a filter specification."
   [filt analyses]
   (if-not (nil? filt)
-    (let [[k v] (string/split filt #"=" 2)
-          k     (keyword k)]
-      (filter #(= (k %) v) analyses))
+    (filter #(analysis-matches-filters? (json/read-json filt) %) analyses)
     analyses))
 
 (defn- get-sort-fn
   "Obtains the sort function to use for the specified sort order."
   [sort-order]
-  (condp = sort-order
-    :DESC (comp - compare)
-    :ASC  compare
+  (condp contains? sort-order
+    #{:desc :DESC} (comp - compare)
+    #{:asc  :ASC}  compare
     (throw+ {:type       ::invalid-sort-order
              :sort-order sort-order})))
 
@@ -151,7 +165,7 @@
                  :or   {limit      0
                         offset     0
                         sort-field :startdate
-                        sort-order :DESC}}]
+                        sort-order :desc}}]
   (validate-workspace-id workspace-id)
   (let [limit      (if (string? limit) (to-long limit) limit)
         offset     (if (string? offset) (to-long offset) offset)
@@ -159,9 +173,9 @@
         sort-fn    (get-sort-fn (keyword sort-order))
         query      (analysis-query workspace-id)
         analyses   (load-analyses query analysis-from-object)
-        total      (count analyses)
         analyses   (sort-by sort-field sort-fn analyses)
         analyses   (filter-analyses filter analyses)
+        total      (count analyses)
         analyses   (if (> offset 0) (drop offset analyses) analyses)
         analyses   (if (> limit 0) (take limit analyses) analyses)
         app-fields (load-app-fields (set (map :analysis_id analyses)))]

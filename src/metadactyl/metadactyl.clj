@@ -351,13 +351,13 @@
   (.getDeployedComponents (workflow-export-service) (slurp body)))
 
 (defn preview-template
-  "This service will convert a JSON document in the format consumed by 
+  "This service will convert a JSON document in the format consumed by
    the import service into the format required by the DE."
   [body]
   (.previewTemplate (workflow-preview-service) (slurp body)))
 
 (defn preview-workflow
-  "This service will convert a JSON document in the format consumed by 
+  "This service will convert a JSON document in the format consumed by
    the import service into the format required by the DE."
   [body]
   (.previewWorkflow (workflow-preview-service) (slurp body)))
@@ -408,7 +408,7 @@
   (empty-response))
 
 (defn force-update-workflow
-  "This service will either update an existing workflow or import a new workflow.  
+  "This service will either update an existing workflow or import a new workflow.
    Vetted workflows may be updated."
   [body {:keys [update-mode]}]
   (.forceUpdateWorkflow (workflow-import-service) (slurp body) update-mode)
@@ -437,7 +437,7 @@
   [app-id]
   (if (nil? app-id)
     nil
-    (try 
+    (try
       (.getTransformationActivity (analysis-retriever) app-id)
       (catch Exception e nil))))
 
@@ -538,6 +538,23 @@
   "Gets the property values for a previously submitted job."
   [job-id]
   (.getPropertyValues (property-value-service) job-id))
+
+(defn get-app-rerun-info
+  "Obtains analysis JSON with the property values from a previous experiment
+   plugged into the appropriate properties."
+  [job-id]
+  (let [values        (read-json (get-property-values job-id))
+        app           (read-json (get-app (:analysis_id values)))
+        pval-to-entry #(vector (:full_param_id %) (:param_value %))
+        values        (into {} (map pval-to-entry (:parameters values)))
+        update-prop   #(let [id (:id %)]
+                         (if (contains? values id)
+                           (assoc % :value (values id))
+                           %))
+        update-props  #(map update-prop %)
+        update-group  #(update-in % [:properties] update-props)
+        update-groups #(map update-group %)]
+    (success-response (update-in app [:groups] update-groups))))
 
 (defn list-reference-genomes
   "Lists the reference genomes in the database."

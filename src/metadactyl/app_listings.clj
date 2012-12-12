@@ -134,3 +134,66 @@
                             search_results)]
     (json-str {:template_count total
                :templates search_results})))
+
+(defn- load-app-details
+  "Retrieves the details for a single app."
+  [app-id]
+  (first (select transformation_activity
+                 (with transformation_activity_references)
+                 (where {:id app-id}))))
+
+(defn- load-deployed-components
+  "Loads information about the deployed components associated with an app."
+  [app-id]
+  (select [:deployed_components :dc]
+          (fields :dc.id :dc.name [:tt.name :tool_type])
+          (join [:tool_types :tt]
+                {:dc.tool_type_id :tt.id})
+          (join [:template :t]
+                {:dc.id :t.component_id})
+          (join [:transformations :tx]
+                {:t.id :tx.template_id})
+          (join [:transformation_steps :ts]
+                {:tx.id :ts.transformation_id})
+          (join [:transformation_task_steps :tts]
+                {:ts.id :tts.transformation_step_id})
+          (join [:transformation_activity :a]
+                {:tts.transformation_task_id :a.hid})
+          (where {:a.id app-id})))
+
+(defn- timestamp-to-millis
+  "Converts a timestamp, which may be nil, to a string representing the number
+   of milliseconds since January 1, 1970."
+  [timestamp]
+  (if (nil? timestamp)
+    ""
+    (str (.getTime timestamp))))
+
+(defn- format-app-details
+  "Formats information for the get-app-details service."
+  [details component]
+  {:published_date (timestamp-to-millis (:integration_date details))
+   :edited_date    (timestamp-to-millis (:edited_date details))
+   :id             (:id details)
+   :references     (map :reference_text (:transformation_activity_references details))
+   :description    (:description details "")
+   :name           (:name details "")
+   :label          (:label details "")
+   :tito           (:id details)
+   :component_id   (:id component)
+   :component      (:name component)
+   :type           (:tool_type component)})
+
+(defn get-app-details
+  "This service obtains the high-level details of an app."
+  [app-id]
+  (let [details    (load-app-details app-id)
+        components (load-deployed-components app-id)]
+    (when (nil? details)
+      (throw (IllegalArgumentException. (str "app, " app-id ", not found"))))
+    (when (empty? components)
+      (throw  (IllegalArgumentException. (str "no tools associated with app, " app-id))))
+    (when (> (count components) 1)
+      (throw (IllegalArgumentException.
+              (str "pipeline, " app-id ", can't be displayed by this service"))))
+    (json-str (format-app-details details (first components)))))

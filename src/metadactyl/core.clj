@@ -126,6 +126,9 @@
   (GET "/get-analysis/:app-id" [app-id]
        (trap #(get-app app-id)))
 
+  (GET "/analysis-details/:app-id" [app-id]
+       (trap #(get-app-details app-id)))
+
   (GET "/get-only-analysis-groups/:workspace-id" [workspace-id]
        (trap #(get-only-app-groups workspace-id)))
 
@@ -176,6 +179,9 @@
 
   (GET "/get-property-values/:job-id" [job-id]
        (trap #(get-property-values job-id)))
+
+  (GET "/analysis-rerun-info/:job-id" [job-id]
+       (trap #(get-app-rerun-info job-id)))
 
   (GET "/get-app-description/:app-id" [app-id]
        (trap #(get-app-description app-id)))
@@ -229,7 +235,7 @@
       wrap-nested-params
       wrap-query-params))
 
-(def app 
+(def app
   (site-handler metadactyl-routes))
 
 (defn -main
