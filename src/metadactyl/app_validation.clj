@@ -31,12 +31,8 @@
 (defn- get-tool-type
   "Gets the tool type name for the deployed component with the given identifier."
   [registry component-id]
-  (let [tool-type (or (get-tool-type-from-registry registry component-id)
-                      (get-tool-type-from-database component-id))]
-    (when (nil? tool-type)
-      (throw+ {:type         ::component_tool_type_not_found
-               :component_id component-id}))
-    tool-type))
+  (or (get-tool-type-from-registry registry component-id)
+      (get-tool-type-from-database component-id)))
 
 (defn- get-valid-ptype-names
   "Gets the valid property type names for a given tool type."
