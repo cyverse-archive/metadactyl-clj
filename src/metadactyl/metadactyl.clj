@@ -46,6 +46,14 @@
     (validate [template registry]
       (validate-template-property-types template registry))))
 
+(defn- get-deployed-component-validator
+  "Gets an implementation of the TemplateValidator interface that can be used
+   to verify that a valid deployed component is associated with the template."
+  []
+  (proxy [TemplateValidator] []
+    (validate [template registry]
+      (validate-template-deployed-component template))))
+
 (def
   ^{:doc "The authenticated user or nil if the service is unsecured."
     :dynamic true}
@@ -56,14 +64,22 @@
    user-session-service (proxy [UserSessionService] []
                           (getUser [] current-user)))
 
-(defn- build-template-validator
+(defn- build-private-template-validator
   "Builds an object that will be used by the workflow import services
-  to to validate incoming templates."
+   to validate incoming templates."
   []
   (doto (ChainingTemplateValidator.)
     (.addValidator (OutputRedirectionTemplateValidator. "stdout"))
     (.addValidator (OutputRedirectionTemplateValidator. "stderr"))
     (.addValidator (get-property-type-validator))))
+
+(defn- build-public-template-validator
+  "Builds an object that will be used by the make-analysis-public service to
+   validate applications that are being made public."
+  []
+  (doto (ChainingTemplateValidator.)
+    (.addValidator (get-deployed-component-validator))
+    (.addValidator (build-private-template-validator))))
 
 (defn- user-from-attributes
   "Creates an instance of org.iplantc.authn.user.User from the given map."
@@ -201,7 +217,8 @@
     "Services used to place apps in app groups."
     (doto (TemplateGroupService.)
       (.setSessionFactory (session-factory))
-      (.setUserSessionService user-session-service))))
+      (.setUserSessionService user-session-service)
+      (.setTemplateValidator (build-public-template-validator)))))
 
 (register-bean
   (defbean workflow-preview-service
@@ -216,7 +233,7 @@
           (Integer/toString (workspace-dev-app-group-index))
           (Integer/toString (workspace-favorites-app-group-index))
           (workspace-initializer))
-     (.setTemplateValidator (build-template-validator)))))
+     (.setTemplateValidator (build-private-template-validator)))))
 
 (register-bean
   (defbean analysis-deletion-service
