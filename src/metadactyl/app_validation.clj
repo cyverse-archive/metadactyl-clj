@@ -42,9 +42,10 @@
 (defn validate-template-property-types
   "Validates the property types in a template that is being imported."
   [template registry]
-  (let [tool-type    (get-tool-type registry (.getComponent template))
-        valid-ptypes (into #{} (get-valid-ptype-names tool-type))
-        properties   (mapcat #(.getProperties %) (.getPropertyGroups template))]
-    (dorun (map #(throw (UnsupportedPropertyTypeException. % (:name tool-type)))
-                (filter #(nil? (valid-ptypes %))
-                        (map #(.getPropertyTypeName %) properties))))))
+  (when-not (nil? (.getComponent template))
+    (let [tool-type    (get-tool-type registry (.getComponent template))
+          valid-ptypes (into #{} (get-valid-ptype-names tool-type))
+          properties   (mapcat #(.getProperties %) (.getPropertyGroups template))]
+      (dorun (map #(throw (UnsupportedPropertyTypeException. % (:name tool-type)))
+                  (filter #(nil? (valid-ptypes %))
+                          (map #(.getPropertyTypeName %) properties)))))))
