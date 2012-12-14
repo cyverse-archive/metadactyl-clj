@@ -1,13 +1,12 @@
 (ns metadactyl.core
   (:gen-class)
   (:use [clojure.java.io :only [file]]
-        [clojure-commons.query-params :only (wrap-query-params)]
+        [clojure-commons.query-params :only [wrap-query-params]]
         [compojure.core]
         [metadactyl.app-categorization]
         [metadactyl.app-listings]
         [metadactyl.beans]
         [metadactyl.collaborators]
-        [metadactyl.config]
         [metadactyl.kormadb]
         [metadactyl.metadactyl]
         [metadactyl.service]
@@ -16,7 +15,7 @@
             [compojure.handler :as handler]
             [clojure.tools.logging :as log]
             [clojure-commons.clavin-client :as cl]
-            [clojure-commons.props :as cp]
+            [metadactyl.config :as config]
             [ring.adapter.jetty :as jetty]))
 
 (defroutes secured-routes
@@ -191,42 +190,22 @@
 
   (route/not-found (unrecognized-path-response)))
 
-(defn- log-props
-  "Logs the configuration properties."
-  []
-  (dorun (map #(log/warn (key %) "=" (val %))
-              (sort-by key @props))))
-
 (defn- init-service
   "Initializes the service."
   []
-  (log-props)
   (init-registered-beans)
-  (when (not (configuration-valid))
-    (log/warn "THE CONFIGURATION IS INVALID - EXITING NOW")
-    (System/exit 1))
   (define-database))
 
-(defn load-configuration-from-props
-  "Loads the configuration from a properties file."
+(defn load-config-from-file
+  "Loads the configuration settings from a properties file."
   []
-  (let [filename "metadactyl.properties"
-        conf-dir (System/getenv "IPLANT_CONF_DIR")]
-    (if (nil? conf-dir)
-      (reset! props (cp/read-properties (file filename)))
-      (reset! props (cp/read-properties (file conf-dir filename)))))
+  (config/load-config-from-file)
   (init-service))
 
-(defn load-configuration-from-zookeeper
-  "Loads the configuration properties from Zookeeper."
+(defn load-config-from-zookeeper
+  "Loads the configuration settings from zookeeper."
   []
-  (cl/with-zk
-    (zk-url)
-    (when (not (cl/can-run?))
-      (log/warn "THIS APPLICATION CANNOT RUN ON THIS MACHINE. SO SAYETH ZOOKEEPER.")
-      (log/warn "THIS APPLICATION WILL NOT EXECUTE CORRECTLY.")
-      (System/exit 1))
-    (reset! props (cl/properties "metadactyl")))
+  (config/load-config-from-zookeeper)
   (init-service))
 
 (defn site-handler [routes]
@@ -240,6 +219,6 @@
 
 (defn -main
   [& args]
-  (load-configuration-from-zookeeper)
-  (log/warn "Listening on" (listen-port))
-  (jetty/run-jetty app {:port (listen-port)}))
+  (load-config-from-zookeeper)
+  (log/warn "Listening on" (config/listen-port))
+  (jetty/run-jetty app {:port (config/listen-port)}))
