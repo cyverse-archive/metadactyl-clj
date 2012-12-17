@@ -2644,6 +2644,7 @@ The response body for this service is in the following format:
     "template_count": number-of-analyses-in-group-and-descendents,
     "templates": [
         {
+            "can_run": analysis-can-run-flag,
             "deleted": analysis-deleted-flag,
             "description": analysis-description,
             "disabled": analysis-disabled-flag,
@@ -2674,6 +2675,7 @@ Here's an example:
 ```
 $ curl -s "http://by-tor:8888/secured/get-analyses-in-group/6A1B9EBD-4950-4F3F-9CAB-DD12A1046D9A?user=snow-dog&email=sd@example.org&limit=1&sortField=name&sortDir=DESC" | python -mjson.tool
 {
+    "can_run": true,
     "description": "",
     "id": "C3DED4E2-EC99-4A54-B0D8-196112D1BB7B",
     "is_public": true,
@@ -2704,6 +2706,12 @@ $ curl -s "http://by-tor:8888/secured/get-analyses-in-group/6A1B9EBD-4950-4F3F-9
     ]
 }
 ```
+
+The `can_run` flag is calculated by comparing the number of steps in the app to
+the number of steps that have deployed component associated with them.  If the
+numbers are different then this flag is set to `false`.  The idea is that every
+step in the analysis has to have, at the very least, a deployed component
+associated with it in order to run successfully.
 
 #### Listing Deployed Components in an Analysis
 

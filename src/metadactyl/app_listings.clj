@@ -59,8 +59,8 @@
                          ", can't currently be included in a pipeline.")}))))
 
 (defn- format-app-pipeline-eligibility
-  "Validates an App for pipeline eligibility, reformatting its :step_count and
-   :overall_job_type values, replacing them with a :pipeline_eligibility map"
+  "Validates an App for pipeline eligibility, reformatting its :overall_job_type value, and
+   replacing it with a :pipeline_eligibility map"
   [app]
   (let [pipeline_eligibility (try+
                                (validate-app-pipeline-eligibility app)
@@ -69,7 +69,7 @@
                                (catch map? {:keys [reason]}
                                  {:is_valid false
                                   :reason reason}))
-        app (dissoc app :step_count :overall_job_type)]
+        app (dissoc app :overall_job_type)]
     (assoc app :pipeline_eligibility pipeline_eligibility)))
 
 (defn- format-app-ratings
@@ -88,11 +88,18 @@
     (assoc app :rating rating)))
 
 (defn- format-app-timestamps
-  ""
+  "Formats each timestamp in an app."
   [app]
   (let [edited_date (date->long (:edited_date app))
         integration_date (date->long (:integration_date app))]
     (assoc app :edited_date edited_date :integration_date integration_date)))
+
+(defn- format-app
+  "Formats any fields in an app that aren't handled in more specific categories."
+  [app]
+  (-> app
+      (assoc :can_run (= (:step_count app) (:component_count app)))
+      (dissoc :component_count)))
 
 (defn list-apps-in-group
   "This service lists all of the apps in an app group and all of its
@@ -109,7 +116,8 @@
         apps_in_group (map #(-> %
                               (format-app-timestamps)
                               (format-app-ratings)
-                              (format-app-pipeline-eligibility))
+                              (format-app-pipeline-eligibility)
+                              (format-app))
                            apps_in_group)]
     (json-str (assoc app_group
                      :template_count total
