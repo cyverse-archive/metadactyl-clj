@@ -157,3 +157,8 @@
   (cc/load-config-from-zookeeper props "metadactyl")
   (cc/log-config props)
   (validate-config))
+
+(def get-default-app-groups
+  (memoize
+  (fn []
+    (read-json (str/replace (workspace-default-app-groups) #"\\," ",")))))
