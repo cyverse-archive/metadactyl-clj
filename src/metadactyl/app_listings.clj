@@ -99,7 +99,10 @@
   [app]
   (-> app
       (assoc :can_run (= (:step_count app) (:component_count app)))
-      (dissoc :component_count)))
+      (dissoc :component_count)
+      (format-app-timestamps)
+      (format-app-ratings)
+      (format-app-pipeline-eligibility)))
 
 (defn list-apps-in-group
   "This service lists all of the apps in an app group and all of its
@@ -113,12 +116,7 @@
                         workspace
                         (workspace-favorites-app-group-index)
                         params)
-        apps_in_group (map #(-> %
-                              (format-app-timestamps)
-                              (format-app-ratings)
-                              (format-app-pipeline-eligibility)
-                              (format-app))
-                           apps_in_group)]
+        apps_in_group (map #(format-app %) apps_in_group)]
     (json-str (assoc app_group
                      :template_count total
                      :templates apps_in_group))))
@@ -135,11 +133,7 @@
                          workspace
                          (workspace-favorites-app-group-index)
                          params)
-        search_results (map #(-> %
-                               (format-app-timestamps)
-                               (format-app-ratings)
-                               (format-app-pipeline-eligibility))
-                            search_results)]
+        search_results (map #(format-app %) search_results)]
     (json-str {:template_count total
                :templates search_results})))
 
