@@ -2533,25 +2533,20 @@ $ curl -sd '
 Secured Endpoint: GET /secured/search-analyses
 
 This service allows users to search for analyses based on a part of the
-analysis name or description.  The response body is in the following format:
+analysis name or description.  The response body contains a "templates" array
+that is in the same format as the "templates" array in the
+/secured/get-analyses-in-group endpoint response (see the next section):
 
 ```json
 {
     "templates": [
         {
-            "deleted": deleted-flag,
+            "id": analysis-id,
             "description": analysis-description,
-            "disabled": disabled-flag,
+            "name": analysis-name,
             "group_id": analysis-group-id,
             "group_name": analysis-group-name,
-            "id": analysis-id,
-            "integrator_name": integrator-name,
-            "is_favorite": is-favorite-flag,
-            "is_public": is-public-flag,
-            "name": analysis-name,
-            "rating": {
-                "average": average-rating,
-            }
+            ...
         },
         ...
     ]
@@ -2565,19 +2560,12 @@ $ curl -s "http://by-tor:8888/secured/search-analyses?user=snow-dog&email=sd@exa
 {
     "templates": [
         {
-            "deleted": false,
+            "id": "9D221848-1D12-4A31-8E93-FA069EEDC151",
+            "name": "Ranger",
             "description": "Some Description",
-            "disabled": false,
             "group_id": "99F2E2FE-9931-4154-ADDB-28386027B19F",
             "group_name": "Some Group Name",
-            "id": "9D221848-1D12-4A31-8E93-FA069EEDC151",
-            "integrator_name": "Nobody",
-            "is_favorite": false,
-            "is_public": false,
-            "name": "Ranger",
-            "rating": {
-                "average": 4
-            }
+            ...
         }
     ]
 }

@@ -95,7 +95,7 @@
     (assoc app :edited_date edited_date :integration_date integration_date)))
 
 (defn- format-app
-  "Formats any fields in an app that aren't handled in more specific categories."
+  "Formats certain app fields into types more suitable for the client."
   [app]
   (-> app
       (assoc :can_run (= (:step_count app) (:component_count app)))
