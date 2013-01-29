@@ -1,17 +1,16 @@
-(defproject metadactyl "1.2.0-SNAPSHOT"
+(defproject metadactyl "1.3.0-SNAPSHOT"
   :description "Framework for hosting DiscoveryEnvironment metadata services."
   :dependencies [[org.clojure/clojure "1.4.0"]
                  [org.clojure/tools.logging "0.2.3"]
                  [org.clojure/data.json "0.1.2"]
-                 [clj-http "0.5.5"]
                  [clj-time "0.4.4"]
                  [c3p0/c3p0 "0.9.1.2"]
                  [compojure "1.0.1"]
-                 [org.iplantc/clojure-commons "1.3.1-SNAPSHOT"]
-                 [org.iplantc/kameleon "0.0.2-SNAPSHOT"]
+                 [org.iplantc/clojure-commons "1.4.0-SNAPSHOT"]
+                 [org.iplantc/kameleon "0.1.0-SNAPSHOT"]
                  [org.iplantc.core/metadactyl "dev-SNAPSHOT"]
                  [org.springframework/spring-orm "3.1.0.RELEASE"]
-                 [korma "0.3.0-beta10"]
+                 [korma "0.3.0-RC2"]
                  [ring/ring-jetty-adapter "1.0.1"]
                  [org.slf4j/slf4j-api "1.5.8"]
                  [org.slf4j/slf4j-log4j12 "1.5.8"]

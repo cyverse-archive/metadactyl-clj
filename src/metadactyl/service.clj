@@ -2,8 +2,7 @@
   (:use [clojure.data.json :only (json-str)]
         [clojure.string :only (join upper-case)]
         [slingshot.slingshot :only [try+]])
-  (:require [clj-http.client :as client]
-            [clojure.tools.logging :as log]))
+  (:require [clojure.tools.logging :as log]))
 
 (defn empty-response []
   {:status 200})
@@ -71,23 +70,3 @@
   {:content-type (get-in request [:headers :content-type])
    :headers (dissoc (:headers request) "content-length" "content-type")
    :body body})
-
-(defn forward-get
-  "Forwards a GET request to a remote service."
-  [url request]
-  (client/get url (prepare-forwarded-request request)))
-
-(defn forward-post
-  "Forwards a POST request to a remote service."
-  [url request body]
-  (client/post url (prepare-forwarded-request request body)))
-
-(defn forward-put
-  "Forwards a PUT request to a remote service."
-  [url request body]
-  (client/put url (prepare-forwarded-request request body)))
-
-(defn forward-delete
-  "Forwards a DELETE request to a remote service."
-  [url request]
-  (client/delete url (prepare-forwarded-request request)))
