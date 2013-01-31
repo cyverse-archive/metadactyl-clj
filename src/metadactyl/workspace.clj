@@ -1,11 +1,11 @@
 (ns metadactyl.workspace
-  (:use [clojure.data.json :only [read-json json-str]]
-        [korma.core]
+  (:use [korma.core]
         [kameleon.core]
         [kameleon.queries]
         [kameleon.app-groups]
         [metadactyl.metadactyl :only [current-user]]
-        [metadactyl.config]))
+        [metadactyl.config])
+  (:require [cheshire.core :as cheshire]))
 
 (defn- create-default-workspace-subgroups
   "Creates the workspace-default-app-groups database entries for the given
@@ -18,7 +18,7 @@
           (:root_analysis_group_id workspace)
           index
           (:hid (create-app-group (:id workspace) name))))
-      (read-json (workspace-default-app-groups)))))
+      (cheshire/decode (workspace-default-app-groups) true))))
 
 (defn- create-workspace-with-default-app-groups
   "Creates a workspace for the given user, with a workspace-root-app-group and

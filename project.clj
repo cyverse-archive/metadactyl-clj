@@ -2,7 +2,7 @@
   :description "Framework for hosting DiscoveryEnvironment metadata services."
   :dependencies [[org.clojure/clojure "1.4.0"]
                  [org.clojure/tools.logging "0.2.3"]
-                 [org.clojure/data.json "0.1.2"]
+                 [cheshire "5.0.1"]
                  [clj-time "0.4.4"]
                  [c3p0/c3p0 "0.9.1.2"]
                  [compojure "1.0.1"]

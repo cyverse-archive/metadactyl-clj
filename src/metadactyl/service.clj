@@ -1,8 +1,8 @@
 (ns metadactyl.service
-  (:use [clojure.data.json :only (json-str)]
-        [clojure.string :only (join upper-case)]
+  (:use [clojure.string :only (join upper-case)]
         [slingshot.slingshot :only [try+]])
-  (:require [clojure.tools.logging :as log]))
+  (:require [cheshire.core :as cheshire]
+            [clojure.tools.logging :as log]))
 
 (defn empty-response []
   {:status 200})
@@ -10,7 +10,7 @@
 (defn success-response
   ([map]
      {:status       200
-      :body         (json-str (merge {:success true} map))
+      :body         (cheshire/encode (merge {:success true} map))
       :content-type :json})
   ([]
      (success-response {})))
@@ -18,15 +18,15 @@
 (defn failure-response [e]
   (log/error e "bad request")
   {:status       400
-   :body         (json-str {:success false :reason (.getMessage e)})
+   :body         (cheshire/encode {:success false :reason (.getMessage e)})
    :content-type :json})
 
 (defn slingshot-failure-response [m]
   (log/error "bad request:" m)
   {:status       400
-   :body         (json-str (assoc (dissoc m :type)
-                             :code    (upper-case (name (:type m)))
-                             :success false))
+   :body         (cheshire/encode (assoc (dissoc m :type)
+                                    :code    (upper-case (name (:type m)))
+                                    :success false))
    :content-type :json})
 
 (defn forbidden-response [e]
@@ -36,13 +36,13 @@
 (defn error-response [e]
   (log/error e "internal error")
   {:status 500
-   :body (json-str {:success false :reason (.getMessage e)})
+   :body (cheshire/encode {:success false :reason (.getMessage e)})
    :content-type :json})
 
 (defn unrecognized-path-response []
   "Builds the response to send for an unrecognized service path."
   (let [msg "unrecognized service path"]
-    (json-str {:success false :reason msg})))
+    (cheshire/encode {:success false :reason msg})))
 
 (defn trap
   "Traps any exception thrown by a service and returns an appropriate

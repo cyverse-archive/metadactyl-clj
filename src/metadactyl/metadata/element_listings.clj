@@ -1,10 +1,10 @@
 (ns metadactyl.metadata.element-listings
-  (:use [clojure.data.json :only [read-json]]
-        [kameleon.core]
+  (:use [kameleon.core]
         [kameleon.entities]
         [kameleon.queries]
         [korma.core]
-        [slingshot.slingshot :only [throw+]]))
+        [slingshot.slingshot :only [throw+]])
+  (:require [cheshire.core :as cheshire]))
 
 (defn- base-property-type-query
   "Creates the base query used to list property types for the metadata element
@@ -72,7 +72,7 @@
 (defn- list-all
   "Lists all of the element types that are available to the listing service."
   [params handler-fn]
-  (let [initial-results (read-json (handler-fn))]
+  (let [initial-results (cheshire/decode (handler-fn) true)]
     (reduce merge initial-results (map #(% params) (vals listing-fns)))))
 
 (defn list-elements
@@ -82,4 +82,4 @@
   (cond
    (= elm-type "all")               (list-all params handler-fn)
    (contains? listing-fns elm-type) ((listing-fns elm-type) params)
-   :else                            (read-json (handler-fn))))
+   :else                            (cheshire/decode (handler-fn) true)))

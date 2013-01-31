@@ -1,6 +1,5 @@
 (ns metadactyl.metadactyl
-  (:use [clojure.data.json :only [read-json]]
-        [slingshot.slingshot :only [throw+]]
+  (:use [clojure.java.io :only [reader]]
         [metadactyl.app-validation]
         [metadactyl.beans]
         [metadactyl.config]
@@ -13,7 +12,8 @@
         [metadactyl.service]
         [metadactyl.transformers]
         [metadactyl.validation :only [validate-json-array-field]]
-        [ring.util.codec :only [url-decode]])
+        [ring.util.codec :only [url-decode]]
+        [slingshot.slingshot :only [throw+]])
   (:import [com.mchange.v2.c3p0 ComboPooledDataSource]
            [java.util HashMap]
            [org.iplantc.authn.service UserSessionService]
@@ -35,7 +35,8 @@
            [org.iplantc.workflow.template.notifications NotificationAppender]
            [org.springframework.orm.hibernate3.annotation
             AnnotationSessionFactoryBean])
-  (:require [clojure.tools.logging :as log]))
+  (:require [cheshire.core :as cheshire]
+            [clojure.tools.logging :as log]))
 
 (defn- get-property-type-validator
   "Gets an implementation of the TemplateValidator interface that can be used
@@ -472,7 +473,7 @@
   (->> (add-workspace-id (slurp body) workspace-id)
        object->json-obj
        (.runExperiment (experiment-runner))
-       read-json
+       (#(cheshire/decode % true))
        :job_id
        vector
        (get-selected-analyses (string->long workspace-id))
@@ -491,7 +492,7 @@
   "This service retrieves information about selected jobs that the user has
    submitted."
   [workspace-id body]
-  (let [m            (read-json (slurp body))
+  (let [m            (cheshire/decode-stream (reader body) true)
         _            (validate-json-array-field m :executions)
         workspace-id (string->long workspace-id)
         analyses     (get-selected-analyses workspace-id (:executions m))
@@ -503,7 +504,7 @@
   "This service marks experiments as deleted so that they no longer show up
    in the Analyses window."
   [body workspace-id]
-  (let [ids (:executions (read-json (slurp body)))]
+  (let [ids (:executions (cheshire/decode-stream (reader body) true))]
     (delete-analyses (string->long workspace-id) ids)
     (success-response)))
 
@@ -560,8 +561,8 @@
   "Obtains analysis JSON with the property values from a previous experiment
    plugged into the appropriate properties."
   [job-id]
-  (let [values        (read-json (get-property-values job-id))
-        app           (read-json (get-app (:analysis_id values)))
+  (let [values        (cheshire/decode (get-property-values job-id) true)
+        app           (cheshire/decode (get-app (:analysis_id values)) true)
         pval-to-entry #(vector (:full_param_id %) (:param_value %))
         values        (into {} (map pval-to-entry (:parameters values)))
         update-prop   #(let [id (:id %)]
@@ -582,5 +583,5 @@
   "Replaces teh reference genomes in the database with a new set of reference
    genomes."
   [body]
-  (put-reference-genomes (:genomes (read-json body)))
+  (put-reference-genomes (:genomes (cheshire/decode body true)))
   (success-response))

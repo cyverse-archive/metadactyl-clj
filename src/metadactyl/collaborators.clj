@@ -1,9 +1,9 @@
 (ns metadactyl.collaborators
-  (:use [clojure.data.json :only [read-json]]
-        [korma.db :only [transaction]]
+  (:use [korma.db :only [transaction]]
         [metadactyl.config :only [uid-domain]]
         [metadactyl.service :only [success-response]])
-  (:require [clojure.string :as string]
+  (:require [cheshire.core :as cheshire]
+            [clojure.string :as string]
             [kameleon.queries :as queries]))
 
 (defn- add-domain
@@ -26,7 +26,7 @@
   "Adds collaborators for the current user."
   [{:keys [user]} body]
   (transaction
-   (let [collaborators (:users (read-json body))]
+   (let [collaborators (:users (cheshire/decode body true))]
      (queries/add-collaborators (add-domain user) (map add-domain collaborators))
      (success-response))))
 
@@ -34,7 +34,7 @@
   "Removes collaborators for the current user."
   [{:keys [user]} body]
   (transaction
-   (let [collaborators (:users (read-json body))]
+   (let [collaborators (:users (cheshire/decode body true))]
      (queries/remove-collaborators (add-domain user)
                                    (map add-domain collaborators))
      (success-response))))

@@ -1,8 +1,8 @@
 (ns metadactyl.config
-  (:use [clojure.data.json :only [read-json]]
-        [clojure.string :only [blank? split]]
+  (:use [clojure.string :only [blank? split]]
         [slingshot.slingshot :only [throw+]])
-  (:require [clojure-commons.config :as cc]
+  (:require [cheshire.core :as cheshire]
+            [clojure-commons.config :as cc]
             [clojure-commons.error-codes :as ce]
             [clojure.string :as str]
             [clojure.tools.logging :as log]))
@@ -161,4 +161,4 @@
 (def get-default-app-groups
   (memoize
   (fn []
-    (read-json (str/replace (workspace-default-app-groups) #"\\," ",")))))
+    (cheshire/decode (str/replace (workspace-default-app-groups) #"\\," ",") true))))
