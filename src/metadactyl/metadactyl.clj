@@ -19,7 +19,6 @@
            [org.iplantc.authn.service UserSessionService]
            [org.iplantc.authn.user User]
            [org.iplantc.workflow.client OsmClient]
-           [org.iplantc.workflow HibernateTemplateFetcher]
            [org.iplantc.workflow.experiment
             AnalysisRetriever ExperimentRunner IrodsUrlAssembler]
            [org.iplantc.workflow.integration.validation
@@ -31,8 +30,7 @@
             TemplateGroupService UserService WorkflowElementRetrievalService
             WorkflowExportService AnalysisListingService WorkflowPreviewService
             WorkflowImportService AnalysisDeletionService RatingService
-            WorkflowElementSearchService PropertyValueService]
-           [org.iplantc.workflow.template.notifications NotificationAppender]
+            WorkflowElementSearchService PropertyValueService UiAnalysisService]
            [org.springframework.orm.hibernate3.annotation
             AnnotationSessionFactoryBean])
   (:require [cheshire.core :as cheshire]
@@ -242,18 +240,6 @@
     (AnalysisDeletionService. (session-factory))))
 
 (register-bean
-  (defbean app-fetcher
-    "Retrieves apps from the database."
-    (doto (HibernateTemplateFetcher.)
-      (.setSessionFactory (session-factory)))))
-
-(register-bean
-  (defbean notification-appender
-    "Appends UI notifications to an app."
-    (doto (NotificationAppender.)
-      (.setSessionFactory (session-factory)))))
-
-(register-bean
   (defbean analysis-edit-service
     "Services to make apps available for editing in Tito."
     (doto (AnalysisEditService.)
@@ -299,6 +285,12 @@
       (.setSessionFactory (session-factory))
       (.setOsmClient (osm-job-request-client)))))
 
+(register-bean
+ (defbean ui-app-service
+   "Services to retrieve apps in the format expected by the UI."
+   (doto (UiAnalysisService.)
+     (.setSessionFactory (session-factory)))))
+
 (defn get-workflow-elements
   "A service to get information about workflow elements."
   [element-type params]
@@ -310,11 +302,6 @@
   "A service to search information about deployed components."
   [search-term]
   (.searchDeployedComponents (workflow-element-search-service) search-term))
-
-(defn get-all-app-ids
-  "A service to get the list of app identifiers."
-  []
-  (.getAnalysisIds (workflow-export-service)))
 
 (defn delete-categories
   "A service used to delete app categories."
@@ -350,8 +337,7 @@
 (defn get-app
   "A service used to get an app in the format required by the DE."
   [app-id]
-  (.appendNotificationToTemplate (notification-appender)
-    (.fetchTemplateByName (app-fetcher) app-id)))
+  (.getAnalysis (ui-app-service) app-id))
 
 (defn export-template
   "This service will export the template with the given identifier."

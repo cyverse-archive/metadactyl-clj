@@ -199,3 +199,28 @@
       (throw (IllegalArgumentException.
               (str "pipeline, " app-id ", can't be displayed by this service"))))
     (cheshire/encode (format-app-details details (first components)))))
+
+(defn load-app-ids
+  "Loads the identifiers for all apps that refer to valid deployed components from the database."
+  []
+  (map :id
+       (select [:transformation_activity :app]
+               (modifier "distinct")
+               (fields :app.id)
+               (join [:transformation_task_steps :tts]
+                     {:app.hid :tts.transformation_task_id})
+               (join [:transformation_steps :ts]
+                     {:tts.transformation_step_id :ts.id})
+               (join [:transformations :tx]
+                     {:ts.transformation_id :tx.id})
+               (where (not [(sqlfn :exists (subselect [:template :t]
+                                                      (join [:deployed_components :dc]
+                                                            {:t.component_id :dc.id})
+                                                      (where {:tx.template_id :t.id
+                                                              :t.component_id nil})))]))
+               (order :id :ASC))))
+
+(defn get-all-app-ids
+  "This service obtains the identifiers of all apps that refer to valid deployed components."
+  []
+  (cheshire/encode {:analysis_ids (load-app-ids)}))
