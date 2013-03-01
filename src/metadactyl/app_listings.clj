@@ -224,3 +224,11 @@
   "This service obtains the identifiers of all apps that refer to valid deployed components."
   []
   (cheshire/encode {:analysis_ids (load-app-ids)}))
+
+(defn get-app-description
+  "This service obtains the description of an app."
+  [app-id]
+  (let [app (first (select transformation_activity (where {:id app-id})))]
+    (when (nil? app)
+      (throw (IllegalArgumentException. (str "app, " app-id ", not found"))))
+    (or (:description app) "")))

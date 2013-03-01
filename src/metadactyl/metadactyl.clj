@@ -19,8 +19,7 @@
            [org.iplantc.authn.service UserSessionService]
            [org.iplantc.authn.user User]
            [org.iplantc.workflow.client OsmClient]
-           [org.iplantc.workflow.experiment
-            AnalysisRetriever ExperimentRunner IrodsUrlAssembler]
+           [org.iplantc.workflow.experiment ExperimentRunner IrodsUrlAssembler]
            [org.iplantc.workflow.integration.validation
             ChainingTemplateValidator OutputRedirectionTemplateValidator
             TemplateValidator]
@@ -248,19 +247,12 @@
       (.setWorkflowImportService (workflow-import-service)))))
 
 (register-bean
-  (defbean analysis-retriever
-    "Used by several services to retrieve apps from the daatabase."
-    (doto (AnalysisRetriever.)
-      (.setSessionFactory (session-factory)))))
-
-(register-bean
   (defbean rating-service
     "Services to associate user ratings with or remove user ratings from
      apps."
     (doto (RatingService.)
       (.setSessionFactory (session-factory))
-      (.setUserSessionService user-session-service)
-      (.setAnalysisRetriever (analysis-retriever)))))
+      (.setUserSessionService user-session-service))))
 
 (register-bean
   (defbean url-assembler
@@ -435,22 +427,6 @@
    the authenticated user."
   []
   (object->json-str (.getCurrentUserInfo (user-service))))
-
-(defn- get-analysis
-  "Gets an app from the database."
-  [app-id]
-  (if (nil? app-id)
-    nil
-    (try
-      (.getTransformationActivity (analysis-retriever) app-id)
-      (catch Exception e nil))))
-
-(defn get-app-description
-  "Gets an app description from the database."
-  [app-id]
-  (log/debug "looking up the description for app" app-id)
-  (let [app (get-analysis app-id)]
-    (if (nil? app) "" (.getDescription app))))
 
 (defn run-experiment
   "This service accepts a job submission from a user then reformats it and
