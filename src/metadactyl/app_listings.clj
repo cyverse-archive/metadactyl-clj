@@ -228,7 +228,4 @@
 (defn get-app-description
   "This service obtains the description of an app."
   [app-id]
-  (let [app (first (select transformation_activity (where {:id app-id})))]
-    (when (nil? app)
-      (throw (IllegalArgumentException. (str "app, " app-id ", not found"))))
-    (or (:description app) "")))
+  (:description (first (select transformation_activity (where {:id app-id}))) ""))
