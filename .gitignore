@@ -16,4 +16,5 @@ pom.xml
 /target
 *~
 \#*
-
+.dir-locals.el
+.*.eld
