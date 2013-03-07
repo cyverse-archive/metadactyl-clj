@@ -25,7 +25,7 @@
   (log/error "bad request:" m)
   {:status       400
    :body         (cheshire/encode (assoc (dissoc m :type)
-                                    :code    (upper-case (name (:type m)))
+                                    :code    (upper-case (name (or (:type m) (:code m))))
                                     :success false))
    :content-type :json})
 
