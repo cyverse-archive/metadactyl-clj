@@ -9,6 +9,7 @@
         [metadactyl.collaborators]
         [metadactyl.kormadb]
         [metadactyl.metadactyl]
+        [metadactyl.metadata.tool-requests]
         [metadactyl.service]
         [ring.middleware keyword-params nested-params])
   (:require [compojure.route :as route]
@@ -85,6 +86,12 @@
 
   (PUT "/reference-genomes" [:as {body :body}]
        (replace-reference-genomes (slurp body)))
+
+  (PUT "/tool-request" [:as {body :body}]
+       (submit-tool-request (.getUsername current-user) body))
+
+  (GET "/tool-requests" [:as {:keys [params]}]
+       (list-tool-requests (.getUsername current-user) params))
 
   (route/not-found (unrecognized-path-response)))
 
@@ -184,6 +191,12 @@
 
   (GET "/get-app-description/:app-id" [app-id]
        (trap #(get-app-description app-id)))
+
+  (POST "/tool-request" [:as {body :body}]
+        (trap #(update-tool-request body)))
+
+  (GET "/tool-request/:uuid" [uuid]
+       (trap #(get-tool-request uuid)))
 
   (context "/secured" [:as {params :params}]
            (store-current-user secured-routes params))

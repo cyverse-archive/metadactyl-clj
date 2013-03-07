@@ -1,12 +1,13 @@
 (ns metadactyl.metadata.tool-requests
-  (:use [kameleon.entities]
-        [kameleon.queries :only [get-user-id]]
+  (:use [clojure.java.io :only [reader]]
+        [kameleon.entities]
         [korma.core]
         [korma.db]
         [metadactyl.service :only [success-response]]
         [slingshot.slingshot :only [throw+]])
   (:require [cheshire.core :as cheshire]
             [clojure.string :as string]
+            [kameleon.queries :as queries]
             [metadactyl.util.params :as params])
   (:import [java.util UUID]))
 
@@ -60,7 +61,7 @@
 (defn- handle-new-tool-request
   "Submits a tool request on behalf of the authenticated user."
   [username req]
-  (let [user-id         (get-user-id username)
+  (let [user-id         (queries/get-user-id username)
         architecture-id (architecture-name-to-id (required-field req :architecture))
         uuid            (UUID/randomUUID)]
 
@@ -136,7 +137,7 @@
                :uuid (string/upper-case (.toString uuid))}))
     status))
 
-(defn load-status-code
+(defn- load-status-code
   "Gets the status code for a status code name."
   [status-code]
   (let [status (first (select tool_request_status_codes (where {:name status-code})))]
@@ -163,7 +164,7 @@
          status      (:status update prev-status)
          status-id   (:id (load-status-code status))
          _           (validate-status-transition prev-status status)
-         user-id     (get-user-id (required-field update :username))
+         user-id     (queries/get-user-id (required-field update :username))
          comments    (:comments update)
          comments    (when-not (string/blank? comments) comments)]
      (insert tool_request_statuses
@@ -172,14 +173,65 @@
                       :updater_id                  user-id
                       :comments                    comments})))))
 
+(defn- get-tool-request-list
+  [username params]
+  (let [limit      (params/optional-long [:limit] params)
+        offset     (params/optional-long [:offset] params)
+        sort-field (params/optional-keyword [:sortfield :sortField] params)
+        sort-order (params/optional-keyword [:sortdir :sortDir] params)]
+    (queries/list-tool-requests username
+                                :limit      limit
+                                :offset     offset
+                                :sort-field sort-field
+                                :sort-order sort-order)))
+
+(def ^:private format-uuid
+  "Formats a UUID."
+  (comp string/upper-case str))
+
+(def ^:private format-timestamp
+  "Formats a timestamp."
+  (comp str #(.getTime %)))
+
+(defn- format-tool-request
+  "Formats a tool request."
+  [req]
+  (assoc req :uuid (format-uuid (:uuid req))))
+
+(defn- format-tool-request-status
+  "Formats a single status record for a tool request."
+  [req-status]
+  (assoc req-status
+    :status_date (format-timestamp (:status_date req-status))
+    :comments    (or (:comments req-status) "")))
+
 (defn submit-tool-request
   "Submits a tool request on behalf of a user."
   [username body]
-  (handle-new-tool-request username (cheshire/decode body true))
+  (handle-new-tool-request username (cheshire/decode-stream (reader body) true))
   (success-response))
 
 (defn update-tool-request
   "Updates the status of a tool request."
   [body]
-  (handle-tool-request-update (cheshire/decode body true))
+  (handle-tool-request-update (cheshire/decode-stream (reader body) true))
   (success-response))
+
+(defn get-tool-request
+  "Lists the details of a single tool request."
+  [uuid]
+  (let [uuid    (UUID/fromString uuid)
+        req     (format-tool-request (queries/get-tool-request-details uuid))
+        history (map format-tool-request-status (queries/get-tool-request-history uuid))]
+    (success-response (assoc req :history history))))
+
+(defn list-tool-requests
+  "Lists tool requests for a user."
+  [username params]
+  (success-response
+   {:tool_requests
+    (map #(assoc %
+            :uuid           (format-uuid (:uuid %))
+            :date_submitted (format-timestamp (:date_submitted %))
+            :date_updated   (format-timestamp (:date_updated %)))
+         (get-tool-request-list username params))}))
