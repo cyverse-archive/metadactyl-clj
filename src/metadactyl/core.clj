@@ -193,7 +193,7 @@
        (trap #(get-app-description app-id)))
 
   (POST "/tool-request" [:as {body :body}]
-        (trap #(update-tool-request body)))
+        (trap #(update-tool-request (config/uid-domain) body)))
 
   (GET "/tool-request/:uuid" [uuid]
        (trap #(get-tool-request uuid)))

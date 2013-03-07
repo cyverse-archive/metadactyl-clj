@@ -103,7 +103,8 @@
     [status-installation status-completion]
     [status-pending      status-submitted]
     [status-pending      status-evaluation]
-    [status-pending      status-installation]})
+    [status-pending      status-installation]
+    [status-pending      status-pending]})
 
 (defn- valid-status-transition?
   "Determines if a status transition is valid."
@@ -156,7 +157,7 @@
 
 (defn- handle-tool-request-update
   "Updates a tool request."
-  [update]
+  [uid-domain update]
   (transaction
    (let [uuid        (UUID/fromString (required-field update :uuid))
          req-id      (:id (get-tool-req uuid))
@@ -164,7 +165,9 @@
          status      (:status update prev-status)
          status-id   (:id (load-status-code status))
          _           (validate-status-transition prev-status status)
-         user-id     (queries/get-user-id (required-field update :username))
+         username    (required-field update :username)
+         username    (if (re-find #"@" username) username (str username "@" uid-domain))
+         user-id     (queries/get-user-id username)
          comments    (:comments update)
          comments    (when-not (string/blank? comments) comments)]
      (insert tool_request_statuses
@@ -213,8 +216,8 @@
 
 (defn update-tool-request
   "Updates the status of a tool request."
-  [body]
-  (handle-tool-request-update (cheshire/decode-stream (reader body) true))
+  [uid-domain body]
+  (handle-tool-request-update uid-domain (cheshire/decode-stream (reader body) true))
   (success-response))
 
 (defn get-tool-request
