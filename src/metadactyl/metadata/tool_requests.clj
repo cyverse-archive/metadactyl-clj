@@ -216,9 +216,13 @@
 
 (defn update-tool-request
   "Updates the status of a tool request."
-  [uid-domain body]
-  (handle-tool-request-update uid-domain (cheshire/decode-stream (reader body) true))
-  (success-response))
+  ([uid-domain body]
+     (handle-tool-request-update uid-domain (cheshire/decode-stream (reader body) true))
+     (success-response))
+  ([uid-domain username body]
+     (handle-tool-request-update uid-domain (assoc (cheshire/decode-stream (reader body) true)
+                                              :username username))
+     (success-response)))
 
 (defn get-tool-request
   "Lists the details of a single tool request."

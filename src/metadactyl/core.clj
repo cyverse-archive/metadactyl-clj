@@ -90,6 +90,9 @@
   (PUT "/tool-request" [:as {body :body}]
        (submit-tool-request (.getUsername current-user) body))
 
+  (POST "/tool-request" [:as {body :body}]
+        (update-tool-request (config/uid-domain) (.getUsername current-user) body))
+
   (GET "/tool-requests" [:as {:keys [params]}]
        (list-tool-requests (.getUsername current-user) params))
 
