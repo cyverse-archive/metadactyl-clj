@@ -1,11 +1,9 @@
 (ns metadactyl.config
-  (:use [clojure.string :only [blank? split]]
-        [slingshot.slingshot :only [throw+]])
+  (:use [slingshot.slingshot :only [throw+]])
   (:require [cheshire.core :as cheshire]
             [clojure-commons.config :as cc]
             [clojure-commons.error-codes :as ce]
-            [clojure.string :as str]
-            [clojure.tools.logging :as log]))
+            [clojure.string :as str]))
 
 (def ^:private props
   "A ref for storing the configuration properties."
