@@ -61,11 +61,11 @@
 (defn- handle-new-tool-request
   "Submits a tool request on behalf of the authenticated user."
   [username req]
-  (let [user-id         (queries/get-user-id username)
-        architecture-id (architecture-name-to-id (required-field req :architecture))
-        uuid            (UUID/randomUUID)]
+  (transaction
+   (let [user-id         (queries/get-user-id username)
+         architecture-id (architecture-name-to-id (required-field req :architecture))
+         uuid            (UUID/randomUUID)]
 
-    (transaction
      (insert tool_requests
              (values {:phone                (:phone req)
                       :uuid                 uuid
@@ -81,12 +81,13 @@
                       :additional_info      (:additional_info req)
                       :additional_data_file (:additional_data_file req)
                       :requestor_id         user-id
-                      :tool_architecture_id architecture-id})))
+                      :tool_architecture_id architecture-id}))
 
-    (insert tool_request_statuses
-           (values {:tool_request_id             (tool-request-subselect uuid)
-                    :tool_request_status_code_id (status-code-subselect status-submitted)
-                    :updater_id                  user-id}))))
+     (insert tool_request_statuses
+             (values {:tool_request_id             (tool-request-subselect uuid)
+                      :tool_request_status_code_id (status-code-subselect status-submitted)
+                      :updater_id                  user-id}))
+     uuid)))
 
 (def ^:private valid-status-transitions
   #{[status-submitted    status-submitted]
@@ -174,7 +175,8 @@
              (values {:tool_request_id             req-id
                       :tool_request_status_code_id status-id
                       :updater_id                  user-id
-                      :comments                    comments})))))
+                      :comments                    comments}))
+     uuid)))
 
 (defn- get-tool-request-list
   [username params]
@@ -208,29 +210,36 @@
     :status_date (format-timestamp (:status_date req-status))
     :comments    (or (:comments req-status) "")))
 
+(defn- get-tool-request-details
+  "Retrieves the details of a single tool request from the database."
+  [uuid]
+  (let [req     (format-tool-request (queries/get-tool-request-details uuid))
+        history (map format-tool-request-status (queries/get-tool-request-history uuid))]
+    (assoc req :history history)))
+
 (defn submit-tool-request
   "Submits a tool request on behalf of a user."
   [username body]
-  (handle-new-tool-request username (cheshire/decode-stream (reader body) true))
-  (success-response))
+  (-> (handle-new-tool-request username (cheshire/decode-stream (reader body) true))
+      (get-tool-request-details)
+      (success-response)))
 
 (defn update-tool-request
   "Updates the status of a tool request."
   ([uid-domain body]
-     (handle-tool-request-update uid-domain (cheshire/decode-stream (reader body) true))
-     (success-response))
+     (->> (cheshire/decode-stream (reader body) true)
+          (handle-tool-request-update uid-domain)
+          (get-tool-request-details)
+          (success-response)))
   ([uid-domain username body]
-     (handle-tool-request-update uid-domain (assoc (cheshire/decode-stream (reader body) true)
-                                              :username username))
-     (success-response)))
+     (->> (assoc (cheshire/decode-stream (reader body) true) :username username)
+          (handle-tool-request-update uid-domain)
+          (success-response))))
 
 (defn get-tool-request
   "Lists the details of a single tool request."
   [uuid]
-  (let [uuid    (UUID/fromString uuid)
-        req     (format-tool-request (queries/get-tool-request-details uuid))
-        history (map format-tool-request-status (queries/get-tool-request-history uuid))]
-    (success-response (assoc req :history history))))
+  (success-response (get-tool-request-details (UUID/fromString uuid))))
 
 (defn list-tool-requests
   "Lists tool requests for a user."
