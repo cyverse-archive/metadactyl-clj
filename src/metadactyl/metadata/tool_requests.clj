@@ -16,6 +16,7 @@
 (def ^:private status-pending "Pending")
 (def ^:private status-evaluation "Evaluation")
 (def ^:private status-installation "Installation")
+(def ^:private status-validation "Validation")
 (def ^:private status-completion "Completion")
 (def ^:private status-failed "Failed")
 
@@ -100,8 +101,12 @@
     [status-evaluation   status-pending]
     [status-installation status-installation]
     [status-installation status-failed]
+    [status-installation status-validation]
     [status-installation status-pending]
-    [status-installation status-completion]
+    [status-validation   status-validation]
+    [status-validation   status-failed]
+    [status-validation   status-completion]
+    [status-validation   status-pending]
     [status-pending      status-submitted]
     [status-pending      status-evaluation]
     [status-pending      status-installation]
@@ -201,7 +206,7 @@
 (defn- format-tool-request
   "Formats a tool request."
   [req]
-  (assoc req :uuid (format-uuid (:uuid req))))
+  (update-in req [:uuid] format-uuid))
 
 (defn- format-tool-request-status
   "Formats a single status record for a tool request."
