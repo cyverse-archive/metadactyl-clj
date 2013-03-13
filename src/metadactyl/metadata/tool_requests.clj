@@ -34,7 +34,8 @@
   [s]
   (condp = s
     "Yes" true
-    "No"  false))
+    "No"  false
+    nil))
 
 (defn- architecture-name-to-id
   "Gets the internal architecture identifier for an architecture name."
