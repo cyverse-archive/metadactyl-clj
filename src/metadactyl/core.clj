@@ -11,6 +11,7 @@
         [metadactyl.metadactyl]
         [metadactyl.metadata.tool-requests]
         [metadactyl.service]
+        [metadactyl.tito]
         [ring.middleware keyword-params nested-params])
   (:require [compojure.route :as route]
             [compojure.handler :as handler]
@@ -62,6 +63,9 @@
 
   (GET "/edit-template/:app-id" [app-id]
        (edit-app app-id))
+
+  (GET "/edit-workflow/:app-id" [app-id]
+       (edit-workflow app-id))
 
   (GET "/copy-template/:app-id" [app-id]
        (copy-app app-id))
