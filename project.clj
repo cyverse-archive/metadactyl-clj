@@ -1,13 +1,13 @@
-(defproject metadactyl "1.3.0-SNAPSHOT"
+(defproject metadactyl "1.3.1-SNAPSHOT"
   :description "Framework for hosting DiscoveryEnvironment metadata services."
-  :dependencies [[org.clojure/clojure "1.4.0"]
+  :dependencies [[org.clojure/clojure "1.5.1"]
                  [org.clojure/tools.logging "0.2.3"]
                  [cheshire "5.0.1"]
                  [clj-time "0.4.4"]
                  [c3p0/c3p0 "0.9.1.2"]
                  [compojure "1.0.1"]
-                 [org.iplantc/clojure-commons "1.4.0-SNAPSHOT"]
-                 [org.iplantc/kameleon "0.1.0-SNAPSHOT"]
+                 [org.iplantc/clojure-commons "1.4.1-SNAPSHOT"]
+                 [org.iplantc/kameleon "0.1.1-SNAPSHOT"]
                  [org.iplantc.core/metadactyl "dev-SNAPSHOT"]
                  [org.springframework/spring-orm "3.1.0.RELEASE"]
                  [korma "0.3.0-RC4"]
@@ -16,7 +16,7 @@
                  [org.slf4j/slf4j-log4j12 "1.5.8"]
                  [net.sf.json-lib/json-lib "2.4" :classifier "jdk15"]
                  [slingshot "0.10.3"]]
-  :plugins [[org.iplantc/lein-iplant-rpm "1.3.2-SNAPSHOT"]
+  :plugins [[org.iplantc/lein-iplant-rpm "1.4.1-SNAPSHOT"]
             [lein-ring "0.7.4"]
             [lein-swank "1.4.4"]]
   :profiles {:dev {:resource-paths ["conf/test"]}}
