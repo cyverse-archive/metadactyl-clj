@@ -2,8 +2,49 @@
   (:use [korma.core]
         [kameleon.core]
         [kameleon.entities]
-        [metadactyl.metadactyl :only [current-user]])
-  (:require [cheshire.core :as cheshire]))
+        [metadactyl.metadactyl :only [current-user]]
+        [slingshot.slingshot :only [throw+]])
+  (:require [cheshire.core :as cheshire]
+            [clojure-commons.error-codes :as cc-errs]))
+
+(defn- get-integrator-email
+  "Fetches the integrator email for the given integration data ID."
+  [integration_data_id]
+  (let [integrator (first (select integration_data
+                                  (fields :integrator_email)
+                                  (where {:id integration_data_id})))]
+    (:integrator_email integrator)))
+
+(defn- verify-ownership
+  "Verifies that the current user owns the analysis that is being edited."
+  [analysis]
+  (let [owner (get-integrator-email (:integration_data_id analysis))]
+    (if (not= owner (.getUsername current-user))
+      (throw+ {:code cc-errs/ERR_NOT_OWNER,
+               :username (.getUsername current-user),
+               :message (str
+                          (.getShortUsername current-user)
+                          " does not own analysis "
+                          (:analysis_id analysis))}))))
+
+(defn- verify-analysis-not-public
+  "Verifies that an analysis has not been made public."
+  [analysis]
+  (let [analysis-id (:analysis_id analysis)
+        app (first (select analysis_listing
+                           (fields :is_public)
+                           (where {:id analysis-id})))]
+    (if (:is_public app)
+      (throw+ {:code cc-errs/ERR_NOT_WRITEABLE,
+               :message (str "Workflow, "
+                             analysis-id
+                             ", is public and may not be edited")}))))
+
+(defn- verify-workflow-editable
+  "Verifies that the analysis is allowed to be edited by the current user."
+  [analysis]
+  (verify-ownership analysis)
+  (verify-analysis-not-public analysis))
 
 (defn- with-dataobjects
   "Includes a list of related data objects in the query's result set,
@@ -109,6 +150,7 @@
         mappings (apply concat (map #(get-formatted-mapping %) steps))
         steps (map #(format-step %) steps)]
     (-> analysis
+      (dissoc :integration_data_id)
       (assoc :steps steps)
       (assoc :mappings mappings)
       (assoc :templates template-ids))))
@@ -119,10 +161,13 @@
   (let [analyses (select transformation_activity
                          (fields [:id :analysis_id]
                                  [:name :analysis_name]
-                                 :description)
+                                 :description
+                                 :integration_data_id)
                          (where {:id app-id}))]
-    (when (nil? analyses)
-      (throw (IllegalArgumentException. (str "workflow, " app-id ", not found"))))
+    (when (empty? analyses)
+      (throw+ {:code cc-errs/ERR_DOES_NOT_EXIST,
+               :message (str "Workflow, " app-id ", not found")}))
+    (dorun (map #(verify-workflow-editable %) analyses))
     analyses))
 
 (defn edit-workflow
