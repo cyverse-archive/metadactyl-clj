@@ -14,4 +14,4 @@ Request and response bodies are in JSON format unless otherwise noted.
 * [App Metadata Endpoints](endpoints/app-metadata.md)
 * [App Execution Endpoints](endpoints/app-execution.md)
 * [Collaborator List Management Endpoints](endpoints/collaborators.md)
-* [Reference Genome Endpoints](enpdoints/reference-genomes.md)
+* [Reference Genome Endpoints](endpoints/reference-genomes.md)
