@@ -519,7 +519,7 @@ $ curl -sd '
 
 ## Valiating Analyses for Pipelines
 
-Unsecured Endpoint: GET /validate-analysis-for-pipeline/{analysis-id}
+Unsecured Endpoint: GET /validate-analysis-for-pipelines/{analysis-id}
 
 Multistep analyses and empty analyses can't currently be included in pipelines,
 so the UI needs a way to determine whether or not an analysis can be included in
@@ -2203,4 +2203,219 @@ $ curl -sd '
 }
 ' "http://by-tor:8888/secured/make-analysis-public?user=snow-dog&email=sd@example.org"
 {}
+```
+
+## Getting an App Description
+
+Unsecured Endpoint: GET /get-app-descrioption/{analysis-id}
+
+This service is used by Donkey to get app descriptions for job status update
+notifications. There is no request body and the response body contains only the
+analysis description, with no special formatting.  Here's an example:
+
+```
+$ curl http://by-tor:8888/get-app-description/FA65A1AF-8B9D-4151-9073-2A5D1874F8C0 && echo
+Lorem ipsum dolor sit amet
+```
+
+## Requesting Tool Installation
+
+Secured Endpoint: PUT /secured/tool-request
+
+This service submits a request for a tool to be installed so that it can be used
+from within the Discovery Environment. The installation request and all status
+updates related to the tool request will be tracked in the Discovery Environment
+database. One possible request body format is:
+
+```json
+{
+    "phone": "user-phone-number",
+    "name": "tool-name",
+    "description": "tool-description",
+    "src_url": "link-to-tool-source",
+    "documentation_url": "link-to-tool-documentation",
+    "version": "tool-version",
+    "attribution": "tool-attribution",
+    "multithreaded": "multithreaded-flag",
+    "test_data_file": "test-data-path",
+    "cmd_line": "command-line-description",
+    "additional_info": "optional-additional-info",
+    "additional_data_file": "optional-additional-file",
+    "architecture": "architecture flag"
+}
+```
+
+All tool installation requests will look similar to this one, but some fields
+may be replaced with others, depending on the nature of the request. A complete
+description of the request body is included below with related fields organized
+into groups. In cases where a multiple fields are in a required field group,
+any one of the fields from that group may be specified.
+
+<table border='1'>
+    <thead>
+        <tr>
+            <th>Field Group</th>
+            <th>Required</th>
+            <th>Field Name</th>
+            <th>Field Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Phone</td>
+            <td>No</td>
+            <td>phone</td>
+            <td>The phone number of the user submitting the request.</td>
+        </tr>
+        <tr>
+            <td>Tool Name</td>
+            <td>Yes</td>
+            <td>name</td>
+            <td>The name of the tool being installed (should be the file name).</td>
+        </tr>
+        <tr>
+            <td>Tool Description</td>
+            <td>Yes</td>
+            <td>description</td>
+            <td>A brief description of the tool.</td>
+        </tr>
+        <tr>
+            <td rowspan="2">Source Location</td>
+            <td rowspan="2">Yes</td>
+            <td>src_url</td>
+            <td>A link that can be used to obtain the tool.</td>
+        </tr>
+        <tr>
+            <td>src_upload_file</td>
+            <td>The path to a file that has been uploaded into iRODS.</td>
+        </tr>
+        <tr>
+            <td>Documentation Location</td>
+            <td>Yes</td>
+            <td>documentation_url</td>
+            <td>A link to the tool documentation.</td>
+        </tr>
+        <tr>
+            <td>Tool Version</td>
+            <td>Yes</td>
+            <td>version</td>
+            <td>The tool's version string.</td>
+        </tr>
+        <tr>
+            <td>Tool Attribution</td>
+            <td>No</td>
+            <td>attribution</td>
+            <td>The people or organizations that produced the tool.</td>
+        </tr>
+        <tr>
+            <td>Multithreaded Indicator</td>
+            <td>No</td>
+            <td>multithreaded</td>
+            <td>
+                A flag indicating whether or not the tool is multithreaded. This
+                can be <code>Yes</code> to indicate that the user requesting the
+                tool knows that it is multithreaded, <code>No</code> to indicate
+                that the user knows that the tool is not multithreaded, or
+                anything else to indicate that the user does not know whether or
+                not the tool is multithreaded.
+            </td>
+        </tr>
+        <tr>
+            <td>Test Data Location</td>
+            <td>Yes</td>
+            <td>test_data_file</td>
+            <td>
+                The path to a test data file that has been uploaded to iRODS.
+            </td>
+        </tr>
+        <tr>
+            <td>Tool Usage Instructions</td>
+            <td>Yes</td>
+            <td>cmd_line</td>
+            <td>Instructions for using the tool.</td>
+        </tr>
+        <tr>
+            <td>Additional Tool Information</td>
+            <td>No</td>
+            <td>additional_info</td>
+            <td>
+                Any additional information that may be helpful during tool
+                installation or validation.
+            </td>
+        </tr>
+        <tr>
+            <td>Additional Data File</td>
+            <td>No</td>
+            <td>additional_data_file</td>
+            <td>
+                Any additional data file that may be helpful during tool
+                installation or validation.
+            </td>
+        </tr>
+        <tr>
+            <td>Tool Architecture</td>
+            <td>Yes</td>
+            <td>architecture</td>
+            <td>
+                One of the architecture names known to the DE. Currently, the
+                valid values are `32-bit Generic` for a 32-bit executable that
+                will run in the DE, `64-bit Generic` for a 64-bit executable
+                that will run in the DE, `Others` for tools run in a virtual
+                machine or interpreter, and `Don't know` if the user requesting
+                the tool doesn't know what the architecture is.
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+The response body is a complete listing of the new tool request as returned by
+the GET /tool-request service. Please see the description of that service for
+more details.
+
+Here's an example:
+
+```
+$ curl -sX PUT -d '
+{
+    "phone": "520-555-1212",
+    "name": "jaguar",
+    "description": "a really big cat",
+    "src_url": "http://www.example.org/path/to/source.tar.gz",
+    "documentation_url": "http://www.example.org/path/to/docs.html",
+    "version": "1.0.0",
+    "attribution": "An exemplary organization.",
+    "multithreaded": "Yes",
+    "test_data_file": "/path/to/test_file",
+    "cmd_line": "jaguar some-file",
+    "additional_info": "some additional info",
+    "additional_data_file": "/path/to/additional_file",
+    "architecture": "64-bit Generic"
+}
+' "http://services-2:31323/secured/tool-request?user=ipctest&email=ipctest@iplantcollaborative.org" | python -mjson.tool
+{
+    "additional_data_file": "/path/to/additional_file",
+    "additional_info": "some additional info",
+    "architecture": "64-bit Generic",
+    "attribution": "An exemplary organization.",
+    "cmd_line": "jaguar some-file",
+    "description": "a really big cat",
+    "documentation_url": "http://www.example.org/path/to/docs.html",
+    "history": [
+        {
+            "comments": "",
+            "status": "Submitted",
+            "status_date": "1364257498649",
+            "updated_by": "ipctest@iplantcollaborative.org"
+        }
+    ],
+    "multithreaded": true,
+    "name": "jaguar",
+    "phone": "520-555-1212",
+    "source_url": "http://www.example.org/path/to/source.tar.gz",
+    "submitted_by": "ipctest@iplantcollaborative.org",
+    "success": true,
+    "test_data_path": "/path/to/test_file",
+    "uuid": "7C5ACB09-8675-4F04-B323-78431B801226",
+    "version": "1.0.0"
+}
 ```
