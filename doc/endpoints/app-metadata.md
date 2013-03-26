@@ -2391,7 +2391,7 @@ $ curl -sX PUT -d '
     "additional_data_file": "/path/to/additional_file",
     "architecture": "64-bit Generic"
 }
-' "http://services-2:31323/secured/tool-request?user=ipctest&email=ipctest@iplantcollaborative.org" | python -mjson.tool
+' "http://by-tor:8888/secured/tool-request?user=nobody&email=nobody@iplantcollaborative.org" | python -mjson.tool
 {
     "additional_data_file": "/path/to/additional_file",
     "additional_info": "some additional info",
@@ -2405,14 +2405,14 @@ $ curl -sX PUT -d '
             "comments": "",
             "status": "Submitted",
             "status_date": "1364257498649",
-            "updated_by": "ipctest@iplantcollaborative.org"
+            "updated_by": "nobody@iplantcollaborative.org"
         }
     ],
     "multithreaded": true,
     "name": "jaguar",
     "phone": "520-555-1212",
     "source_url": "http://www.example.org/path/to/source.tar.gz",
-    "submitted_by": "ipctest@iplantcollaborative.org",
+    "submitted_by": "nobody@iplantcollaborative.org",
     "success": true,
     "test_data_path": "/path/to/test_file",
     "uuid": "7C5ACB09-8675-4F04-B323-78431B801226",
@@ -2438,7 +2438,7 @@ can be controlled by query-string parameters:
     <tbody>
         <tr>
             <td>sortfield</td>
-            <td colspan="2">
+            <td rowspan="2">
                 The field to use when sorting the tool installation requests.
                 This can be any field that appears in each tool request in the
                 response body.
@@ -2449,7 +2449,7 @@ can be controlled by query-string parameters:
         </tr>
         <tr>
             <td>sortdir</td>
-            <td colspan="2">
+            <td rowspan="2">
                 The sort order to use in the response list. This can be either
                 `asc` for ascending or `desc` for descending. The values of this
                 field are case-insensitive.
@@ -2506,5 +2506,172 @@ $ curl -s "http://by-tor:8888/secured/tool-requests?user=nobody&limit=1" | pytho
             "version": "1.0.0"
         }
     ]
+}
+```
+
+## Updating the Status of a Tool Request
+
+Unsecured Endpoint: POST /tool-request
+
+This endpoint is used by Discovery Environment administrators to update the
+status of a tool request. The request body is in the following format:
+
+```json
+{
+    "uuid": "tool-request-uuid",
+    "status": "new-status-code",
+    "username": "de-administrator-username",
+    "comments": "administrator-comments'
+}
+```
+
+The fields are all fairly self-explanatory except that the transitions that the
+status code can make are limited. The valid status codes and status code
+transitions are listed in the following table:
+
+<table>
+    <thead>
+        <tr>
+            <th>Status Code</th>
+            <th>Description</th>
+            <th>Reachable From</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td rowspan="2">Submitted</td>
+            <td rowspan="2">
+                This is the initial status code for all tool requests.
+            </td>
+            <td>Submitted</td>
+        </tr>
+        <tr>
+            <td>Pending</td>
+        </tr>
+        <tr>
+            <td rowspan="5">Pending</td>
+            <td rowspan="5">
+                Indicates that the support team is awaiting more information
+                from the user who submitted the request.
+            </td>
+            <td>Submitted</td>
+        </tr>
+        <tr>
+            <td>Pending</td>
+        </tr>
+        <tr>
+            <td>Evaluation</td>
+        </tr>
+        <tr>
+            <td>Installation</td>
+        </tr>
+        <tr>
+            <td>Validation</td>
+        </tr>
+        <tr>
+            <td rowspan="3">Evaluation</td>
+            <td rowspan="3">
+                Indicates that the support team is evaluating the tool for
+                installation.
+            </td>
+            <td>Submitted</td>
+        </tr>
+        <tr>
+            <td>Evaluation</td>
+        </tr>
+        <tr>
+            <td>Pending</td>
+        </tr>
+        <tr>
+            <td rowspan="3">Installation</td>
+            <td rowspan="3">
+                Indicates that the support team is installing the tool.
+            </td>
+            <td>Evaluation</td>
+        </tr>
+        <tr>
+            <td>Installation</td>
+        </tr>
+        <tr>
+            <td>Pending</td>
+        </tr>
+        <tr>
+            <td rowspan="2">Validation</td>
+            <td rowspan="2">
+                Indicates that the support team is verifying that the tool was
+                installed correctly.
+            </td>
+            <td>Installation</td>
+        </tr>
+        <tr>
+            <td>Validation</td>
+        </tr>
+        <tr>
+            <td>Completion</td>
+            <td>Indicates that the tool was installed successfully.</td>
+            <td>Validation</td>
+        </tr>
+        <tr>
+            <td rowspan="4">Failed</td>
+            <td rowspan="4">Indicates that the tool could not be installed.</td>
+            <td>Submitted</td>
+        </tr>
+        <tr>
+            <td>Evaluation</td>
+        </tr>
+        <tr>
+            <td>Installation</td>
+        </tr>
+        <tr>
+            <td>Validation</td>
+        </tr>
+    </tbody>
+</table>
+
+The respose body is in the same format as the GET /tool-request service. Please
+see the documentation for that service for more information.
+
+Here's an example:
+
+```
+$ curl -sd '
+{
+    "uuid": "7C5ACB09-8675-4F04-B323-78431B801226",
+    "status": "Evaluation",
+    "username": "someadmin",
+    "comments": "About to do the evaluation."
+}
+' http://by-tor:8888/tool-request | python -mjson.tool
+{
+    "additional_data_file": "/path/to/additional_file",
+    "additional_info": "some additional info",
+    "architecture": "64-bit Generic",
+    "attribution": "An exemplary organization.",
+    "cmd_line": "jaguar some-file",
+    "description": "a really big cat",
+    "documentation_url": "http://www.example.org/path/to/docs.html",
+    "history": [
+        {
+            "comments": "",
+            "status": "Submitted",
+            "status_date": "1364257498649",
+            "updated_by": "nobody@iplantcollaborative.org"
+        },
+        {
+            "comments": "About to do the evaluation.",
+            "status": "Evaluation",
+            "status_date": "1364328278490",
+            "updated_by": "someadmin@iplantcollaborative.org"
+        }
+    ],
+    "multithreaded": true,
+    "name": "jaguar",
+    "phone": "520-555-1212",
+    "source_url": "http://www.example.org/path/to/source.tar.gz",
+    "submitted_by": "nobody@iplantcollaborative.org",
+    "success": true,
+    "test_data_path": "/path/to/test_file",
+    "uuid": "7C5ACB09-8675-4F04-B323-78431B801226",
+    "version": "1.0.0"
 }
 ```
