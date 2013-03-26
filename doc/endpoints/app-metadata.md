@@ -2419,3 +2419,92 @@ $ curl -sX PUT -d '
     "version": "1.0.0"
 }
 ```
+
+## Listing Tool Requests
+
+Scured Endpoint: GET /tool-requests
+
+This endpoint lists high level details about tool requests that have been
+submitted by a user. The number of results returned and the order of the results
+can be controlled by query-string parameters:
+
+<table>
+    <thead>
+        <tr>
+            <th>Parameter Name(s)</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>sortfield</td>
+            <td colspan="2">
+                The field to use when sorting the tool installation requests.
+                This can be any field that appears in each tool request in the
+                response body.
+            </td>
+        </tr>
+        <tr>
+            <td>sortField</td>
+        </tr>
+        <tr>
+            <td>sortdir</td>
+            <td colspan="2">
+                The sort order to use in the response list. This can be either
+                `asc` for ascending or `desc` for descending. The values of this
+                field are case-insensitive.
+            </td>
+        </tr>
+        <tr>
+            <td>sortDir</td>
+        </tr>
+        <tr>
+            <td>limit</td>
+            <td>The maximum number of results to return.</td>
+        </tr>
+        <tr>
+            <td>offset</td>
+            <td>The index of the first result to return.</td>
+        </tr>
+    </tbody>
+</table>
+
+The response body is in the following format:
+
+```json
+{
+    "success": true,
+    "tool_requests": [
+        {
+            "date_submitted": "timestamp",
+            "date_updated": "timestamp",
+            "name": "tool-name",
+            "status": "tool-request-status",
+            "updated_by": "username",
+            "uuid": "tool-request-id",
+            "version": "tool-version"
+        },
+        ...
+    ]
+}
+```
+
+Here's an example:
+
+```
+$ curl -s "http://by-tor:8888/secured/tool-requests?user=nobody&limit=1" | python -mjson.tool
+{
+    "success": true,
+    "tool_requests": [
+        {
+            "date_submitted": "1363047831085",
+            "date_updated": "1363047831085",
+            "name": "jaguar",
+            "status": "Submitted",
+            "updated_by": "nobody@iplantcollaborative.org",
+            "uuid": "D38A108F-0626-481B-A4C9-356462916642",
+            "version": "1.0.0"
+        }
+    ]
+}
+```
