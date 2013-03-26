@@ -2521,7 +2521,7 @@ status of a tool request. The request body is in the following format:
     "uuid": "tool-request-uuid",
     "status": "new-status-code",
     "username": "de-administrator-username",
-    "comments": "administrator-comments'
+    "comments": "administrator-comments"
 }
 ```
 
@@ -2642,6 +2642,82 @@ $ curl -sd '
     "comments": "About to do the evaluation."
 }
 ' http://by-tor:8888/tool-request | python -mjson.tool
+{
+    "additional_data_file": "/path/to/additional_file",
+    "additional_info": "some additional info",
+    "architecture": "64-bit Generic",
+    "attribution": "An exemplary organization.",
+    "cmd_line": "jaguar some-file",
+    "description": "a really big cat",
+    "documentation_url": "http://www.example.org/path/to/docs.html",
+    "history": [
+        {
+            "comments": "",
+            "status": "Submitted",
+            "status_date": "1364257498649",
+            "updated_by": "nobody@iplantcollaborative.org"
+        },
+        {
+            "comments": "About to do the evaluation.",
+            "status": "Evaluation",
+            "status_date": "1364328278490",
+            "updated_by": "someadmin@iplantcollaborative.org"
+        }
+    ],
+    "multithreaded": true,
+    "name": "jaguar",
+    "phone": "520-555-1212",
+    "source_url": "http://www.example.org/path/to/source.tar.gz",
+    "submitted_by": "nobody@iplantcollaborative.org",
+    "success": true,
+    "test_data_path": "/path/to/test_file",
+    "uuid": "7C5ACB09-8675-4F04-B323-78431B801226",
+    "version": "1.0.0"
+}
+```
+
+## Obtaining Tool Request Details
+
+Unsecured Endpoint: GET /tool-request/{uuid}
+
+This service obtains detailed information about a tool request. This is the
+service that the DE support team uses to obtain the request details. The
+response body is in the following format:
+
+```json
+{
+    "additional_data_file": "some-irods-path",
+    "additional_info": "some-additional-info",
+    "architecture": "tool-architecture-name",
+    "attribution": "tool-attribution",
+    "cmd_line": "command-line-description",
+    "description": "tool-description",
+    "documentation_url": "link-to-tool-documentation",
+    "history": [
+        {
+            "comments": "status-change-comments",
+            "status": "status-code",
+            "status_date": "milliseconds-since-epoch",
+            "updated_by": "username"
+        },
+        ...
+    ],
+    "multithreaded": "multithreaded-flag",
+    "name": "tool-name",
+    "phone": "user-phone-number",
+    "source_url": "link-or-path-to-tool-source",
+    "submitted_by": "username",
+    "success": true,
+    "test_data_path": "path-to-test-data",
+    "uuid": "tool-request-uuid",
+    "version": "tool-version"
+}
+```
+
+Here's an example:
+
+```
+$ curl -s http://by-tor:8888/tool-request/7C5ACB09-8675-4F04-B323-78431B801226 | python -mjson.tool
 {
     "additional_data_file": "/path/to/additional_file",
     "additional_info": "some additional info",
