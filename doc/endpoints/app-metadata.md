@@ -1,3 +1,50 @@
+# Table of Contents
+
+* [App Metadata Endpoints](#app-metadata-endpoints)
+    * [Listing Workflow Elements](#listing-workflow-elements)
+    * [Search Deployed Components](#search-deployed-components)
+    * [Listing Analysis Identifiers](#listing-analysis-identifiers)
+    * [Deleting Categories](#deleting-categories)
+    * [Valiating Analyses for Pipelines](#validating-analyses-for-pipelines)
+    * [Listing Data Objects in an Analysis](#listing-data-objects-in-an-analysis)
+    * [Categorizing Analyses](#categorizing-analyses)
+    * [Listing Analysis Categorizations](#listing-analysis-categorizations)
+    * [Determining if an Analysis Can be Exported](#determining-if-an-analysis-can-be-exported)
+    * [Adding Analyses to Analysis Groups](#adding-analyses-to-analysis-groups)
+    * [Getting Analyses in the JSON Format Required by the DE](#getting-analyses-in-the-json-format-required-by-the-de)
+    * [Getting Analysis Details](#getting-analysis-details)
+    * [Listing Analysis Groups](#listing-analysis-groups)
+    * [Listing Individual Analyses](#listing-individual-analyses)
+    * [Exporting a Template](#exporting-a-template)
+    * [Exporting an Analysis](#exporting-an-analysis)
+    * [Exporting Selected Deployed Components](#exporting-selected-deployed-components)
+    * [Permanently Deleting an Analysis](#permanently-deleting-an-analysis)
+    * [Logically Deleting an Analysis](#logically-deleting-an-analysis)
+    * [Previewing Templates](#previewing-templates)
+    * [Previewing Analyses](#previewing-analyses)
+    * [Updating an Existing Template](#updating-an-existing-template)
+    * [Updating an Analysis](#updating-an-analysis)
+    * [Forcing an Analysis to be Updated](#forcing-an-analysis-to-be-updated)
+    * [Importing a Template](#importing-a-template)
+    * [Importing an Analysis](#importing-an-analysis)
+    * [Importing Tools](#importing-tools)
+    * [Updating Top-Level Analysis Information](#updating-top-level-analysis-information)
+    * [Getting Analysis JSON in DE Format](#geting-analysis-json-in-de-format)
+    * [Rating Analyses](#rating-analyses)
+    * [Deleting Analysis Ratings](#deleting-analysis-ratings)
+    * [Searching for Analyses](#searching-for-analyses)
+    * [Listing Analyses in an Analysis Group](#listing-analyses-in-an-analysis-group)
+    * [Listing Deployed Components in an Analysis](#listing-deployed-components-in-an-analysis)
+    * [Updating the Favorite Analyses List](#updating-the-favorite-analysis-list)
+    * [Making an Analysis Available for Editing in Tito](#making-an-analysis-available-for-editing-in-tito)
+    * [Making a Copy of an Analysis Available for Editing in Tito](#making-a-copy-of-an-analysis-available-for-editing-in-tito)
+    * [Submitting an Analysis for Public Use](#submitting-an-analysis-for-public-use)
+    * [Getting an App Description](#getting-an-app-description)
+    * [Requesting Tool Installation](#requesting-tool-installation)
+    * [Listing Tool Requests](#listing-tool-requests)
+    * [Updating the Status of a Tool Request](#updating-the-status-of-a-tool-request)
+    * [Obtaining Tool Request Details](#obtaining-tool-request-details)
+
 # App Metadata Endpoints
 
 ## Listing Workflow Elements
@@ -1552,7 +1599,7 @@ request body is in the following format:
 Only the "id" field is required; the rest of the fields will be left unmodified
 if they're not specified.
 
-## Getting Analyses in the JSON Format Required by the DE
+## Getting Analysis JSON in DE Format
 
 Secured Endpoint: GET /secured/template/{analysis-id}
 
