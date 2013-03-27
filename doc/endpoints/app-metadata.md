@@ -5,7 +5,7 @@
     * [Search Deployed Components](#search-deployed-components)
     * [Listing Analysis Identifiers](#listing-analysis-identifiers)
     * [Deleting Categories](#deleting-categories)
-    * [Valiating Analyses for Pipelines](#validating-analyses-for-pipelines)
+    * [Validating Analyses for Pipelines](#validating-analyses-for-pipelines)
     * [Listing Data Objects in an Analysis](#listing-data-objects-in-an-analysis)
     * [Categorizing Analyses](#categorizing-analyses)
     * [Listing Analysis Categorizations](#listing-analysis-categorizations)
@@ -29,13 +29,12 @@
     * [Importing an Analysis](#importing-an-analysis)
     * [Importing Tools](#importing-tools)
     * [Updating Top-Level Analysis Information](#updating-top-level-analysis-information)
-    * [Getting Analysis JSON in DE Format](#geting-analysis-json-in-de-format)
+    * [Getting Analysis JSON in DE Format](#getting-analysis-json-in-de-format)
     * [Rating Analyses](#rating-analyses)
     * [Deleting Analysis Ratings](#deleting-analysis-ratings)
     * [Searching for Analyses](#searching-for-analyses)
     * [Listing Analyses in an Analysis Group](#listing-analyses-in-an-analysis-group)
     * [Listing Deployed Components in an Analysis](#listing-deployed-components-in-an-analysis)
-    * [Updating the Favorite Analyses List](#updating-the-favorite-analysis-list)
     * [Making an Analysis Available for Editing in Tito](#making-an-analysis-available-for-editing-in-tito)
     * [Making a Copy of an Analysis Available for Editing in Tito](#making-a-copy-of-an-analysis-available-for-editing-in-tito)
     * [Submitting an Analysis for Public Use](#submitting-an-analysis-for-public-use)
@@ -564,7 +563,7 @@ $ curl -sd '
 }
 ```
 
-## Valiating Analyses for Pipelines
+## Validating Analyses for Pipelines
 
 Unsecured Endpoint: GET /validate-analysis-for-pipelines/{analysis-id}
 
