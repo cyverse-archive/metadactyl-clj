@@ -1,3 +1,10 @@
+# Table of Contents
+
+* [Installing and Configuring metadactyl-clj](#installing-and-configuring-metadactyl-clj)
+    * [Primary Configuration](#primary-configuration)
+    * [Zookeeper Connection Information](#zookeeper-connection-information)
+    * [Logging Configuration](#logging-configuration)
+
 # Installing and Configuring metadactyl-clj
 
 metadactyl-clj is packaged as an RPM and published in iPlant's YUM repositories.
