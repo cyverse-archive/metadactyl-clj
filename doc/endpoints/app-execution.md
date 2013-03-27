@@ -1,3 +1,13 @@
+# Table of Contents
+
+* [App Execution Endpoints](#app-execution-endpoints)
+    * [Obtaining Property Values for a Previously Executed Job](#obtaining-property-values-for-a-previously-executed-job)
+    * [Obtaining Information to Rerun a Job](#obtaining-information-to-rerun-a-job)
+    * [Submitting a Job for Execution](#submitting-a-job-for-execution)
+    * [Listing Jobs](#listing-jobs)
+    * [Getting Status Information for Selected Jobs](#getting-status-information-for-selected-jobs)
+    * [Deleting Jobs](#deleting-jobs)
+
 # App Execution Endpoints
 
 ## Obtaining Property Values for a Previously Executed Job
@@ -116,7 +126,7 @@ $ curl -s http://by-tor:8888/get-property-values/jebf8120d-0ccb-45d1-bae6-849620
 }
 ```
 
-#### Obtaining Information to Rerun a Job
+## Obtaining Information to Rerun a Job
 
 Unsecured Endpoint: GET /analysis-rerun-info/{job-id}
 
