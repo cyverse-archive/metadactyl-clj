@@ -1,3 +1,9 @@
+# Table of Contents
+
+* [Miscellaneous Endpoints](#miscellaneous-endpoints)
+    * [Verifying that metadactyl-clj is Running](#verifying-that-metadactyl-clj-is-running)
+    * [Initializing a User's Workspace](#initializing-a-user's-workspace)
+
 # Miscellaneous Endpoints
 
 ## Verifying that metadactyl-clj is Running

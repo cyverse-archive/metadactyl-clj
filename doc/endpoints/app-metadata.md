@@ -35,6 +35,7 @@
     * [Searching for Analyses](#searching-for-analyses)
     * [Listing Analyses in an Analysis Group](#listing-analyses-in-an-analysis-group)
     * [Listing Deployed Components in an Analysis](#listing-deployed-components-in-an-analysis)
+    * [Updating the Favorite Analyses List](#updating-the-favorite-analyses-list)
     * [Making an Analysis Available for Editing in Tito](#making-an-analysis-available-for-editing-in-tito)
     * [Making a Copy of an Analysis Available for Editing in Tito](#making-a-copy-of-an-analysis-available-for-editing-in-tito)
     * [Submitting an Analysis for Public Use](#submitting-an-analysis-for-public-use)
