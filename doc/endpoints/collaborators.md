@@ -9,7 +9,7 @@
 
 ## Listing Collaborators
 
-Secured Endpoint: GET /secured/collaborators
+*Secured Endpoint:* GET /secured/collaborators
 
 This service can be used to list all of the users that the current user has
 selected as collaborators. The response body is in the following format:
@@ -42,7 +42,7 @@ $ curl -s "http://by-tor:8888/secured/collaborators?user=snow-dog&email=sd@examp
 
 ## Adding Collaborators
 
-Secured Endpoint: POST /secured/collaborators
+*Secured Endpoint:* POST /secured/collaborators
 
 This service can be used to add one or more collaborators to the list of
 collaborators for the current user. The request body is in the following format:
@@ -76,7 +76,7 @@ $ curl `-sd '
 
 ## Removing Collaborators
 
-Secured Endpoint: POST /secured/remove-collaborators
+*Secured Endpoint:* POST /secured/remove-collaborators
 
 This service can be used to remove one or more collaborators from the list of
 collaborators for the current user. The request body is in the following format:

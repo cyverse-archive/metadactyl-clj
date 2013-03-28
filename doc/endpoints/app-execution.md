@@ -12,7 +12,7 @@
 
 ## Obtaining Property Values for a Previously Executed Job
 
-Unsecured Endpoint: GET /get-property-values/{job-id}
+*Unsecured Endpoint:* GET /get-property-values/{job-id}
 
 This service obtains the property values that were passed to a job that has
 already been executed so that the user can see which values were passed to the
@@ -128,7 +128,7 @@ $ curl -s http://by-tor:8888/get-property-values/jebf8120d-0ccb-45d1-bae6-849620
 
 ## Obtaining Information to Rerun a Job
 
-Unsecured Endpoint: GET /analysis-rerun-info/{job-id}
+*Unsecured Endpoint:* GET /analysis-rerun-info/{job-id}
 
 It's occasionally nice to be able to rerun a job that was prevously executed,
 possibly with some tweaked values. The UI uses this service to obtain analysis
@@ -220,7 +220,7 @@ $ curl -s http://by-tor:8888/analysis-rerun-info/j41bef770-f68c-40a2-8da4-2f53e2
 
 ## Submitting a Job for Execution
 
-Secured Endpoint: PUT /secured/workspaces/{workspace-id}/newexperiment
+*Secured Endpoint:* PUT /secured/workspaces/{workspace-id}/newexperiment
 
 The DE uses this service to submit jobs for execution on behalf of the user. The
 request body is in the following format:
@@ -293,7 +293,7 @@ $ curl -XPUT -sd '
 
 ## Listing Jobs
 
-Secured Endpoint: GET /secured/workspaces/{workspace-id}/executions/list
+*Secured Endpoint:* GET /secured/workspaces/{workspace-id}/executions/list
 
 Information about the status of jobs that have previously been submitted for
 execution can be obtained using this service. The DE uses this service to
@@ -432,7 +432,7 @@ $ curl -s "http://by-tor:8888/secured/workspaces/4/executions/list?user=snow-dog
 
 ## Getting Status Information for Selected Jobs
 
-Secured Endpoint: POST /secured/workspaces/{workspace-id}/executions/list
+*Secured Endpoint:* POST /secured/workspaces/{workspace-id}/executions/list
 
 The UI needs to be able to retrieve status information for selected jobs when
 updating the analyses window. This endpoint provides it with the means to do so.
@@ -521,7 +521,7 @@ $ curl -sd '
 
 ## Deleting Jobs
 
-Secured Endpoint: PUT /secured/workspaces/{workspace-id}/executions/delete
+*Secured Endpoint:* PUT /secured/workspaces/{workspace-id}/executions/delete
 
 After a job has completed, a user may not want to view the job status
 information in the _Analyses_ window any longer. This service provides a way to

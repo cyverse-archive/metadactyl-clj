@@ -8,7 +8,7 @@
 
 ## Verifying that metadactyl-clj is Running
 
-Unsecured Endpoint: GET /
+*Unsecured Endpoint:* GET /
 
 The root path in metadactyl-clj can be used to verify that metadactyl-clj is
 actually running and is responding. Currently, the response to this URL contains
@@ -21,7 +21,7 @@ Welcome to Metadactyl!
 
 ## Initializing a User's Workspace
 
-Secured Endpoint: GET /secured/bootstrap
+*Secured Endpoint:* GET /secured/bootstrap
 
 The DE calls this service as soon as the user logs in. If the user has never
 logged in before then the service initializes the user's workspace and returns

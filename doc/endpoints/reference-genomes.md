@@ -8,7 +8,7 @@
 
 ## Exporting Reference Genomes
 
-Secured Endpoint: GET /secured/reference-genomes
+*Secured Endpoint:* GET /secured/reference-genomes
 
 This service can be used to export reference genomes from the discovery
 environment, presumably in order to import them into another deployment of the
@@ -38,7 +38,7 @@ $ curl -s "http://by-tor:8888/secured/reference-genomes?user=snow-dog&email=sd@e
 
 ## Importing Reference Genomes
 
-Secured Endpoint: PUT /secured/reference-genomes
+*Secured Endpoint:* PUT /secured/reference-genomes
 
 This service can be used to import reference genomes into the discovery
 environment. The request body for this service should be in the same format as
