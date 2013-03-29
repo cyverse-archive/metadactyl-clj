@@ -1,5 +1,6 @@
 # Table of Contents
 
+* [Overview](#overview)
 * [App Metadata Administration Services](#app-metadata-administration-services)
     * [Exporting a Template](#exporting-a-template)
     * [Exporting an Analysis](#exporting-an-analysis)
@@ -16,6 +17,328 @@
     * [Importing Tools](#importing-tools)
     * [Updating Top-Level Analysis Information](#updating-top-level-analysis-information)
     * [Updating the Favorite Analyses List](#updating-the-favorite-analyses-list)
+
+# Overview
+
+The app metadata model used by the DE has three major types of components:
+_deployed components_, _templates_ and _apps_.
+
+Deployed components represent tools that have been deployed within the Discovery
+Environment. Currently, these refer to command-line tools that can be executed
+in the Discovery Environment, either from within the Discovery Environment's
+Condor cluster or on the HPC resources at TACC.
+
+Templates represent a single use of a deployed component, including command-line
+arguments and options that the deployed component supports. One important thing
+to keep in mind is that a template does not have to describe every possible use
+of a deployed component and it is common for multiple templates to be used to
+describe distinct usages of a single deployed component. For example, it would
+be perfectly reasonable to have two templates for the Unix utility, `tar`: one
+for extracting files from a tarball and another for building a tarball. The
+structure of a template is fairly deep and complex, and will be described in
+more detail later.
+
+Apps, represent groups of one or more templates that can be run by a user from
+within the Discovery Environment. A template cannot be used directly by a user
+without being included in an app. And a single app may contain multple templates
+strung together into a pipeline. Note that the `/import-template` service in
+metadactyl automatically generates a single-step app containing that template.
+This is done as a convenience because single-step apps are common.
+
+A fourth type of component, _notification sets_, was supported at one time, but
+it is no longer supported as of DE version 1.8. Some vestiges of notification
+sets still exist, but they are no longer used by the DE. All remaining support
+for them will be removed at some point in the future.
+
+## Deployed Components
+
+Each deployed component contains information about a command-line tool that is
+deployed in the Discovery Environment. This includes the path to the directory
+containing the executable file, the name of the executable file and several
+pieces of information to determine how the tool is executed:
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>Field Name</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Name</td>
+            <td>The name of the executable file.</td>
+        </tr>
+        <tr>
+            <td>Location</td>
+            <td>The path to the directory containing the executable file.</td>
+        </tr>
+        <tr>
+            <td>Description</td>
+            <td>A brief description of the tool.</td>
+        </tr>
+        <tr>
+            <td>Version</td>
+            <td>The tool version.</td>
+        </tr>
+        <tr>
+            <td>Attribution</td>
+            <td>
+                Information about the people or entities that created the tool.
+            </td>
+        </tr>
+        <tr>
+            <td>Integration Data</td>
+            <td>Information related to the tool installation request.</td>
+        </tr>
+        <tr>
+            <td>Tool Type</td>
+            <td>The type of the tool.</td>
+        </tr>
+    </tbody>
+</table>
+
+The integration data and tool type both deserve special attention. The
+integration data includes the name and email address of the person who requested
+that the tool be installed along with example input files and expected output
+files for a test run of the tool. The tool type indicates where the utility
+runs. There are currently two available tool types: `executable`, which
+indicates that the tool runs on the Discovery Environment's Condor cluster, and
+`fAPI`, which indicates that the job is submitted to the Foundation API.
+
+## Templates
+
+As mentioned above, each template describes one possible use of a deployed
+component. This includes descriptions of all of the options and command-line
+arguments required for that use of the deployed component. The template
+structure is nested fairly deeply, so we'll start with a brief description of
+each level in the structure:
+
+<table>
+    <thead>
+        <tr>
+            <th>Structure Level</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Template</td>
+            <td>The top level of the template structure</td>
+        </tr>
+        <tr>
+            <td>Property Group</td>
+            <td>
+                Represents a group of related options or command-line arguments.
+            </td>
+        </tr>
+        <tr>
+            <td>Property</td>
+            <td>Represents a single option or command-line argument.</td>
+        </tr>
+        <tr>
+            <td>Property Type</td>
+            <td>Indicates the type of information accepted by the property.</td>
+        </tr>
+        <tr>
+            <td>Validator</td>
+            <td>Indicates how property values should be validated.</td>
+        </tr>
+        <tr>
+            <td>Rule</td>
+            <td>Represents one rule for validating a property value.</td>
+        </tr>
+        <tr>
+            <td>Rule Type</td>
+            <td>Indicates how rule arguments should be interpreted.</td>
+        </tr>
+        <tr>
+            <td>Rule Argument</td>
+            <td>Provies an argument to a rule.</td>
+        </tr>
+        <tr>
+            <td>Data Object</td>
+            <td>Represents one or more input or output files.</td>
+        </tr>
+        <tr>
+            <td>Info Type</td>
+            <td>
+                Represents the type of information in an input or output file.
+            </td>
+        </tr>
+        <tr>
+            <td>Data Format</td>
+            <td>Represents the format of an input or output file.</td>
+        </tr>
+    </tbody>
+</table>
+
+There are several fields associated with the top level of the template
+structure, most of which are largely ignored. Aside from the identifier, the
+only field that is commonly used is the deployed component identifier. The name
+field is used by the import service in some cases, which will be described
+later, but it is not used otherwise.
+
+<table>
+    <thead>
+        <tr>
+            <th>Field Name</th>
+            <th>Description</th>
+        <tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Name</td>
+            <td>The name of the template.</td>
+        </tr>
+        <tr>
+            <td>Description</td>
+            <td>A brief description of the template.</td>
+        </tr>
+        <tr>
+            <td>Label</td>
+            <td>A display label for the template.</td>
+        </tr>
+        <tr>
+            <td>Type</td>
+            <td>The type of the template.</td>
+        </tr>
+        <tr>
+            <td>Deployed Component Identifier</td>
+            <td>A reference to the deployed component.</td>
+        </tr>
+    </tbody>
+</table>
+
+### Property Group
+
+A property group is nothing more than a way to group related options and
+command-line arguments. This allows the Discovery Environment to group related
+things together in the user interface.
+
+<table>
+    <thead>
+        <tr>
+            <th>Field Name</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Name</td>
+            <td>The name of the property group.</td>
+        </tr>
+        <tr>
+            <td>Description</td>
+            <td>A brief description of the property group.</td>
+        </tr>
+        <tr>
+            <td>Label</td>
+            <td>The display label for the property group.</td>
+        </tr>
+        <tr>
+            <td>Property Group Type</td>
+            <td>The type of the property group.</td>
+        </tr>
+        <tr>
+            <td>Visibility Flag</td>
+            <td>Indicates whether or not the group is displayed in the DE.</td>
+        </tr>
+    </tbody>
+</table>
+
+The property group label is used as the label of an accordion panel in the UI
+that is generated for the template. The visibility flag indicates whether or not
+the property group should be displayed in the UI. Hidden property groups can be
+useful for grouping properties that are not configurable by the end user.
+
+### Property
+
+A property represents a single option or command-line argument for a tool. This
+is where things start to get a little more interesting. Properties come in
+several different types, which indicate the type of information accepted by the
+property.
+
+<table>
+    <thead>
+        <tr>
+            <th>Field Name</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Name</td>
+            <td>The command-line flag to use for the property.</td>
+        </tr>
+        <tr>
+            <td>Description</td>
+            <td>A brief description of the property.</td>
+        </tr>
+        <tr>
+            <td>Label</td>
+            <td>
+                The display label for the property. This field determines how
+                the widget associated with the property will be labeled in the
+                UI.
+            </td>
+        </tr>
+        <tr>
+            <td>Default Valure</td>
+            <td>
+                The value used for the property if none is provided. If this
+                field is blank then the default value is also blank.
+            </td>
+        </tr>
+        <tr>
+            <td>Visibility Flag</td>
+            <td>
+                Indicates if the property is visible in the UI. Hidden
+                properties are useful for settings that have to be passed to
+                the tool but are not configruable by end users.
+            </td>
+        </tr>
+        <tr>
+            <td>Order Index</td>
+            <td>
+                Indicates the relative command-line order of the property. For
+                example, if a property with an order index of 1 will be included
+                first on the command line and a property with an order index of
+                2 will be second.
+            </td>
+        </tr>
+        <tr>
+            <td>Property Type</td>
+            <td>
+                The type of information accepted by the property. In the
+                database, this field is a foreign key into a table that lists
+                all of the property types that are supported by the DE.
+            </td>
+        </tr>
+        <tr>
+            <td>Validator</td>
+            <td>
+                Information about how to validate property values, if
+                applicable.
+            </td>
+        </tr>
+        <tr>
+            <td>Data Object</td>
+            <td>
+                Information about an output or input file associated with the
+                property, if applicable.
+            </td>
+        </tr>
+        <tr>
+            <td>Omit if Blank Flag</td>
+            <td>
+                Indicates whether or not the property should be omitted from the
+                command line if its value is blank.
+            </td>
+        </tr>
+    </tbody>
+</table>
+
 
 # App Metadata Administration Services
 
