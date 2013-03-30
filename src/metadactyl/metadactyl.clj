@@ -367,8 +367,7 @@
 (defn import-workflow
   "This service will import a workflow into the DE."
   [body]
-  (.importWorkflow (workflow-import-service) (slurp body))
-  (empty-response))
+  (.importWorkflow (workflow-import-service) (slurp body)))
 
 (defn import-tools
   "This service will import deployed components into the DE and send
@@ -400,15 +399,13 @@
 (defn update-workflow
   "This service will either update an existing workflow or import a new workflow."
   [body]
-  (.updateWorkflow (workflow-import-service) (slurp body))
-  (empty-response))
+  (.updateWorkflow (workflow-import-service) (slurp body)))
 
 (defn force-update-workflow
   "This service will either update an existing workflow or import a new workflow.
    Vetted workflows may be updated."
   [body {:keys [update-mode]}]
-  (.forceUpdateWorkflow (workflow-import-service) (slurp body) update-mode)
-  (empty-response))
+  (.forceUpdateWorkflow (workflow-import-service) (slurp body) update-mode))
 
 (defn delete-workflow
   "This service will logically remove a workflow from the DE."
