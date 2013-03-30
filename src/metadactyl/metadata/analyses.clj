@@ -59,7 +59,7 @@
   "Converts a job state map to an analysis listing map."
   [state]
   {:id               (:uuid state)
-   :name             (or (:display_name state) (:name state))
+   :name             (first (remove string/blank? [(:display_name state) (:name state)]))
    :startdate        (str (format-timestamp (:submission_date state "")))
    :enddate          (str (format-timestamp (:completion_date state "")))
    :analysis_id      (:analysis_id state "")
