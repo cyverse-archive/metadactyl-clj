@@ -26,6 +26,10 @@
         * [Data Object Mappings](#data-object-mappings)
         * [Transformation Values](#transformation-values)
         * [Template Groups](#template-groups)
+* [App Metadata JSON](#app-metadata-json)
+    * [Template JSON](#template-json)
+    * [App JSON](#app-json)
+    * [App JSON for UI](#app-json-for-ui)
 * [App Metadata Administration Services](#app-metadata-administration-services)
     * [Exporting a Template](#exporting-a-template)
     * [Exporting an Analysis](#exporting-an-analysis)
@@ -1260,6 +1264,20 @@ currently restricted to containing either apps or subgroups, but not both.
         </tr>
     </tbody>
 </table>
+
+# App Metadata JSON
+
+## Template JSON
+
+TODO: document me.
+
+## App JSON
+
+TODO: document me.
+
+## App JSON for UI
+
+TODO: document me.
 
 # App Metadata Administration Services
 
