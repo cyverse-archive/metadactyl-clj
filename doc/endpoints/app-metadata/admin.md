@@ -22,7 +22,7 @@
         * [Suggested Groups](#suggested-groups)
         * [Transformation Steps](#transformation-steps)
         * [Transformations](#transformations)
-        * [Input/Output Mappings](#input/output-mappings)
+        * [Input/Output Mappings](#inputoutput-mappings)
         * [Data Object Mappings](#data-object-mappings)
         * [Transformation Values](#transformation-values)
         * [Template Groups](#template-groups)
