@@ -1,6 +1,31 @@
 # Table of Contents
 
 * [Overview](#overview)
+    * [Deployed Components](#deployed-components)
+    * [Templates](#templates)
+        * [Property Groups](#property-groups)
+        * [Properties](#properties)
+        * [Property Types](#property-types)
+        * [Value Types](#value-types)
+        * [Validators](#validators)
+        * [Rules](#rules)
+        * [Rule Arguments](#rule-arguments)
+        * [Data Objects](#data-objects)
+        * [Data Object Multiplicity](#data-object-multiplicity)
+        * [Data Sources](#data-sources)
+        * [Info Types](#info-types)
+        * [Data Formats](#data-formats)
+    * [Apps](#apps)
+        * [Transformation Activities](#transformation-activities)
+        * [Transformation Activity References](#transformation-activity-references)
+        * [Ratings](#ratings)
+        * [Suggested Groups](#suggested-groups)
+        * [Transformation Steps](#transformation-steps)
+        * [Transformations](#transformations)
+        * [Input/Output Mappings](#input/output-mappings)
+        * [Data Object Mappings](#data-object-mappings)
+        * [Transformation Values](#transformation-values)
+        * [Template Groups](#template-groups)
 * [App Metadata Administration Services](#app-metadata-administration-services)
     * [Exporting a Template](#exporting-a-template)
     * [Exporting an Analysis](#exporting-an-analysis)
@@ -1045,27 +1070,196 @@ suggestions is typically chosen.
 
 ### Transformation Steps
 
-TODO: document me.
+A transformation step represents a single step in an app. Each step eventually
+maps to a single template. For multi-step apps, each step is referenced by a set
+of input/output mappings, which are used to map the outputs from one step to the
+inputs of a subsequent step.
+
+<table>
+    <thead>
+        <tr>
+            <th>Field Name</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Name</td>
+            <td>The name of the step.</td>
+        </tr>
+        <tr>
+            <td>Description</td>
+            <td>A brief description of the step.</td>
+        </tr>
+        <tr>
+            <td>Transformation</td>
+            <td>The transformation, which refers to the template.</td>
+        </tr>
+    </tbody>
+</table>
 
 ### Transformations
 
-TODO: document me.
+A transformation represents a way to customize a template by specifying constant
+values for certain properties. The original purpose of a transformation was to
+foster template reuse, but transformations tend not to be used for this purpose
+in practice. Instead, transformations just serve as an empty link from a
+transformation step to a template.
+
+<table>
+    <thead>
+        <tr>
+            <th>Field Name</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Name</td>
+            <td>The name of the transformation.</td>
+        </tr>
+        <tr>
+            <td>Description</td>
+            <td>A brief description of the transformation.</td>
+        </tr>
+        <tr>
+            <td>Template ID</td>
+            <td>
+                The external identifier of the template used by the
+                transformation. This is often a point of confusion because the
+                template ID is not listed as a foreign key in the database.
+            </td>
+        </tr>
+        <tr>
+            <td>Transformation Values</td>
+            <td>The property values specified by the transformation.</td>
+        </tr>
+    </tbody>
+</table>
 
 ### Input/Output Mappings
 
-TODO: document me.
+Input/output mappings only apply to multi-step apps; they indicate which outputs
+of one step should be applied to which inputs of a subsequent step.
+
+<table>
+    <thead>
+        <tr>
+            <th>Field Name</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Source</td>
+            <td>The source transformation step</td>
+        </tr>
+        <tr>
+            <td>Target</td>
+            <td>The target transformation step</td>
+        </tr>
+        <tr>
+            <td>Data Object Mappings</td>
+            <td>The actual data object mappings.</td>
+        </tr>
+    </tbody>
+</table>
 
 ### Data Object Mappings
 
-TODO: document me.
+Data object mappings only apply to multi-step apps; they map an output of one
+step to the input of a subsequent step.
+
+<table>
+    <thead>
+        <tr>
+            <th>Field Name</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Mapping</td>
+            <td>The associated input/output mapping.</td>
+        </tr>
+        <tr>
+            <td>Input</td>
+            <td>The external data object ID for the input.</td>
+        </tr>
+        <tr>
+            <td>Output</td>
+            <td>The external data object ID for the output.</td>
+        </tr>
+    </tbody>
+</table>
 
 ### Transformation Values
 
-TODO: document me.
+A transformation value specifies a constant value for a property inside a
+template referenced by a transformation.
+
+<table>
+    <thead>
+        <tr>
+            <th>Field Name</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Transformation</td>
+            <td>The transformation to which this value applies.</td>
+        </tr>
+        <tr>
+            <td>Value</td>
+            <td>The constant property value.</td>
+        </tr>
+        <tr>
+            <td>Property</td>
+            <td>
+                The identifier of the property to assign the constant value to.
+            </td>
+        </tr>
+    </tbody>
+</table>
 
 ### Template Groups
 
-TODO: document me.
+Template groups are somewhat misnamed. A template group doesn't contain a set of
+templates; it contains a set of apps. Template groups can also contain other
+template groups so that apps can be grouped hierarchically. Template groups are
+currently restricted to containing either apps or subgroups, but not both.
+
+<table>
+    <thead>
+        <tr>
+            <th>Field Name</th>
+            <th>Field Value</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Name</td>
+            <td>The display name of the template group.</td>
+        </tr>
+        <tr>
+            <td>Description</td>
+            <td>A brief description of the template group.</td>
+        </tr>
+        <tr>
+            <td>Workspace</td>
+            <td>The workspace that the template group belongs to.</td>
+        </tr>
+        <tr>
+            <td>Subgroups</td>
+            <td>The list of subgroups in the current group.</td>
+        </tr>
+        <tr>
+            <td>Templates</td>
+            <td>The list of templates in the current group.</td>
+        </tr>
+    </tbody>
+</table>
 
 # App Metadata Administration Services
 
