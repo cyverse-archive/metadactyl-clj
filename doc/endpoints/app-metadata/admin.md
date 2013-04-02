@@ -1616,7 +1616,197 @@ dealing with this field.
 
 ### Template JSON - Data Object
 
+<table>
+    <thead>
+        <tr>
+            <th>Accepted Names</th>
+            <th>Description</th>
+            <th>Produced Name</th>
+            <th>Required</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>id</td>
+            <td>the data object identifier</td>
+            <td>id</td>
+            <td>no</td>
+        </tr>
+        <tr>
+            <td>name, label, output_filename</td>
+            <td>described in detail below</td>
+            <td>
+                name (for input properties),
+                output_filename (for output properties)
+            </td>
+            <td>no</td>
+        </tr>
+        <tr>
+            <td>type, File, file_info_type</td>
+            <td>described in detail below</td>
+            <td>file_info_type</td>
+            <td>no</td>
+        </tr>
+        <tr>
+            <td>multiplicity</td>
+            <td>indicates the number of files accepted or produced</td>
+            <td>multiplicity</td>
+            <td>yes</td>
+        </tr>
+        <tr>
+            <td>order</td>
+            <td>specifies the relative order in the arugment list</td>
+            <td>order</td>
+            </td>no</td>
+        </tr>
+        <tr>
+            <td>switch, option, param_option, cmdSwitch</td>
+            <td>the flag to use on the command line</td>
+            <td>cmdSwitch</td>
+            <td>no</td>
+        </tr>
+        <tr>
+            <td>required</td>
+            <td>
+                indicates whether or not an output name or an input must be
+                specified
+            </td>
+            <td>required</td>
+            <td>no</td>
+        </tr>
+        <tr>
+            <td>retain</td>
+            <td>
+                indicates whether or not the data object should be copied back
+                to the job output directory in iRODS
+            </td>
+            <td>retain</td>
+            <td>no</td>
+        </tr>
+        <tr>
+            <td>is_implicit</td>
+            <td>
+                indicates that the name of an output file is not specified on
+                the command line
+            </td>
+            <td>is_implicit</td>
+            <td>no</td>
+    </tbody>
+</table>
 
+A lot of the fields in data objects are vestigial remains from the time when
+data objects were referenced directly from within the template instead of being
+associated with a property, which is no longer the case. The import and export
+JSON could be simplified quite a bit, but we haven't had the time to devote to
+the simplification yet.
+
+As usual, the `id` field is optional and an identifier will be generated if none
+is provided.
+
+The `name` field is overloaded in data objects just like it is in other template
+components, which can be a cause for confusion at times. For input properties,
+the name is used to specify the prompt to use in the UI, meaning that it serves
+essentially the same purpose as the `label` field for a property, which is why
+`label` is used as a synonym for `name` in this field. For output properties,
+the name was once used as the default output file name. Fortunately, this is no
+longer the case. Instead, the name field is ignored for output data objects and
+the default value field from the associated property is used instead.
+
+The `type` field contains the name of the information type that should be
+associated with the file, which indicates what type of information is contained
+within the file. You can use the `/get-workflow-elements/info-types` endpoint to
+obtain the list of valid info types.
+
+The `multiplicity` field indicates how many files are either consumed or
+produced by an app for a specific property. The available multiplicity names are
+currently `single`, `many` and `folder`, representing single files, multiple
+files and a folder containing one or more files, respectively.
+
+The `order` field currently only applies to input properties, which still use
+the data object to format the job request that is sent down to the JEX. All
+other properties, including output properties, use the `order` field in the
+property to determine the relative command-line order.
+
+The `switch` field also currently only applies to input properties, and it
+specifies the option flag used on the command line. If this field is blank or
+null then, assuming the argument appears on the command line (more on this
+later), the argument is assumed to be positional.
+
+For input properties, the `required` parameter indicates whether or not an input
+file is required for an app to run. For output properties, this parameter
+indicates whether or not the name of an output file must be specified in order
+for an app to run.
+
+The `retain` field indicates whether or not the data object should be copied
+back into the job results folder in iRODS after the job completes.
+
+The `is_implicit` field indicates whether or not the name of an output file is
+implicitly determined by the app itself, and thus not included on the command
+line. If the output file name is implicit then the output file name either must
+always be the same or it must follow a naming convention that can easily be
+matched with a glob pattern.
+
+### Template JSON - Validator
+
+<table>
+    <thead>
+        <tr>
+            <th>Accepted Names</th>
+            <th>Description</th>
+            <th>Produced Name</th>
+            <th>Required</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>id</td>
+            <td>the validator identifier</td>
+            <td>id</td>
+            <td>no</td>
+        </tr>
+        <tr>
+            <td>name</td>
+            <td>the validator name</td>
+            <td>name</td>
+            <td>no</td>
+        </tr>
+        <tr>
+            <td>required</td>
+            <td>true if the field is required to have a value</td>
+            <td>required</td>
+            <td>no</td>
+        </tr>
+        <tr>
+            <td>rules</td>
+            <td>the list of validation rules associated with the validator</td>
+            <td>rules</td>
+            <td>no</td>
+        </tr>
+    </tbody>
+</table>
+
+The `name` field is optional and largely irrelevant.
+
+The `required` field indicates whether or not a non-blank value is required for
+the property in order for the app to function property. If this field is set to
+true and the user does not enter a value then the UI should prevent the job from
+being submitted.
+
+### Template JSON - Rule
+
+Rules are described in the JSON a little bit differently from other metadata
+components. Instead of having a dedicated JSON format, each rule is described as
+a JSON object containing exactly one member. The name of the member is the name
+of the type of rule being used for validation. You can get the list of accepted
+rule types using the `/get-workflow-elements/rule-types` endpoint. The value of
+the member is a list of arguments to pass to that rule. An example of a valid
+rule specification would be:
+
+```json
+{
+    "IntRange": [ 0, 42 ]
+}
+```
 
 ## App JSON
 
