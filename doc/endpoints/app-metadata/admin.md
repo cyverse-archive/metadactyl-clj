@@ -1287,7 +1287,7 @@ are intended to be convenience endpoints for dealing with single-step apps in
 order to avoid dealing with the more complicated JSON format associated with the
 `/*-workflow` endpoints.
 
-*Template*
+### Template JSON - Template
 
 <table>
     <thead>
@@ -1383,7 +1383,7 @@ single-step app corresponding to the template, however.
 The `groups` field is required, but it's permitted to be an empty JSON array (or
 an object containing an empty JSON array).
 
-*Implementation*
+### Template JSON - Implementation
 
 <table>
     <thead>
@@ -1416,7 +1416,7 @@ attempt to avoid adding duplicate integration data objects by looking for a
 matching entry in the database. If a match is found then another link to the
 matching entry is created. Otherwise, a new entry is added.
 
-*Property Group*
+### Template JSON - Property Group
 
 <table>
     <thead>
@@ -1488,7 +1488,7 @@ will be made optional or removed at some point in the future. Similarly, the
 `visible` or `isVisible` flag is optional and defaults to `true` if not
 specified.
 
-*Property*
+### Template JSON - Property
 
 <table>
     <thead>
@@ -1609,7 +1609,7 @@ to verify that this field is present whenever not having this field would cause
 the imported template to be invalid. In the meantime, please be careful when
 dealing with this field.
 
-*Data Object*
+### Template JSON - Data Object
 
 TODO: document me.
 
