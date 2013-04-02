@@ -28,6 +28,11 @@
         * [Template Groups](#template-groups)
 * [App Metadata JSON](#app-metadata-json)
     * [Template JSON](#template-json)
+        * [Template JSON - Template](#template-json---template)
+        * [Template JSON - Implementation](#template-json---implementation)
+        * [Template JSON - Property Group](#template-json---property-group)
+        * [Template JSON - Property](#template-json---property)
+        * [Template JSON - Data Object](#template-json---data-object)
     * [App JSON](#app-json)
     * [App JSON for UI](#app-json-for-ui)
 * [App Metadata Administration Services](#app-metadata-administration-services)
@@ -1537,7 +1542,7 @@ specified.
             <td>no</td>
         </tr>
         <tr>
-            <td>validator</tr>
+            <td>validator</td>
             <td>the validator describing how to validate property values</td>
             <td>validator</td>
             <td>no</td>
@@ -1611,7 +1616,7 @@ dealing with this field.
 
 ### Template JSON - Data Object
 
-TODO: document me.
+
 
 ## App JSON
 
