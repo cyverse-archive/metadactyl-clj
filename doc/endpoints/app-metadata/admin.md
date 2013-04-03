@@ -33,7 +33,19 @@
         * [Template JSON - Property Group](#template-json---property-group)
         * [Template JSON - Property](#template-json---property)
         * [Template JSON - Data Object](#template-json---data-object)
+        * [Template JSON - Validator](#template-json---validator)
+        * [Template JSON - Rule](#template-json---rule)
     * [App JSON](#app-json)
+        * [App JSON - Deployed Components](#app-json---deployed-components)
+            * [App JSON - Deployed Components - Implementation](#app-json---deployed-components---implementation)
+            * [App JSON - Deployed Components - Test Data](#app-json---deployed-components---test-data)
+        * [App JSON - Templates](#app-json---templates)
+            * [App JSON - Templates - Property Group](#app-json---templates---property-group)
+            * [App JSON - Templates - Property](#app-json---templates---property)
+            * [App JSON - Templates - Data Object](#app-json---templates---data-object)
+            * [App JSON - Templates - Validator](#app-json---templates---validator)
+            * [App JSON - Templates - Rule](#app-json---templates---rule)
+        * [App JSON - Analyses](#app-json---analyses)
     * [App JSON for UI](#app-json-for-ui)
 * [App Metadata Administration Services](#app-metadata-administration-services)
     * [Exporting a Template](#exporting-a-template)
@@ -1810,7 +1822,325 @@ rule specification would be:
 
 ## App JSON
 
-TODO: document me.
+The app JSON is a more generalized version of the Template JSON that can
+correctly handle multi-step apps among other things. The top level of this
+format is a JSON object containing up to four fields:
+
+<table>
+    <thead>
+        <tr>
+            <th>Accepted Names</th>
+            <th>Description</th>
+            <th>Produced Name</th>
+            <th>Required</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>components</td>
+            <td>zero or more deployed component definitions</td>
+            <td>components</td>
+            <th>no</td>
+        </tr>
+        <tr>
+            <td>templates</td>
+            <td>zero or more template definitions</td>
+            <td>templates</td>
+            <td>no</td>
+        </tr>
+        <tr>
+            <td>analyses</td>
+            <td>zero or more app (a.k.a. analysis) definitions</td>
+            <td>analyses</td>
+            <td>no</td>
+        </tr>
+    </tbody>
+</table>
+
+A fourth field, `notification_sets`, is accepted by the import service, but will
+not be documented here. Notification sets are no longer supported in the DE, but
+support for them has not been removed from the import service yet.
+
+While it is possible to import templates using the services that accept this
+JSON format, there are two important differences to note. First apps are not
+automatically generated for templates that are imported using these services.
+Instead, apps must be specified explicitly using the `analyses` field. Second,
+these services allow elements to refer to other elements defined in the same
+service call by name. For example, a template might refer to a deployed
+component defined in the same JSON document by its name rather than by its
+identifier. This allows the automatic generation of identifiers without
+requiring multiple separate service calls.
+
+### App JSON - Deployed Components
+
+<table>
+    <thead>
+        <tr>
+            <th>Accepted Names</th>
+            <th>Description</th>
+            <th>Produced Name</th>
+            <th>Required</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>id</td>
+            <td>the deployed component identifier</td>
+            <td>id</td>
+            <td>no</td>
+        </tr>
+        <tr>
+            <td>name</td>
+            <td>the name of the file that is used to run the tool</td>
+            <td>name</td>
+            <td>yes</td>
+        </tr>
+        <tr>
+            <td>location</td>
+            <td>the path to the directory containing the executable</td>
+            <td>location</td>
+            <td>yes</td>
+        </tr>
+        <tr>
+            <td>type</td>
+            <td>the deployed component type name</td>
+            <td>type</td>
+            <td>yes</td>
+        </tr>
+        <tr>
+            <td>description</td>
+            <td>a brief description of the deployed component</td>
+            <td>description</td>
+            <td>no</td>
+        </tr>
+        <tr>
+            <td>version</td>
+            <td>the deployed component version</td>
+            <td>version</td>
+            <td>no</td>
+        </tr>
+        <tr>
+            <td>attribution</td>
+            <td>the people or entities who create or maintain the tool</td>
+            <td>attribution</td>
+            <td>no</td>
+        </tr>
+        <tr>
+            <td>implementation</td>
+            <td>
+                information about the user who integrated the deployed component
+                into the DE
+            </td>
+            <td>implementation</td>
+            <td>yes</td>
+        </tr>
+    </tbody>
+</table>
+
+The `type` field has to contain the name of ne of the known tool types. You can
+get the list of known tool types using the `/get-workflow-elements/tool-types`
+endpoint.
+
+#### App JSON - Deployed Components - Implementation
+
+<table>
+    <thead>
+        <tr>
+            <th>Accepted Names</th>
+            <th>Description</th>
+            <th>Produced Names</th>
+            <th>Required</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>implementor_email</td>
+            <td>the email address of the implementor</td>
+            <td>N/A</td>
+            <td>yes</td>
+        </tr>
+        <tr>
+            <td>implementor</td>
+            <td>the name of the implementor</td>
+            <td>N/A</td>
+            <td>yes</td>
+        </tr>
+        <tr>
+            <td>test</td>
+            <td>test data for the deployed component</td>
+            <td>test</td>
+            <td>yes</td>
+        </tr>
+    </tbody>
+</table>
+
+All three fields are required, and attempts to import or update deployed
+components will fail if any field is not provided. The import services attempt
+to avoid adding duplicate integration data objects by looking for a matching
+entry in the database. If a match is found then another link to the matching
+entry is created. Otherwise, a new entry is added.
+
+The test data files are stored in a separate table, so integration data table
+entries can be shared between multiple deployed components and even between apps
+and deployed components.
+
+#### App JSON - Deployed Components - Test Data
+
+<table>
+    <thead>
+        <tr>
+            <th>Accepted Names</th>
+            <th>Description</th>
+            <th>Produced Name</th>
+            <th>Required</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>input_files</td>
+            <td>the list of paths to test input files in iRODS</td>
+            <td>input_files</td>
+            <td>yes</td>
+        </tr>
+        <tr>
+            <td>output_files</td>
+            <td>the list of paths to expected output files in iRODS</td>
+            <td>output_files</td>
+            <td>yes</td>
+        </tr>
+    </tbody>
+</table>
+
+Both the `input_files` and `output_files` fields are required, and an error will
+occur if either is not specified. The list of paths may be empty in both cases,
+however.
+
+### App JSON - Templates
+
+The JSON format described here is identical to the JSON format described in the
+[Template JSON](#template-json) section except that the top-level JSON object
+accepts new field called, `component_ref`, and does not accept the
+`implementation` field.
+
+<table>
+    <thead>
+        <tr>
+            <th>Accepted Names</th>
+            <th>Description</th>
+            <th>Produced Name</th>
+            <th>Required</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>id</td>
+            <td>a UUID that is used to identify the template</td>
+            <td>id</td>
+            <td>no</td>
+        </tr>
+        <tr>
+            <td>name</td>
+            <td>the name of the template</td>
+            <td>name</td>
+            <td>no</td>
+        </tr>
+        <tr>
+            <td>label</td>
+            <td>the display name of the template</td>
+            <td>label</td>
+            <td>no</td>
+        </tr>
+        <tr>
+            <td>component, component_id</td>
+            <td>
+                the identifier of the component used to execute the template
+            </td>
+            <td>component_id</td>
+            <td>no</td>
+        </tr>
+        <tr>
+            <td>component_ref</td>
+            <td>
+                the name of a deployed component defined in the same JSON
+                document
+            </td>
+            <td>component_ref</td>
+            <td>no</td>
+        </tr>
+        <tr>
+            <td>type</td>
+            <td>the type of the template, which is a free-form string</td>
+            <td>type</td>
+            <td>no</td>
+        </tr>
+        <tr>
+            <td>groups</td>
+            <td>
+                the list of property groups associated with the template (may be
+                embedded within a `groups` JSON object
+            </td>
+            <td>groups</td>
+            <td>yes</td>
+        </tr>
+    </tbody>
+</table>
+
+The `name` and `id` fields deserve some special attention. The
+`/import-template` and `/update-template` endpoints both treat these fields the
+same way. If an identifier is provided then the endpoints will attempt to match
+based on the identifier. If a template with a matching identifier is found then
+the `/import-template` endpoint will refuse to do anything and the
+`/update-template` endpoint will update the existing template. If no identifier
+is provided then the services attempt to find another template with the same
+name. If exactly one template with the same name is found then the
+`/import-template` interface will refuse to proceed and the `/update-template`
+endpoint will update the existing template. If multiple templates with the same
+name are found then neither endpoint will do anything. If no identifier is
+specified and no template with the same name is found then both endpoints will
+generate a new ID and import the template into the database as a new template.
+If an identifier of `auto-gen` is specified then neither endpoint will attempt
+to match by name or ID. Instead, a new identifier will be generated and a new
+template will be imported into the database.
+
+The `component_ref` and `component` fields are different ways of specifying the
+deployed component. If the `component` field is used then the deployed component
+must have been imported into the database before the service was called. If the
+`component_ref` field is used then the field value should refer to the deployed
+component by name and the deployed component must be defined within the same
+JSON document. If both the `component_ref` field and the `component` field are
+specified then the `component` field takes precedence.
+
+The `label` field contains the display name to use for the template. If the
+template label isn't provided then the template name will be used as its display
+name. Strictly speaking neither the template name nor label is displayed in the
+DE. Instead, the app name or label is displayed. Both import services use the
+template name and label as the name and label of the automatically generated
+single-step app corresponding to the template, however.
+
+The `groups` field is required, but it's permitted to be an empty JSON array (or
+an object containing an empty JSON array).
+
+#### App JSON - Templates - Property Group
+
+Please see [Template JSON - Property Group](#template-json---property-group).
+
+#### App JSON - Templates - Property
+
+Please see [Template JSON - Property](#template-json---property).
+
+#### App JSON - Templates - Data Object
+
+Please see [Template JSON - Data Object](#template-json---data-object).
+
+#### App JSON - Templates - Validator
+
+Please see [Template JSON - Validator](#template-json---validator).
+
+#### App JSON - Templates - Rule
+
+Please see [Template JSON - Rule](#template-json---rule).
+
+### App JSON - Analyses
 
 ## App JSON for UI
 
