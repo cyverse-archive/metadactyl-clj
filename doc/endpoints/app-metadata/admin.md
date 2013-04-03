@@ -35,6 +35,7 @@
         * [Template JSON - Data Object](#template-json---data-object)
         * [Template JSON - Validator](#template-json---validator)
         * [Template JSON - Rule](#template-json---rule)
+    * [Template JSON Example](#template-json-example)
     * [App JSON](#app-json)
         * [App JSON - Deployed Components](#app-json---deployed-components)
             * [App JSON - Deployed Components - Implementation](#app-json---deployed-components---implementation)
@@ -46,6 +47,10 @@
             * [App JSON - Templates - Validator](#app-json---templates---validator)
             * [App JSON - Templates - Rule](#app-json---templates---rule)
         * [App JSON - Analyses](#app-json---analyses)
+            * [App JSON - Analyses - Steps](#app-json---analyses---steps)
+            * [App JSON - Analyses - Mappings](#app-json---analyses---mappings)
+            * [App JSON - Analyses - Implementation](#app-json---analyses---implementation)
+    * [App JSON Example](#app-json-example)
     * [App JSON for UI](#app-json-for-ui)
 * [App Metadata Administration Services](#app-metadata-administration-services)
     * [Exporting a Template](#exporting-a-template)
@@ -1820,6 +1825,10 @@ rule specification would be:
 }
 ```
 
+## Template JSON Example
+
+Please see the [examples file](examples.md#template-json).
+
 ## App JSON
 
 The app JSON is a more generalized version of the Template JSON that can
@@ -2141,6 +2150,212 @@ Please see [Template JSON - Validator](#template-json---validator).
 Please see [Template JSON - Rule](#template-json---rule).
 
 ### App JSON - Analyses
+
+<table>
+    <thead>
+        <tr>
+            <th>Accepted Names</th>
+            <th>Description</th>
+            <th>Produced Names</th>
+            <th>Required</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>analysis_id, id</td>
+            <td>the app identifier</td>
+            <td>analysis_id</td>
+            <td>no</td>
+        </tr>
+        <tr>
+            <td>analysis_name</td>
+            <td>the app display name</td>
+            <td>analysis_name</td>
+            <td>yes</td>
+        </tr>
+        <tr>
+            <td>type</td>
+            <td>the app type</td>
+            <td>type</td>
+            <td>no</td>
+        </tr>
+        <tr>
+            <td>description</td>
+            <td>a textual description of the app</td>
+            <td>description</td>
+            <td>yes</td>
+        </tr>
+        <tr>
+            <td>steps</td>
+            <td>the sequence of steps used to run the app</td>
+            <td>steps</td>
+            <td>mappings</td>
+        </tr>
+        <tr>
+            <td>implementation</td>
+            <td>the implementation details for the analysis</td>
+            <td>implementation</td>
+            <td>yes</td>
+        </tr>
+    </tbody>
+</table>
+
+The app import and update services match existing apps in the same way that the
+corresponding template service match templates. If an app ID is specified then
+the service will attempt to match based on the app ID. If the app ID is not
+specified then the service will attempt to match based on the app name. If no
+match is found (whether an ID match or a name match was done) then the service
+will create a new app, generating an identifier if necessary. As a special case,
+if the app identifier is `auto-gen` then the service will always create a new
+app and generate a new identifier for it even if another app with the same name
+already exists in the database.
+
+The `type` field is provided as another means of documentation, but it's not
+used for anything in the DE.
+
+The `description` field is not required for the import service to be used, but a
+description must be provided before an app can be made public.
+
+#### App JSON - Analyses - Steps
+
+<table>
+    <thead>
+        <tr>
+            <th>Accepted Names</th>
+            <th>Description</th>
+            <th>Produced Names</th>
+            <th>Required</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>id</td>
+            <td>the step identifier</td>
+            <td>id</td>
+            <td>no</td>
+        </tr>
+        <tr>
+            <td>description</td>
+            <td>a brief description of the step</td>
+            <td>description</td>
+            <td>no</td>
+        </tr>
+        <tr>
+            <td>name</td>
+            <td>the transformation step name</td>
+            <td>name</td>
+            <td>yes</td>
+        </tr>
+        <tr>
+            <td>template_id</td>
+            <td>the identifier of the template used to perform the step</td>
+            <td>template_id</td>
+            <td>either template_id or template_ref must be specified</td>
+        </tr>
+        <tr>
+            <td>template_ref</td>
+            <td>the name of the template used to perform the step</td>
+            <td>template_ref</td>
+            <td>either template_id or template_ref must be specified</td>
+        </tr>
+        <tr>
+            <td>config</td>
+            <td>a list of default property value settings</td>
+            <td>config</td>
+            <td>yes</td>
+        </tr>
+    </tbody>
+</table>
+
+As usual, the `id` field is optional and a new identifier will be generated if
+one is not supplied.
+
+The `name` field is required because it's used to distinguish properties in case
+two properties in different steps have the same identifier. This name is not
+displayed, so it would be perfectly reasonable to put an ID in this field or use
+general names such as `step1`.
+
+The `template_id` and `template_ref` fields represent two different means of
+indicating which template should be used for the step. If the `template_id`
+field is used then the template ID must be known in advance, either by
+specifying the template ID when it is being imported or by importing the
+template first then looking up the identifier. If the `template_ref` field is
+used then the field value refers to the template by name and the template must
+be defined within the same JSON document as the app.
+
+The `config` field contains a set of automatically assigned property values to
+use in the step. These are the values that will be used every time the app is
+executed, and users will not be prompted for or shown the values. The
+configuration itself is JSON object that maps property IDs to property values.
+here's an example configuration:
+
+```json
+{
+    "91A738F2-EF76-48DF-A386-7FC6BCB4A2BF": "foo",
+    "11CBBCCB-2D56-4636-AB3C-807C132373B9": "bar"
+}
+```
+
+#### App JSON - Analyses - Mappings
+
+<table>
+    <thead>
+        <tr>
+            <th>Accepted Names</th>
+            <th>Description</th>
+            <th>Produced Names</th>
+            <th>Required</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>source_step</td>
+            <td>the name of the step that produces the output files</td>
+            <td>source_step</td>
+            <td>yes</td>
+        </tr>
+        <tr>
+            <td>target_step</td>
+            <td>the name of the step that consumes the input files</td>
+            <td>target_step</td>
+            <td>yes</td>
+        </tr>
+        <tr>
+            <td>map</td>
+            <td>maps output file IDs to input file IDS</td>
+            <td>map</td>
+            <td>yes</td>
+        </tr>
+    </tbody>
+</table>
+
+The `source_step` field refers to the name of the step that produces the output
+files that are later consumed by the step referenced by the `target_step` field.
+Both steps must be defined in the same app, and the source step must come before
+the target step in the app definition.
+
+The `map` field contains a JSON object that maps output identifiers from the
+source step to input identifiers from the target step. Here's an example of a
+complete mapping:
+
+```json
+{
+    "source_step": "step1",
+    "target_step": "step2",
+    "map": {
+        "00B9894F-70BC-47CF-8C0C-D45A30290F88": "C3196109-73A9-45B0-AEB6-BFC6759E768C",
+        "01C5A5E4-8AF8-454E-A8B8-D68009F6C0FB": "4FAB6049-AEDF-4664-B081-E25048613605"
+    }
+}
+```
+
+#### App JSON - Analyses - Implementation
+
+Please see [Template JSON - Implementation](template-json---implementation).
+
+## App JSON Example
+
+Please see the [examples file](examples.md#app-json).
 
 ## App JSON for UI
 
