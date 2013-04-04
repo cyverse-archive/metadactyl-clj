@@ -3,6 +3,7 @@
 * [JSON Examples](#json-examples)
     * [Template JSON](#template-json)
     * [App JSON](#app-json)
+    * [App JSON for UI](#app-json-for-ui)
 
 # JSON Examples
 
@@ -532,6 +533,141 @@
             "name": "Muscle-3.8.31",
             "published_date": "",
             "tito": "9B41C9E4-5031-4A49-B1CB-C471335DF16E",
+            "type": ""
+        }
+    ]
+}
+```
+
+## App JSON for UI
+
+```json
+{
+    "analyses": [
+        {
+            "groups": [
+                {
+                    "id": "804AD475-2946-43A6-9461-D5BA60A055AC",
+                    "label": "Muscle-3.8.31 - Select input data",
+                    "name": "Muscle-3.8.31 - Select data:",
+                    "properties": [
+                        {
+                            "description": "",
+                            "id": "step_1_9B41C9E4-5031-4A49-B1CB-C471335DF16E_513E1726-79E0-4D86-90D2-08FEB47C4139",
+                            "isVisible": true,
+                            "label": "Select Multiple Sequence File (FASTA format)",
+                            "name": "",
+                            "type": "FileInput",
+                            "validator": {
+                                "label": "",
+                                "name": "",
+                                "required": true
+                            }
+                        }
+                    ],
+                    "type": "step"
+                },
+                {
+                    "id": "A9867696-B993-4DC0-8B02-75216B89C454",
+                    "label": "Muscle-3.8.31 - Sequence Type",
+                    "name": "Muscle-3.8.31 - ",
+                    "properties": [
+                        {
+                            "description": "",
+                            "id": "step_1_9B41C9E4-5031-4A49-B1CB-C471335DF16E_A52CB953-3C2D-C9F5-6FD3-D8D418E8246E",
+                            "isVisible": true,
+                            "label": "Sequence Type",
+                            "name": "",
+                            "type": "Selection",
+                            "validator": {
+                                "id": "23A2884C-84A2-4099-BE75-4C260AD89568",
+                                "label": "",
+                                "name": "",
+                                "required": true,
+                                "rules": [
+                                    {
+                                        "MustContain": [
+                                            {
+                                                "display": "Auto",
+                                                "isDefault": false,
+                                                "name": "Auto",
+                                                "value": ""
+                                            },
+                                            {
+                                                "display": "Protein",
+                                                "isDefault": false,
+                                                "name": "Protein",
+                                                "value": ""
+                                            },
+                                            {
+                                                "display": "DNA",
+                                                "isDefault": false,
+                                                "name": "DNA",
+                                                "value": ""
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            "value": "0"
+                        }
+                    ],
+                    "type": ""
+                },
+                {
+                    "id": "1AF0BA7E-1384-4516-8E61-7FEB8696F8F7",
+                    "label": "Ninja - Options",
+                    "name": "Ninja - ",
+                    "properties": [
+                        {
+                            "description": "",
+                            "id": "step_2_2A6B165E-416C-2EDD-1DF4-036EB7D0684F_E31FB0C2-213E-4996-954E-5594B5F3CB46",
+                            "isVisible": true,
+                            "label": "Input type",
+                            "name": "",
+                            "type": "Selection",
+                            "validator": {
+                                "id": "D633C634-245F-4536-97A2-7968EDCFA88A",
+                                "label": "",
+                                "name": "",
+                                "required": true,
+                                "rules": [
+                                    {
+                                        "MustContain": [
+                                            {
+                                                "display": "Multiple sequence alignment (fasta)",
+                                                "isDefault": false,
+                                                "name": "--in",
+                                                "value": ""
+                                            },
+                                            {
+                                                "display": "Pair-wise distance matrix (phylip)",
+                                                "isDefault": false,
+                                                "name": "--in_type",
+                                                "value": "d"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            "value": "0"
+                        },
+                        {
+                            "description": "",
+                            "id": "step_2_2A6B165E-416C-2EDD-1DF4-036EB7D0684F_A83E93C5-D6D0-4B1B-A17F-7162F9D6B635",
+                            "isVisible": true,
+                            "label": "Output file",
+                            "name": "--out ",
+                            "type": "Text",
+                            "value": "tree.newick"
+                        }
+                    ],
+                    "type": ""
+                }
+            ],
+            "id": "0234CD33-46C2-4DEC-BBC7-FCCA91534DAF",
+            "label": "Muscle-Fasttree",
+            "name": "Muscle-Fasttree",
             "type": ""
         }
     ]

@@ -52,6 +52,11 @@
             * [App JSON - Analyses - Implementation](#app-json---analyses---implementation)
     * [App JSON Example](#app-json-example)
     * [App JSON for UI](#app-json-for-ui)
+        * [App JSON for UI - Property Group](#app-json-for-ui---property-group)
+        * [App JSON for UI - Property](#app-json-for-ui---property)
+        * [App JSON for UI - Validator](#app-json-for-ui---validator)
+        * [App JSON for UI - Rule](#app-json-for-ui---rule)
+    * [App JSON for UI Example](#app-json-for-ui-example)
 * [App Metadata Administration Services](#app-metadata-administration-services)
     * [Exporting a Template](#exporting-a-template)
     * [Exporting an Analysis](#exporting-an-analysis)
@@ -2359,7 +2364,196 @@ Please see the [examples file](examples.md#app-json).
 
 ## App JSON for UI
 
-TODO: document me.
+The app JSON required by the UI closely resembles the template JSON required by
+the template import services. The property groups in each app are collapsed into
+what appears to be a single app and the property identifiers are amended so that
+the job submission services can efficiently relate them to the correct
+properties.
+
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>id</td>
+            <td>the app identifier</td>
+        </tr>
+        <tr>
+            <td>name</td>
+            <td>the app name</td>
+        </tr>
+        <tr>
+            <td>label</td>
+            <td>the app name</td>
+        </tr>
+        <tr>
+            <td>type</td>
+            <td>the app type</td>
+        </tr>
+        <tr>
+            <td>groups</td>
+            <td>the list of property groups</td>
+        </tr>
+    </tbody>
+</table>
+
+### App JSON for UI - Property Group
+
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>id</td>
+            <td>the property group ID</td>
+        </tr>
+        <tr>
+            <td>name</td>
+            <td>the property group name</td>
+        </tr>
+        <tr>
+            <td>label</td>
+            <td>the property group label</td>
+        </tr>
+        <tr>
+            <td>type</td>
+            <td>the property group type</td>
+        </tr>
+        <tr>
+            <td>properties</td>
+            <td>the list of properties in the property group</td>
+        </tr>
+    </tbody>
+</table>
+
+If the app is a multi-step app then the `name` and `label` fields are prefixed
+by the template name and a hyphen in order to disambiguate similarly named or
+labeled property groups in different steps. For single-step apps these fields
+are left unmodified.
+
+### App JSON for UI - Property
+
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>id</td>
+            <td>the property ID</td>
+        </tr>
+        <tr>
+            <td>name</td>
+            <td>the property name</td>
+        </tr>
+        <tr>
+            <td>label</td>
+            <td>the property label</td>
+        </tr>
+        <tr>
+            <td>isVisible</td>
+            <td>visibility flag</td>
+        </tr>
+        <tr>
+            <td>value</td>
+            <td>the default value for the property</td>
+        </tr>
+        <tr>
+            <td>type</td>
+            <td>the property type name</td>
+        </tr>
+        <tr>
+            <td>description</td>
+            <td>a brief description of the property.</td>
+        </tr>
+        <tr>
+            <td>validator</td>
+            <td>property value validation instructions</td>
+        </tr>
+    </tbody>
+</table>
+
+The way in which properties are formatted varies depending on whether the
+property is an output property, an input property, or any other type of
+property.
+
+In all cases, the `id` field is prefixed by the step name and an underscore in
+order to ensure that property values can be mapped to properties using only the
+identifier given to the UI and the property value itself.
+
+Also note that properties are only formatted in the JSON that is sent to the UI
+if their values cannot be determined without prompting the user. This varies for
+different types of properties. For any property that is neither an output nor an
+input property, the property is only formatted if it is marked as visible and
+its value isn't specified in the transformation (the `config` section from the
+import JSON). An input or output property is formatted only if it is marked as
+visible, its value is not specified in the transformation, it does not appear in
+an input/output mapping, and its name is not implicitly defined by the deployed
+component itself.
+
+Also note that the validators for input and output properties are handled a
+little bit differently than those for other types of properties. For input and
+output properties that consume or generate files, the formatter looks at the
+data object associated with the property. If the data object indicates that the
+input or output is required then the formatter generates a validator with no
+rules and the `required` flag set to true. For reference genome type properties,
+the formatter generates a validator with the `required` flag set to true and a
+single `MustContain` rule defined to allow users to select the appropriate
+reference genome from a drop-down list.
+
+### App JSON for UI - Validator
+
+<table>
+    <thead>
+        <tr>
+            <th>Name</td>
+            <th>Description</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>id</td>
+            <td>the validator identifier</td>
+        </tr>
+        <tr>
+            <td>label</td>
+            <td>the validator label</td>
+        </tr>
+        <tr>
+            <td>name</td>
+            <td>the validator name</td>
+        </tr>
+        <tr>
+            <td>required</td>
+            <td>a flag indicating if user input is required</td>
+        </tr>
+        <tr>
+            <td>rules</td>
+            <td>the list of validation rules</td>
+        </tr>
+    </tbody>
+</table>
+
+### App JSON for UI - Rule
+
+The rule JSON is formatted in the same way that the export service formats it.
+For more information, please see [Template JSON - Rule](#template-json---rule)
+above.
+
+## App JSON for UI Example
+
+Please see the [examples file](examples.md#app-json-for-ui).
 
 # App Metadata Administration Services
 
@@ -2368,11 +2562,10 @@ TODO: document me.
 *Unsecured Endpoint:* GET /export-template/{template-id}
 
 This service exports a template in a format similar to the format required by
-Tito. This service is not used by the DE and has been superceded by the secured
-`/edit-template` and `/copy-template` endpoints. The response body for this
-service is fairly large, so it will not be documented in this file. For all of
-the gory details, see the (Tool Integration Services wiki
-page)[https://pods.iplantcollaborative.org/wiki/display/coresw/Tool+Integration+Services].
+tool integration. This service is not used by the DE and has been superceded by
+the secured `/edit-template` and `/copy-template` endpoints. The response body
+for this service is fairly large, so it will not be documented here. Please see
+[Template JSON](#template-json) above for more information.
 
 ## Exporting an Analysis
 
@@ -2382,9 +2575,8 @@ This service exports an analysis in the format used to import multi-step
 analyses into the DE. Note that this format will work for both single- and
 multi-step analyses. This service is used by the export script to export
 analyses from the DE. The response body for this service is fairly large, so it
-will not be documented in this file. For all of the gory details, see the (Tool
-Integration Services wiki
-page)[https://pods.iplantcollaborative.org/wiki/display/coresw/Tool+Integration+Services].
+will not be documented here. Please see [Template JSON](#template-json) above
+for more information.
 
 ## Exporting Selected Deployed Components
 
@@ -2554,32 +2746,64 @@ this format:
 
 This service has no response body.
 
-For more information about this service, please see the (Tool Integration
-Services wiki
-page)[https://pods.iplantcollaborative.org/wiki/display/coresw/Tool+Integration+Services].
-
 ## Logically Deleting an Analysis
 
 *Unsecured Endpoint:* POST /delete-workflow
 
-This service works in exactly the same way as the `/permanently-delete-workflow`
-service except that, instead of permanently deleting the analysis, it merely
-marks the analysis as deleted. This prevents the analysis from being displayed
-in the DE, but retains its definition so that it can be restored later if
-necessary. For more information about this service, please see the (Tool
-Integration Services wiki
-page)[https://pods.iplantcollaborative.org/wiki/display/coresw/Tool+Integration+Services].
+An app can be marked as deleted in the DE without being completely removed from
+the database using this service. To mark a private app as deleted using the app
+identifier, the request body should be in the following format:
+
+```json
+{
+    "analysis_id": "some-analysis-id",
+    "full_username": "somebody@example.org"
+}
+```
+
+To mark a private app as deleted using the app name, the request body should be
+in the following format:
+
+```json
+{
+    "analysis_name": "some-analysis-name",
+    "full_username": "somebody@example.org"
+}
+```
+
+To mark a public app as deleted using the app identifier, the request body
+should be in the following format:
+
+```json
+{
+    "analysis_id": "some-analysis-id",
+    "root_deletion_request": true
+}
+```
+
+To mark a public app as deleted using the app name, the request body should be
+in the following format:
+
+```json
+{
+    "analysis_name": "some-analysis-name",
+    "root_deletion_request": true
+}
+```
+
+This service has no response body.
 
 ## Previewing Templates
 
 *Unsecured Endpoint:* POST /preview-template
 
-Tito uses this service (indirectly) to allow users to preview the UI for a
+Tool integration uses this service to allow users to preview the UI for a
 template that is being edited. The request body for this service is in the
-format required by the `/import-template` service. The response body for this
-service is the in the format produced by the `/get-analysis` service. For more
-information about this service, please see the (Tool Integration Services wiki
-page)[https://pods.iplantcollaborative.org/wiki/display/coresw/Tool+Integration+Services].
+format required by the `/import-template` service. For more information about
+the request body format, please see [Template JSON](#template-json) above. The
+response body for this service is the in the format produced by the
+`/get-analysis` service. For more information about the response body format,
+please see [App JSON for UI](#app-json-for-ui) above.
 
 ## Previewing Analyses
 
@@ -2587,19 +2811,19 @@ page)[https://pods.iplantcollaborative.org/wiki/display/coresw/Tool+Integration+
 
 The purpose of this service is to preview the JSON that would be fed to the UI
 for an analysis. The request body for this service is in the format required by
-the `/import-workflow` service. The response body for this service is in the
-format produced by the `/get-analysis` service. For more information about this
-service, please see the (Tool Integration Services wiki
-page)[https://pods.iplantcollaborative.org/wiki/display/coresw/Tool+Integration+Services].
+the `/import-workflow` service. For more information about the request body
+format, please see [App JSON](#app-json) above. The response body for this
+service is in the format produced by the `/get-analysis` service. For more
+information about the format of the response body, please see
+[App JSON for UI](#app-json-for-ui), above.
 
 ## Updating an Existing Template
 
 *Unsecured Endpoint:* POST /update-template
 
 This service either imports a new template or updates an existing template in
-the database. For more information about this service, please see the (Tool
-Integration Services wiki
-page)[https://pods.iplantcollaborative.org/wiki/display/coresw/Tool+Integration+Services].
+the database. For more information about the format of the request body, please
+see [Template JSON](#template-json) above.
 
 ## Updating an Analysis
 
@@ -2608,9 +2832,8 @@ page)[https://pods.iplantcollaborative.org/wiki/display/coresw/Tool+Integration+
 This service either imports a new analysis or updates an existing analysis in
 the database (as long as the analysis has not been submitted for public use).
 The difference between this service and the `/update-template` service is that
-this service can support multi-step analyses. For more information about this
-service, please see the (Tool Integration Services wiki
-page)[https://pods.iplantcollaborative.org/wiki/display/coresw/Tool+Integration+Services].
+this service can support multi-step analyses. For information about the format
+of the request body, please see [App JSON](#app-json) above.
 
 ## Forcing an Analysis to be Updated
 
@@ -2619,9 +2842,8 @@ page)[https://pods.iplantcollaborative.org/wiki/display/coresw/Tool+Integration+
 The `/update-workflow` service only allows private analyses to be updated.
 Analyses that have been submitted for public use must be updated using this
 service. The analysis import script uses this service to import analyses that
-have previously been exported. For more information about this service, please
-see the (Tool Integration Services wiki
-page)[https://pods.iplantcollaborative.org/wiki/display/coresw/Tool+Integration+Services].
+have previously been exported. For information about the format of the request
+body, please see [App JSON](#app-json) above.
 
 ## Importing a Template
 
@@ -2629,9 +2851,8 @@ page)[https://pods.iplantcollaborative.org/wiki/display/coresw/Tool+Integration+
 
 This service imports a new template into the DE; it will not overwrite an
 existing template. To overwrite an existing template, please use the
-`/update-template` service. For more information about this service, please see
-the (Tool Integration Services wiki
-page)[https://pods.iplantcollaborative.org/wiki/display/coresw/Tool+Integration+Services].
+`/update-template` service. For information about the format of the request
+body, please see [Template JSON](#template-json) above.
 
 ## Importing an Analysis
 
@@ -2639,9 +2860,8 @@ page)[https://pods.iplantcollaborative.org/wiki/display/coresw/Tool+Integration+
 
 This service imports a new analysis into the DE; it will not overwrite an
 existing analysis. To overwrite an existing analysis, please use the
-`/update-workflow` service. For more information about this service, please see
-the (Tool Integration Services wiki
-page)[https://pods.iplantcollaborative.org/wiki/display/coresw/Tool+Integration+Services].
+`/update-workflow` service. For information about the format of the request
+body, please see [App JSON](#app-json) above.
 
 ## Importing Tools
 
