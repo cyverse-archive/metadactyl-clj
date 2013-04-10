@@ -11,7 +11,7 @@
         [metadactyl.metadactyl]
         [metadactyl.metadata.tool-requests]
         [metadactyl.util.service]
-        [metadactyl.tito]
+        [metadactyl.zoidberg]
         [ring.middleware keyword-params nested-params])
   (:require [compojure.route :as route]
             [compojure.handler :as handler]

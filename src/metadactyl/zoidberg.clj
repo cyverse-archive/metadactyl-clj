@@ -1,4 +1,4 @@
-(ns metadactyl.tito
+(ns metadactyl.zoidberg
   (:use [korma.core]
         [kameleon.core]
         [kameleon.entities]
