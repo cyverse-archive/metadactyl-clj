@@ -9,7 +9,7 @@
         [metadactyl.metadata.reference-genomes
          :only [get-reference-genomes put-reference-genomes]]
         [metadactyl.metadata.element-listings :only [list-elements]]
-        [metadactyl.service]
+        [metadactyl.util.service]
         [metadactyl.transformers]
         [metadactyl.validation :only [validate-json-array-field]]
         [ring.util.codec :only [url-decode]]
@@ -85,7 +85,7 @@
   (log/debug user-attributes)
   (let [uid (user-attributes :user)]
     (if (empty? uid)
-      (throw+ {:type :metadactyl.service/unauthorized,
+      (throw+ {:type :metadactyl.util.service/unauthorized,
                :user user-attributes,
                :message "Invalid user credentials provided."}))
     (doto (User.)

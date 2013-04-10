@@ -1,7 +1,7 @@
 (ns metadactyl.collaborators
   (:use [korma.db :only [transaction]]
         [metadactyl.config :only [uid-domain]]
-        [metadactyl.service :only [success-response]])
+        [metadactyl.util.service :only [success-response]])
   (:require [cheshire.core :as cheshire]
             [clojure.string :as string]
             [kameleon.queries :as queries]))

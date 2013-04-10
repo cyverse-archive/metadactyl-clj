@@ -10,7 +10,7 @@
         [metadactyl.kormadb]
         [metadactyl.metadactyl]
         [metadactyl.metadata.tool-requests]
-        [metadactyl.service]
+        [metadactyl.util.service]
         [metadactyl.tito]
         [ring.middleware keyword-params nested-params])
   (:require [compojure.route :as route]

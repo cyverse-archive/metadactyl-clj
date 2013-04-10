@@ -3,7 +3,7 @@
         [kameleon.entities]
         [korma.core]
         [korma.db]
-        [metadactyl.service :only [success-response]]
+        [metadactyl.util.service :only [success-response]]
         [slingshot.slingshot :only [throw+]])
   (:require [cheshire.core :as cheshire]
             [clojure.string :as string]

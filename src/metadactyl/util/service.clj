@@ -1,4 +1,4 @@
-(ns metadactyl.service
+(ns metadactyl.util.service
   (:use [clojure.string :only (join upper-case)]
         [slingshot.slingshot :only [try+]])
   (:require [cheshire.core :as cheshire]
