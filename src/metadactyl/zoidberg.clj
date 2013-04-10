@@ -155,28 +155,29 @@
       (assoc :mappings mappings)
       (assoc :templates template-ids))))
 
-(defn- get-analyses
-  "Fetches analyses for the given app ID."
+(defn- get-analysis
+  "Fetches an analysis with the given app ID."
   [app-id]
-  (let [analyses (select transformation_activity
+  (let [analysis (select transformation_activity
                          (fields [:id :analysis_id]
                                  [:name :analysis_name]
                                  :description
                                  :integration_data_id)
-                         (where {:id app-id}))]
-    (when (empty? analyses)
+                         (where {:id app-id}))
+        analysis (first analysis)]
+    (when (empty? analysis)
       (throw+ {:code cc-errs/ERR_DOES_NOT_EXIST,
                :message (str "Workflow, " app-id ", not found")}))
-    (dorun (map #(verify-workflow-editable %) analyses))
-    analyses))
+    (verify-workflow-editable analysis)
+    analysis))
 
 (defn edit-workflow
   "This service prepares a JSON response for editing a workflow in the client."
   [app-id]
-  (let [analyses (get-analyses app-id)
-        analyses (map #(format-analysis %) analyses)
-        template-ids (set (apply concat (map #(:templates %) analyses)))
+  (let [analysis (get-analysis app-id)
+        analysis (format-analysis analysis)
+        template-ids (:templates analysis)
         templates (map #(format-template %) (get-templates template-ids))
-        analyses (map #(dissoc % :templates) analyses)]
-    (cheshire/encode {:analyses analyses
+        analysis (dissoc analysis :templates)]
+    (cheshire/encode {:analyses [analysis]
                       :templates templates})))
