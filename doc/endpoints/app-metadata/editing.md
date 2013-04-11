@@ -4,6 +4,7 @@
     * [Making an Analysis Available for Editing in Tito](#making-an-analysis-available-for-editing-in-tito)
     * [Making a Copy of an Analysis Available for Editing in Tito](#making-a-copy-of-an-analysis-available-for-editing-in-tito)
     * [Submitting an Analysis for Public Use](#submitting-an-analysis-for-public-use)
+    * [Making a Pipeline Available for Editing](#making-a-pipeline-available-for-editing)
 
 # App Editing Services
 
@@ -13,8 +14,9 @@
 
 Tito uses this service to obtain the analysis description JSON so that the
 analysis can be edited. The Analysis must have been integrated by the requesting
-user, and it must not already be public. Currently, Analyses with more than 1
-step can not be edited.
+user, and it must not already be public. For editing Analyses with more than 1
+step, the client uses the
+[edit-workflow](#making-a-pipeline-available-for-editing) endpoint.
 
 The response body contains the analysis description in the format that is
 required by Tito. Here's an example:
@@ -108,7 +110,7 @@ $ curl -s "http://by-tor:8888/secured/edit-template/F29C156C-E286-4BBD-9033-0075
 
 This service can be used to make a copy of an analysis in the user's workspace.
 The response body consists of a JSON object containing the ID of the new
-analysis. Here's an example:
+analysis.
 
 Here's an example:
 
@@ -177,4 +179,101 @@ $ curl -sd '
 }
 ' "http://by-tor:8888/secured/make-analysis-public?user=snow-dog&email=sd@example.org"
 {}
+```
+
+## Making a Pipeline Available for Editing
+
+*Secured Endpoint:* GET /secured/edit-workflow/{analysis-id}
+
+The client uses this service to obtain a JSON representation of a Pipeline for
+editing. The Pipeline must have been integrated by the requesting
+user, and it must not already be public.
+
+The response body contains the JSON representation in the format that is
+required by the client.
+
+Here's an example:
+
+```
+$ curl -s "http://by-tor:8888/secured/edit-workflow/2751855E-BFA5-472D-B34D-1D079CA9DDE6?user=snow-dog&email=sd@example.org" | python -m json.tool
+{
+    "analyses": [
+        {
+            "analysis_id": "2751855E-BFA5-472D-B34D-1D079CA9DDE6",
+            "analysis_name": "...",
+            "description": "...",
+            "mappings": [
+                {
+                    "source_step": "step_1_...",
+                    "target_step": "step_2_...",
+                    "map": {
+                        "outputID...": "inputID..."
+                    }
+                }
+            ],
+            "steps": [
+                {
+                    "template_id": "...",
+                    "description": "...",
+                    "name": "step_1_...",
+                    "id": "..."
+                },
+                {
+                    "template_id": "...",
+                    "description": "...",
+                    "name": "step_2_...",
+                    "id": "..."
+                }
+            ]
+        }
+    ],
+    "templates": [
+        {
+            "outputs": [
+                {
+                    "format": "Unspecified",
+                    "required": true,
+                    "description": "",
+                    "name": "...",
+                    "id": "outputID..."
+                }
+            ],
+            "inputs": [
+                {
+                    "format": "Unspecified",
+                    "required": true,
+                    "description": "",
+                    "name": "...",
+                    "id": "..."
+                }
+            ],
+            "description": "...",
+            "name": "...",
+            "id": "..."
+        },
+        {
+            "outputs": [
+                {
+                    "format": "Unspecified",
+                    "required": true,
+                    "description": "",
+                    "name": "...",
+                    "id": "..."
+                }
+            ],
+            "inputs": [
+                {
+                    "format": "Unspecified",
+                    "required": true,
+                    "description": "",
+                    "name": "...",
+                    "id": "inputID..."
+                }
+            ],
+            "description": "...",
+            "name": "...",
+            "id": "..."
+        }
+    ]
+}
 ```
