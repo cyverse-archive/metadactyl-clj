@@ -82,7 +82,7 @@ Here are some examples:
 $ curl -sd '{"analysis_id": "BDB011B6-1F6B-443E-B94E-400930619978"}' http://by-tor:8888/can-export-analysis | python -mjson.tool
 {
     "can-export": false,
-    "cause": "Multi-step applications cannot be copied or modified at this time."
+    "cause": "Application contains Properties that cannot be copied or modified at this time.."
 }
 ```
 
