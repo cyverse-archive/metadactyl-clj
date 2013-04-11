@@ -70,6 +70,9 @@
   (GET "/copy-template/:app-id" [app-id]
        (copy-app app-id))
 
+  (GET "/copy-workflow/:app-id" [app-id]
+       (copy-workflow app-id))
+
   (PUT "/update-template" [:as {body :body}]
         (trap #(update-template-secured body)))
 

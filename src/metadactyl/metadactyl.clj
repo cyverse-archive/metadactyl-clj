@@ -396,10 +396,16 @@
   [body]
   (.updateTemplate (workflow-import-service) (slurp body)))
 
+(defn update-workflow-from-json
+  "This service will either update an existing workflow or import a new workflow
+   from the given JSON string."
+  [json]
+  (.updateWorkflow (workflow-import-service) json))
+
 (defn update-workflow
   "This service will either update an existing workflow or import a new workflow."
   [body]
-  (.updateWorkflow (workflow-import-service) (slurp body)))
+  (update-workflow-from-json (slurp body)))
 
 (defn force-update-workflow
   "This service will either update an existing workflow or import a new workflow.

@@ -2,10 +2,19 @@
   (:use [korma.core]
         [kameleon.core]
         [kameleon.entities]
-        [metadactyl.metadactyl :only [current-user]]
+        [metadactyl.metadactyl :only [current-user
+                                      update-workflow-from-json]]
         [slingshot.slingshot :only [throw+]])
   (:require [cheshire.core :as cheshire]
             [clojure-commons.error-codes :as cc-errs]))
+
+(defn- get-implementor-details
+  "Gets an implementor object with details from the current-user, needed to save
+   workflows."
+  []
+  {:implementor (.getShortUsername current-user)
+   :implementor_email (.getEmail current-user)
+   :test {:params []}})
 
 (defn- get-integrator-email
   "Fetches the integrator email for the given integration data ID."
@@ -114,6 +123,15 @@
     (dissoc :guid)
     (dissoc :input_mapping)))
 
+(defn- format-step-copy
+  "Formats step fields as copies for an update-workflow call."
+  [step]
+  (-> step
+    (dissoc :id)
+    (dissoc :guid)
+    (dissoc :input_mapping)
+    (assoc :config {})))
+
 (defn- get-input-output-mappings
   "Fetches the output->input mapping UUIDs for the given source and target IDs."
   [source target]
@@ -155,6 +173,22 @@
       (assoc :mappings mappings)
       (assoc :templates template-ids))))
 
+(defn- convert-analysis-to-copy
+  "Adds copies of the steps and mappings fields to the analysis, and formats
+   appropriate analysis fields to prepare it for saving as a copy."
+  [analysis]
+  (let [steps (get-steps (:analysis_id analysis))
+        mappings (apply concat (map #(get-formatted-mapping %) steps))
+        steps (map #(format-step-copy %) steps)]
+    (-> analysis
+      (dissoc :integration_data_id)
+      (assoc :analysis_id "auto-gen")
+      (assoc :analysis_name (str "Copy of " (:analysis_name analysis)))
+      (assoc :implementation (get-implementor-details))
+      (assoc :full_username (.getUsername current-user))
+      (assoc :steps steps)
+      (assoc :mappings mappings))))
+
 (defn- get-analysis
   "Fetches an analysis with the given app ID."
   [app-id]
@@ -181,3 +215,14 @@
         analysis (dissoc analysis :templates)]
     (cheshire/encode {:analyses [analysis]
                       :templates templates})))
+
+(defn copy-workflow
+  "This service makes a copy of a workflow available in Tito for editing."
+  [app-id]
+  (let [analysis (get-analysis app-id)
+        analysis (convert-analysis-to-copy analysis)
+        workflow-json (cheshire/encode {:analyses [analysis]})
+        update-response (update-workflow-from-json workflow-json)
+        workflow-copy (cheshire/decode update-response true)
+        analysis-id (first (:analyses workflow-copy))]
+    (edit-workflow analysis-id)))
