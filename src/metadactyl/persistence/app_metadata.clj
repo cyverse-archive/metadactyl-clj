@@ -81,7 +81,7 @@
             {:name        name
              :description description
              :label       label}))
-          (where {:pg.id group-id}))
+          (where {:pg.id id}))
   ;; TODO: implement update-property-labels.
   #_(dorun (map (partial update-property-labels group-id) (:properties group))))
 
