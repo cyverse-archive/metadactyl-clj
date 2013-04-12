@@ -10,7 +10,7 @@
                  [org.iplantc/kameleon "0.1.1-SNAPSHOT"]
                  [org.iplantc.core/metadactyl "dev-SNAPSHOT"]
                  [org.springframework/spring-orm "3.1.0.RELEASE"]
-                 [korma "0.3.0-RC4"]
+                 [korma "0.3.0-RC5"]
                  [ring/ring-jetty-adapter "1.0.1"]
                  [org.slf4j/slf4j-api "1.5.8"]
                  [org.slf4j/slf4j-log4j12 "1.5.8"]
