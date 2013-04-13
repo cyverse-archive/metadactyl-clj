@@ -10,6 +10,7 @@
         [metadactyl.kormadb]
         [metadactyl.metadactyl]
         [metadactyl.metadata.tool-requests]
+        [metadactyl.service.app-metadata :only [relabel-app]]
         [metadactyl.util.service]
         [metadactyl.zoidberg]
         [ring.middleware keyword-params nested-params])
@@ -192,6 +193,9 @@
 
   (POST "/update-analysis" [:as {body :body}]
         (trap #(update-app body)))
+
+  (POST "/update-app-labels" [:as {body :body}]
+        (trap #(relabel-app body)))
 
   (GET "/get-property-values/:job-id" [job-id]
        (trap #(get-property-values job-id)))

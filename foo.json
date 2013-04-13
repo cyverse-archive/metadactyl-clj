@@ -1,0 +1,57 @@
+{
+  "id": "F1B92BA7-7081-42B7-9461-197792E4E0F3",
+  "Label": "The Great and Powerful Lynx!",
+  "name": "The Great and Powerful Lynx!",
+  "type": "The Great and Powerful Lynx!",
+  "description": "The Great and Powerful Lynx!",
+  "groups": [
+    {
+      "description": "All that is Input in the World",
+      "id": "03CE3E5C-2495-0D26-FBF8-BE3BEC34E200",
+      "isVisible": true,
+      "label": "All that is Input",
+      "name": "All that is Input",
+      "properties": [
+        {
+          "description": "I can haz teh files?",
+          "id": "6BE6E5C4-9E25-F8A3-BFE4-80AD69CFBF49",
+          "isVisible": true,
+          "label": "Gimme some files!",
+          "name": "",
+          "omit_if_blank": false,
+          "order": 1,
+          "type": "Input",
+          "validator": {
+            "id": "vffb06deb654749578ef4918bdbec9215",
+            "name": "",
+            "required": true,
+            "rules": []
+          },
+          "value": ""
+        }
+      ],
+      "type": ""
+    },
+    {
+      "description": "General Options",
+      "id": "9B3DB651-96E7-EA67-87A2-388AA9DC6752",
+      "isVisible": true,
+      "label": "I can haz options?",
+      "name": "I can haz options?",
+      "properties": [
+        {
+          "description": "Number all output lines from 1, except on Thursdays.",
+          "id": "D37E9C66-92EA-A132-4DC4-5020BF1D3DBC",
+          "isVisible": true,
+          "label": "Number Output Lines from 1, except on Thursdays",
+          "name": "-n",
+          "omit_if_blank": false,
+          "order": 2,
+          "type": "Flag",
+          "value": "true"
+        }
+      ],
+      "type": ""
+    }
+  ]
+}

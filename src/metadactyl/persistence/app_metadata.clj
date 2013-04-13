@@ -5,7 +5,8 @@
         [korma.core]
         [metadactyl.util.conversions :only [long->timestamp]]
         [slingshot.slingshot :only [throw+]])
-  (:require [clojure.string :as string]
+  (:require [cheshire.core :as cheshire]
+            [clojure.string :as string]
             [clojure-commons.error-codes :as ce]))
 
 (defmacro ^:private assert-not-nil
@@ -33,10 +34,10 @@
                 :field      ~field})
        res#)))
 
-(defn- remove-blank-values
+(defn- remove-nil-values
   "Removes entries containing blank values from a map."
   [m]
-  (into {} (remove (comp string/blank? val) m)))
+  (into {} (remove (comp nil? val) m)))
 
 (defn get-app
   "Retrieves an app from the database."
@@ -57,40 +58,144 @@
                :step_count (count templates)}))
     (first templates)))
 
-(defn- validate-property-group
-  "Verifies that a selected property group belongs to a template."
+(defn- get-property-group-in-template
+  "Verifies that a selected property group belongs to a specific template."
   [template-hid group-id]
   (assert-not-nil
    [:group_id group-id]
    (first
-    (select [:template :t]
+    (select [:property_group :pg]
             (join [:template_property_group :tpg]
-                  {:t.hid :tpg.template_id})
-            (join [:property_group :pg]
-                  {:tpg.property_group_id :pg.hid})
+                  {:pg.hid :tpg.property_group_id})
+            (join [:template :t]
+                  {:tpg.template_id :t.hid})
             (where {:t.hid template-hid
                     :pg.id group-id})))))
 
+(defn- get-property-in-group
+  "Verifies that a property belongs to a specific property group."
+  [group-hid prop-id]
+  (assert-not-nil
+   [:property_id prop-id]
+   (first
+    (select [:property :p]
+            (join [:property_group_property :pgp]
+                  {:p.hid :pgp.property_id})
+            (join [:property_group :pg]
+                  {:pgp.property_group_id :pg.hid})
+            (join [:property_type :pt]
+                  {:p.property_type :pt.hid})
+            (where {:pg.hid group-hid
+                    :p.id   prop-id})))))
+
+(defn- get-validator-for-prop
+  "Gets the validator associated with a property."
+  [prop-hid]
+  (select [:validator :v]
+          (join [:property :p]
+                {:v.hid :p.validator})
+          (where {:p.hid prop-hid})))
+
+(defn- get-prop-info-type
+  "Gets the info type associated with a property."
+  [prop-hid]
+  ((comp :name first)
+   (select [:info_type :t]
+           (join [:data_object :d]
+                 {:t.hid :d.info_type})
+           (join [:property :p]
+                 {:d.hid :p.data_object_id})
+           (where {:p.hid prop-hid}))))
+
+(defn- get-validator-for-prop
+  "Gets the validator associated with a property."
+  [prop-hid]
+  (select [:validator :v]
+          (join [:property :p]
+                {:p.validator :v.hid})
+          (where {:p.hid prop-hid})))
+
+(defn- get-must-contain-rules-for-prop
+  "Gets the list of MustContain rules associated with a property."
+  [prop-hid]
+  (select [:rule :r]
+          (join [:rule_type :rt]
+                {:r.rule_type :rt.hid})
+          (join [:validator_rule :vr]
+                {:r.hid :vr.rule_id})
+          (join [:validator :v]
+                {:v.hid :vr.validator_id})
+          (join [:property :p]
+                {:v.hid :p.validator})
+          (where {:p.hid   prop-hid
+                  :rt.name "MustContain"})))
+
+(def ^:private generated-selection-list-info-types
+  "The list of info types for which selection lists are generated."
+  ["ReferenceAnnotation" "ReferenceGenome" "ReferenceSequence"])
+
+(defn update-must-contain-arg
+  "Updates a single argument in a MustContain rule."
+  [new-args {:keys [rule_id argument_value hid]}]
+  (let [args-equal (fn [old new] (every? (map #(= (% old) (% new)) [:name :value])))
+        old-arg    (cheshire/decode argument_value :keywordize)
+        new-arg    (first (filter args-equal (repeat old-arg) new-args))]
+    (when-not (nil? (:display new-arg))
+      (let [updated-arg (cheshire/encode (assoc old-arg :display (:display new-arg)))]
+        (update :rule_argument
+                (set-fields {:argument_value updated-arg})
+                (where {:rule_id rule_id
+                        :hid     hid}))))))
+
+(defn update-must-contain-rule-labels
+  "Updates the display strings in a single MustContain rule."
+  [arguments {:keys [hid] :as rule}]
+  (dorun (map (comp (partial update-must-contain-arg arguments) :argument_value)
+              (select :rule_argument (where {:rule_id hid})))))
+
+(defn update-must-contain-rules-in-validator
+  "Updates the labels in a MustContain rule."
+  [prop-hid arguments]
+  (let [info-type (get-prop-info-type prop-hid)]
+    (when-not (some (partial = info-type) generated-selection-list-info-types)
+      (if-let [rules (seq (get-must-contain-rules-for-prop prop-hid))]
+        (dorun (map (partial update-must-contain-rule-labels arguments) rules))
+        (throw+ {:error_code ce/ERR_ILLEGAL_ARGUMENT
+                 :reason     :property_missing_must_contain_rule})))))
+
+(defn update-property-labels
+  "Updates the labels in a property."
+  [group-id {:keys [id name description label arguments] :as prop}]
+  (let [hid (:hid (get-property-in-group group-id id))]
+    (update property
+            (set-fields
+             (remove-nil-values
+              {:name        name
+               :description description
+               :label       label}))
+            (where {:hid hid}))
+    (when (seq arguments)
+      (update-must-contain-rules-in-validator hid arguments))))
+
 (defn update-property-group-labels
   "Updates the labels in a property group."
-  [req template-hid {:keys [id name description label] :as group}]
-  (validate-property-group template-hid id)
-  (update property_group
-          (set-fields
-           (remove-blank-values
-            {:name        name
-             :description description
-             :label       label}))
-          (where {:pg.id id}))
-  ;; TODO: implement update-property-labels.
-  #_(dorun (map (partial update-property-labels group-id) (:properties group))))
+  [template-hid {:keys [id name description label] :as group}]
+  (let [hid (:hid (get-property-group-in-template template-hid id))]
+    (update property_group
+            (set-fields
+             (remove-nil-values
+              {:name        name
+               :description description
+               :label       label}))
+            (where {:hid hid}))
+    (dorun (map (partial update-property-labels hid) (:properties group)))))
 
 (defn update-template-labels
   "Updates the labels in a template."
   [req template-hid]
   (update template
           (set-fields
-           (remove-blank-values
+           (remove-nil-values
             {:name        (:name req)
              :description (:description req)
              :label       (:label req)}))
@@ -102,7 +207,7 @@
   [req app-hid]
   (update transformation_activity
           (set-fields
-           (remove-blank-values
+           (remove-nil-values
             {:name             (:name req)
              :description      (:description req)
              :label            (:label req)
