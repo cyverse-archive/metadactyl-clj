@@ -101,10 +101,10 @@
   [prop-hid]
   ((comp :name first)
    (select [:info_type :t]
-           (join [:data_object :d]
+           (join [:dataobjects :d]
                  {:t.hid :d.info_type})
            (join [:property :p]
-                 {:d.hid :p.data_object_id})
+                 {:d.hid :p.dataobject_id})
            (where {:p.hid prop-hid}))))
 
 (defn- get-validator-for-prop
@@ -137,9 +137,9 @@
 (defn update-must-contain-arg
   "Updates a single argument in a MustContain rule."
   [new-args {:keys [rule_id argument_value hid]}]
-  (let [args-equal (fn [old new] (every? (map #(= (% old) (% new)) [:name :value])))
-        old-arg    (cheshire/decode argument_value :keywordize)
-        new-arg    (first (filter args-equal (repeat old-arg) new-args))]
+  (let [old-arg    (cheshire/decode argument_value true)
+        wanted-arg (fn [arg] (every? true? (map #(= (% old-arg) (% arg)) [:name :value])))
+        new-arg    (first (filter wanted-arg new-args))]
     (when-not (nil? (:display new-arg))
       (let [updated-arg (cheshire/encode (assoc old-arg :display (:display new-arg)))]
         (update :rule_argument
@@ -150,7 +150,7 @@
 (defn update-must-contain-rule-labels
   "Updates the display strings in a single MustContain rule."
   [arguments {:keys [hid] :as rule}]
-  (dorun (map (comp (partial update-must-contain-arg arguments) :argument_value)
+  (dorun (map (partial update-must-contain-arg arguments)
               (select :rule_argument (where {:rule_id hid})))))
 
 (defn update-must-contain-rules-in-validator
@@ -210,7 +210,6 @@
            (remove-nil-values
             {:name             (:name req)
              :description      (:description req)
-             :label            (:label req)
              :edited_date      (long->timestamp (:edited_date req))
              :integration_date (long->timestamp (:published_date req))}))
           (where {:hid app-hid}))

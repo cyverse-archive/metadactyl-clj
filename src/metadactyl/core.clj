@@ -18,6 +18,7 @@
             [compojure.handler :as handler]
             [clojure.tools.logging :as log]
             [clojure-commons.clavin-client :as cl]
+            [clojure-commons.error-codes :as ce]
             [metadactyl.config :as config]
             [ring.adapter.jetty :as jetty]))
 
@@ -195,7 +196,7 @@
         (trap #(update-app body)))
 
   (POST "/update-app-labels" [:as {body :body}]
-        (trap #(relabel-app body)))
+        (ce/trap "update-app-labels" #(relabel-app body)))
 
   (GET "/get-property-values/:job-id" [job-id]
        (trap #(get-property-values job-id)))

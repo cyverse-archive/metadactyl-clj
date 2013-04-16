@@ -1,8 +1,10 @@
 (ns metadactyl.util.service
-  (:use [clojure.string :only (join upper-case)]
-        [slingshot.slingshot :only [try+]])
+  (:use [clojure.java.io :only [reader]]
+        [clojure.string :only (join upper-case)]
+        [slingshot.slingshot :only [try+ throw+]])
   (:require [cheshire.core :as cheshire]
-            [clojure.tools.logging :as log]))
+            [clojure.tools.logging :as log]
+            [clojure-commons.error-codes :as ce]))
 
 (defn empty-response []
   {:status 200})
@@ -70,3 +72,14 @@
   {:content-type (get-in request [:headers :content-type])
    :headers (dissoc (:headers request) "content-length" "content-type")
    :body body})
+
+(defn parse-json
+  "Parses a JSON request body."
+  [body]
+  (try+
+    (if (string? body)
+      (cheshire/decode body true)
+      (cheshire/decode-stream (reader body) true))
+    (catch Exception e
+      (throw+ {:error_code ce/ERR_INVALID_JSON
+               :detail     (str e)}))))
