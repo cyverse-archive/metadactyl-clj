@@ -3012,7 +3012,7 @@ Here's a copy of the JSON request body:
 Here's an example of an unsuccessful call:
 
 ```
-$ curl -sd @jaguarundi.json http://localhost:3000/update-app-labels | python -mjson.tool
+$ curl -sd @jaguarundi.json http://by-tor:8888/update-app-labels | python -mjson.tool
 {
     "action": "update-app-labels",
     "error_code": "ERR_NOT_FOUND",
