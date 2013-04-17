@@ -33,7 +33,8 @@
            [org.springframework.orm.hibernate3.annotation
             AnnotationSessionFactoryBean])
   (:require [cheshire.core :as cheshire]
-            [clojure.tools.logging :as log]))
+            [clojure.tools.logging :as log]
+            [metadactyl.translations.app-metadata :as app-meta-tx]))
 
 (defn- get-property-type-validator
   "Gets an implementation of the TemplateValidator interface that can be used
@@ -395,6 +396,16 @@
    ID is returned in the response body."
   [body]
   (.updateTemplate (workflow-import-service) (slurp body)))
+
+(defn update-app-secured
+  "This service will either update an existing single-step app or import a new one. The app ID
+   is returned in the response body."
+  [body]
+  (.updateTemplate
+   (workflow-import-service)
+   (-> (parse-json body)
+       (app-meta-tx/template-external-to-internal)
+       (cheshire/encode))))
 
 (defn update-workflow-from-json
   "This service will either update an existing workflow or import a new workflow

@@ -76,7 +76,10 @@
        (copy-workflow app-id))
 
   (PUT "/update-template" [:as {body :body}]
-        (trap #(update-template-secured body)))
+       (trap #(update-template-secured body)))
+
+  (PUT "/update-app" [:as {body :body}]
+       (ce/trap "update-app" #(update-app-secured body)))
 
   (POST "/make-analysis-public" [:as {body :body}]
         (make-app-public body))
