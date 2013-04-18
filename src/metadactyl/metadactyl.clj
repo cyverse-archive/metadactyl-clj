@@ -533,6 +533,19 @@
   [app-id]
   (.prepareAnalysisForEditing (analysis-edit-service) app-id))
 
+(defn edit-app-new-format
+  "This service makes an app available for editing in Tito and returns a
+   representation of it in the JSON format required by the DE as of version
+   1.8."
+  [app-id]
+  (-> (edit-app app-id)
+      (cheshire/decode true)
+      (:objects)
+      (first)
+      (app-meta-tx/template-internal-to-external)
+      ((fn [app] {:objects [app]}))
+      (cheshire/encode)))
+
 (defn copy-app
   "This service makes a copy of an app available in Tito for editing."
   [app-id]

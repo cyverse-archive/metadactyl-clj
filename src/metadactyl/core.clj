@@ -69,6 +69,9 @@
   (GET "/edit-template/:app-id" [app-id]
        (edit-app app-id))
 
+  (GET "/edit-app/:app-id" [app-id]
+       (edit-app-new-format app-id))
+
   (GET "/edit-workflow/:app-id" [app-id]
        (edit-workflow app-id))
 
