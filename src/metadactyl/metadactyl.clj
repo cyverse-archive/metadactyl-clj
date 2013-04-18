@@ -332,6 +332,14 @@
   [app-id]
   (.getAnalysis (ui-app-service) app-id))
 
+(defn get-app-new-format
+  "This service will retrieve an app in the format required by the DE as of version 1.8."
+  [app-id]
+  (-> (get-app app-id)
+      (cheshire/decode true)
+      (app-meta-tx/template-internal-to-external)
+      (cheshire/encode)))
+
 (defn export-template
   "This service will export the template with the given identifier."
   [template-id]

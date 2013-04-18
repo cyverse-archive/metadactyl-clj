@@ -29,6 +29,9 @@
   (GET "/template/:app-id" [app-id]
        (get-app app-id))
 
+  (GET "/app/:app-id" [app-id]
+       (get-app-new-format app-id))
+
   (PUT "/workspaces/:workspace-id/newexperiment" [workspace-id :as {body :body}]
        (run-experiment body workspace-id))
 
