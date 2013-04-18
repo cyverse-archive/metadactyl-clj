@@ -1,5 +1,6 @@
 (ns metadactyl.translations.app-metadata.external-to-internal
-  (:use [slingshot.slingshot :only [throw+]])
+  (:use [metadactyl.translations.app-metadata.util :only [get-property-groups]]
+        [slingshot.slingshot :only [throw+]])
   (:require [clojure-commons.error-codes :as ce]))
 
 (defn build-validator-for-property
@@ -7,7 +8,8 @@
   [{rules :validators required :required args :arguments default-value :defaultValue
     :or {rules [] required false}}]
   (if (or required (seq rules) (seq args))
-    (letfn [(add-default-flag [arg] (assoc arg :isDefault (= default-value arg)))]
+    (let [add-default-flag (fn [arg] (assoc arg :isDefault (= default-value arg)))
+          rules            (mapv (fn [{:keys [type params]}] {(keyword type) params}) rules)]
       {:required required
        :rules    (if (seq args)
                    (conj rules {:MustContain (map add-default-flag args)})
@@ -31,17 +33,6 @@
   [property-group]
   (assoc property-group
     :properties (map translate-property (:properties property-group))))
-
-(defn get-property-groups
-  "Gets the list of property groups "
-  [template]
-  (cond
-   (map? (:groups template))    (get-property-groups (:groups template))
-   (vector? (:groups template)) (:groups template)
-   (nil? (:groups template))    (throw+ {:error_code ce/ERR_INVALID_JSON
-                                         :detail     :MISSING_PROPERTY_GROUP_LIST})
-   :else                        (throw+ {:error_code ce/ERR_INVALID_JSON
-                                         :detail     :INVALID_PROPERTY_GROUP_LIST})))
 
 (defn translate-template
   "Translates a template from its external format to its internal format."

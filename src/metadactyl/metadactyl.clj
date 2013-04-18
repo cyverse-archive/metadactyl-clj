@@ -337,6 +337,14 @@
   [template-id]
   (.exportTemplate (workflow-export-service) template-id))
 
+(defn export-app
+  "This service will export a single-step app in the format used by the UI."
+  [app-id]
+  (-> (export-template app-id)
+      (cheshire/decode true)
+      (app-meta-tx/template-internal-to-external)
+      (cheshire/encode)))
+
 (defn export-workflow
   "This service will export a workflow with the given identifier."
   [app-id]
