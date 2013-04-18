@@ -34,7 +34,8 @@
             AnnotationSessionFactoryBean])
   (:require [cheshire.core :as cheshire]
             [clojure.tools.logging :as log]
-            [metadactyl.translations.app-metadata :as app-meta-tx]))
+            [metadactyl.translations.app-metadata :as app-meta-tx]
+            [metadactyl.translations.property-values :as prop-value-tx]))
 
 (defn- get-property-type-validator
   "Gets an implementation of the TemplateValidator interface that can be used
@@ -560,7 +561,10 @@
 (defn get-property-values
   "Gets the property values for a previously submitted job."
   [job-id]
-  (.getPropertyValues (property-value-service) job-id))
+  (-> (.getPropertyValues (property-value-service) job-id)
+      (cheshire/decode true)
+      (prop-value-tx/normalize-property-values)
+      (cheshire/encode)))
 
 (defn get-app-rerun-info
   "Obtains analysis JSON with the property values from a previous experiment
