@@ -163,6 +163,43 @@
                                                   :display   "bar"}]}
                                   {:IntAbove [42]}]}}))))
 
+(deftest translate-property-with-data-object-test
+  (is (= {:arguments    []
+          :data_object  {:data_source    "data-obj-source"
+                         :file_info_type "data-obj-info-type"
+                         :format         "data-obj-format"
+                         :is_implicit    false
+                         :multiplicity   "data-obj-multiplicity"
+                         :retain         true}
+          :defaultValue ""
+          :description  "data-obj-description"
+          :id           "data-obj-id"
+          :label        "data-obj-name"
+          :name         "data-obj-cmd-switch"
+          :order        42
+          :required     true
+          :validators   []}
+         (translate-property
+          {:data_object {:cmdSwitch      "data-obj-cmd-switch"
+                         :data_source    "data-obj-source"
+                         :description    "data-obj-description"
+                         :file_info_type "data-obj-info-type"
+                         :format         "data-obj-format"
+                         :id             "data-obj-id"
+                         :is_implicit    false
+                         :multiplicity   "data-obj-multiplicity"
+                         :label          "data-obj-label"
+                         :name           "data-obj-name"
+                         :order          42
+                         :required       true
+                         :retain         true}
+           :description "prop-description"
+           :id          "prop-id"
+           :label       "prop-label"
+           :name        "prop-name"
+           :order       27
+           :required    false}))))
+
 (deftest translate-property-group-test
   (is (= {:name       "group-name"
           :properties [{:name         "prop-name"

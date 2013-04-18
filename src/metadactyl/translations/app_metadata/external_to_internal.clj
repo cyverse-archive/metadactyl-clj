@@ -21,12 +21,27 @@
   [{args :arguments default-value :defaultValue}]
   (if (seq args) nil default-value))
 
+(defn populate-data-object
+  "Populates a data object with information from its parent property."
+  [property data-object]
+  (when (re-matches #"(?i)input|output" (:type property ""))
+    (assoc data-object
+      :cmdSwitch   (:name property)
+      :description (:description property)
+      :id          (:id property)
+      :name        (:label property)
+      :order       (:order property)
+      :required    (:required property))))
+
 (defn translate-property
   "Translates a property from its external format to its internal format."
   [property]
-  (assoc (dissoc property :arguments :required :validators :defaultValue)
-    :validator (build-validator-for-property property)
-    :value     (get-default-value property)))
+  (assoc (dissoc property
+                 :arguments :required :validators :defaultValue :data_source :file_info_type
+                 :format :is_implicit :multiplicity :retain)
+    :validator   (build-validator-for-property property)
+    :value       (get-default-value property)
+    :data_object (populate-data-object property (:data_object property {}))))
 
 (defn translate-property-group
   "Translates a property group from its external format to its internal format."
