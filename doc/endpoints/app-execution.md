@@ -26,7 +26,9 @@ job. The response body is in the following format:
             "full_param_id": "fully-qualified-parameter-id",
             "param_id": "parameter-id",
             "param_name": "parameter-name",
-            "param_value": "parameter-value",
+            "param_value": {
+                "value": "parameter-value"
+            },
             "param_type": "parameter-type",
             "info_type": "info-type-name",
             "data_format": "data-format-name",
@@ -65,7 +67,9 @@ $ curl -s http://by-tor:8888/get-property-values/jebf8120d-0ccb-45d1-bae6-849620
             "param_id": "38950035-8F31-0A27-1BE1-8E55F5C30B54",
             "param_name": "Select an SRA or SRAlite file:",
             "param_type": "Input",
-            "param_value": "/iplant/home/nobody/SRR001355.lite.sra"
+            "param_value": {
+                "value": ""/iplant/home/nobody/SRR001355.lite.sra"
+            }
         },
         {
             "data_format": "",
@@ -76,7 +80,9 @@ $ curl -s http://by-tor:8888/get-property-values/jebf8120d-0ccb-45d1-bae6-849620
             "param_id": "B962E548-4023-E40C-48E5-6484AF55E5DD",
             "param_name": "Optional accession override",
             "param_type": "Text",
-            "param_value": ""
+            "param_value": {
+                "value": ""
+            }
         },
         {
             "data_format": "",
@@ -87,7 +93,9 @@ $ curl -s http://by-tor:8888/get-property-values/jebf8120d-0ccb-45d1-bae6-849620
             "param_id": "DCFC3CD9-FB31-E0F8-C4CB-78F66FF368D2",
             "param_name": "File contains paired-end data",
             "param_type": "Flag",
-            "param_value": "true"
+            "param_value": {
+                "value": "true"
+            }
         },
         {
             "data_format": "",
@@ -98,7 +106,9 @@ $ curl -s http://by-tor:8888/get-property-values/jebf8120d-0ccb-45d1-bae6-849620
             "param_id": "0E21A202-EC8A-7BFD-913B-FA73FE86F58E",
             "param_name": "Offset to use for quality scale conversion",
             "param_type": "Number",
-            "param_value": "33"
+            "param_value": {
+                "value": "33"
+            }
         },
         {
             "data_format": "",
@@ -109,7 +119,9 @@ $ curl -s http://by-tor:8888/get-property-values/jebf8120d-0ccb-45d1-bae6-849620
             "param_id": "F9AD602D-38E3-8C90-9DD7-E1BB4971CD70",
             "param_name": "Emit only FASTA records without quality scores",
             "param_type": "Flag",
-            "param_value": "false"
+            "param_value": {
+                "value": "false"
+            }
         },
         {
             "data_format": "",
@@ -120,7 +132,9 @@ $ curl -s http://by-tor:8888/get-property-values/jebf8120d-0ccb-45d1-bae6-849620
             "param_id": "6BAD8D7F-3EE2-A52A-93D1-1329D1565E4F",
             "param_name": "Verbose",
             "param_type": "Flag",
-            "param_value": "true"
+            "param_value": {
+                "value": "true"
+            }
         }
     ]
 }
