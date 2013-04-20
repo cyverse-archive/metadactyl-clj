@@ -1,5 +1,5 @@
 (ns metadactyl.translations.app-metadata.external-to-internal
-  (:use [metadactyl.translations.app-metadata.util :only [get-property-groups]]
+  (:use [metadactyl.translations.app-metadata.util]
         [slingshot.slingshot :only [throw+]])
   (:require [clojure-commons.error-codes :as ce]))
 
@@ -24,24 +24,26 @@
 (defn populate-data-object
   "Populates a data object with information from its parent property."
   [property data-object]
-  (when (re-matches #"(?i)input|output" (:type property ""))
+  (when (contains? io-property-types (:type property))
     (assoc data-object
-      :cmdSwitch   (:name property)
-      :description (:description property)
-      :id          (:id property)
-      :name        (:label property)
-      :order       (:order property)
-      :required    (:required property))))
+      :cmdSwitch    (:name property)
+      :description  (:description property)
+      :id           (:id property)
+      :name         (:label property)
+      :order        (:order property)
+      :required     (:required property)
+      :multiplicity (multiplicity-for (:type property) (:multiplicity data-object)))))
 
 (defn translate-property
   "Translates a property from its external format to its internal format."
   [property]
   (assoc (dissoc property
-                 :arguments :required :validators :defaultValue :data_source :file_info_type
-                 :format :is_implicit :multiplicity :retain)
+                 :arguments :validators :defaultValue :data_source :file_info_type :format
+                 :is_implicit :multiplicity :retain)
     :validator   (build-validator-for-property property)
     :value       (get-default-value property)
-    :data_object (populate-data-object property (:data_object property {}))))
+    :data_object (populate-data-object property (:data_object property {}))
+    :type        (if (contains? input-property-types (:type property)) "Input" (:type property))))
 
 (defn translate-property-group
   "Translates a property group from its external format to its internal format."

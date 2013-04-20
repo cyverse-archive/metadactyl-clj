@@ -40,18 +40,20 @@
            :defaultValue {:name "foo" :value "foo" :display "foo"}}))))
 
 (deftest translate-property-test
-  (is (= {:value "foo" :validator nil :data_object nil}
+  (is (= {:value "foo" :validator nil :data_object nil :type nil}
          (translate-property {:defaultValue "foo"}))))
 
 (deftest translate-empty-property-test
-  (is (= {:value nil :validator nil :data_object nil}
+  (is (= {:value nil :validator nil :data_object nil :type nil}
          (translate-property {}))))
 
 (deftest translate-required-property-test
   (is (= {:value       nil
           :validator   {:required true
                         :rules    []}
-          :data_object nil}
+          :data_object nil
+          :type        nil
+          :required    true}
          (translate-property
           {:required true}))))
 
@@ -59,7 +61,8 @@
   (is (= {:value       nil
           :validator   {:required false
                         :rules    [{:IntAbove [42]}]}
-          :data_object nil}
+          :data_object nil
+          :type        nil}
          (translate-property
           {:validators [{:type   "IntAbove"
                          :params [42]}]}))))
@@ -68,46 +71,62 @@
   (is (= {:value       nil
           :validator   {:required false
                         :rules    [{:MustContain (internal-selection-args)}]}
-          :data_object nil}
+          :data_object nil
+          :type        nil}
          (translate-property
           {:arguments (external-selection-args)}))))
 
+(defn- internal-prop
+  [multiplicity]
+  {:data_object   {:cmdSwitch      "da-name"
+                   :data_source    "da-data-source"
+                   :description    "da-description"
+                   :file_info_type "da-info-type"
+                   :format         "da-format"
+                   :id             "da-id"
+                   :is_implicit    false
+                   :multiplicity   multiplicity
+                   :name           "da-label"
+                   :order          42
+                   :required       false
+                   :retain         true}
+   :description   "da-description"
+   :id            "da-id"
+   :isVisible     true
+   :label         "da-label"
+   :name          "da-name"
+   :omit_if_blank false
+   :order         42
+   :required      false
+   :type          "Input"
+   :value         nil
+   :validator     nil})
+
+(defn- external-prop
+  [type]
+  {:data_object   {:data_source    "da-data-source"
+                   :file_info_type "da-info-type"
+                   :format         "da-format"
+                   :is_implicit    false
+                   :retain         true}
+   :description   "da-description"
+   :id            "da-id"
+   :isVisible     true
+   :label         "da-label"
+   :name          "da-name"
+   :omit_if_blank false
+   :order         42
+   :required      false
+   :type          type})
+
 (deftest translate-property-with-data-object-test
-  (is (= {:data_object   {:cmdSwitch      "da-name"
-                          :data_source    "da-data-source"
-                          :description    "da-description"
-                          :file_info_type "da-info-type"
-                          :format         "da-format"
-                          :id             "da-id"
-                          :is_implicit    false
-                          :multiplicity   "single"
-                          :name           "da-label"
-                          :order          42
-                          :required       false
-                          :retain         true}
-          :description   "da-description"
-          :id            "da-id"
-          :isVisible     true
-          :label         "da-label"
-          :name          "da-name"
-          :omit_if_blank false
-          :order         42
-          :required      false
-          :type          "Input"
-          :value         nil
-          :validator     nil})
-      (translate-property
-       {:data_object   {:data_source    "da-data-source"
-                        :file_info_type "da-info-type"
-                        :format         "da-format"
-                        :is_implicit    false
-                        :multiplicity   "single"
-                        :retain         true}
-        :description   "da-description"
-        :id            "da-id"
-        :isVisible     true
-        :label         "da-label"
-        :name          "na-name"
-        :omit_if_blank false
-        :order         42
-        :required      false})))
+  (is (= (internal-prop "One")
+         (translate-property (external-prop "FileInput")))))
+
+(deftest folder-input-translation-test
+  (is (= (internal-prop "Folder")
+         (translate-property (external-prop "FolderInput")))))
+
+(deftest multi-file-selector-translation-test
+  (is (= (internal-prop "Many")
+         (translate-property (external-prop "MultiFileSelector")))))

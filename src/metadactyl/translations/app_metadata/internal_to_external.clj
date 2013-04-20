@@ -1,5 +1,5 @@
 (ns metadactyl.translations.app-metadata.internal-to-external
-  (:use [metadactyl.translations.app-metadata.util :only [get-property-groups]]
+  (:use [metadactyl.translations.app-metadata.util]
         [slingshot.slingshot :only [throw+]])
   (:require [clojure-commons.error-codes :as ce]))
 
@@ -30,7 +30,8 @@
   [property]
   (let [rules    (get-in property [:validator :rules] [])
         args     (get-property-arguments rules)
-        data-obj (:data_object property)]
+        data-obj (:data_object property)
+        type     (:type property)]
     (if (nil? data-obj)
       (assoc (dissoc property :validator :value)
         :arguments    (map #(dissoc % :isDefault) args)
@@ -43,13 +44,16 @@
         :defaultValue (get-default-value property args)
         :data_object  (dissoc data-obj
                               :cmdSwitch :name :description :id :label :order :required
-                              :file_info_type_id :format_id)
+                              :file_info_type_id :format_id :multiplicity)
         :name         (:cmdSwitch data-obj (:name property))
         :description  (:description data-obj (:description property))
         :id           (:id data-obj (:id property))
         :label        (:name data-obj (:label property))
         :order        (:order data-obj (:order property))
-        :required     (:required data-obj (:required property false))))))
+        :required     (:required data-obj (:required property false))
+        :type         (if (input-property-types (:type property))
+                        (property-type-for (:multiplicity data-obj))
+                        (:type property))))))
 
 (defn translate-property-group
   "Translates a property group from its internal format to its external format."

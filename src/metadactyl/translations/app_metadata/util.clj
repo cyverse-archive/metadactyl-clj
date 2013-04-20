@@ -1,6 +1,27 @@
 (ns metadactyl.translations.app-metadata.util
   (:use [slingshot.slingshot :only [throw+]])
-  (:require [clojure-commons.error-codes :as ce]))
+  (:require [clojure.set :as set]
+            [clojure-commons.error-codes :as ce]))
+
+(def input-property-types
+  #{"Input" "FileInput" "FolderInput" "MultiFileSelector"})
+
+(def output-property-types
+  #{"Output"})
+
+(def io-property-types
+  (set/union input-property-types output-property-types))
+
+(def ^:private multiplicities-and-prop-types
+  [["FileInput"         "One"]
+   ["FolderInput"       "Folder"]
+   ["MultiFileSelector" "Many"]])
+
+(def multiplicity-for
+  (into {} multiplicities-and-prop-types))
+
+(def property-type-for
+  (into {} (map (comp vec reverse) multiplicities-and-prop-types)))
 
 (defn get-property-groups
   "Gets the list of property groups "
