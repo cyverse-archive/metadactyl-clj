@@ -4,6 +4,7 @@
     * [Template JSON](#template-json)
     * [App JSON](#app-json)
     * [App JSON for UI](#app-json-for-ui)
+    * [Updated Template JSON](#updated-template-json)
 
 # JSON Examples
 
@@ -668,6 +669,61 @@
             "id": "0234CD33-46C2-4DEC-BBC7-FCCA91534DAF",
             "label": "Muscle-Fasttree",
             "name": "Muscle-Fasttree",
+            "type": ""
+        }
+    ]
+}
+```
+
+## Updated Template JSON
+
+```json
+{
+    "objects": [
+        {
+            "component": "tar",
+            "component_id": "ca6eaa4e7a8cb40ad9d0fbfe8a37bca44",
+            "description": "",
+            "edited_date": "1323731379419",
+            "groups": [
+                {
+                    "description": "",
+                    "id": "3CB157DD-E8EB-457C-95DE-07FB0065769F",
+                    "isVisible": true,
+                    "label": "Filename",
+                    "name": "",
+                    "properties": [
+                        {
+                            "arguments": [],
+                            "data_object": {
+                                "data_source": "file",
+                                "file_info_type": "File",
+                                "format": "Unspecified",
+                                "is_implicit": false,
+                                "retain": false
+                            },
+                            "defaultValue": "",
+                            "description": "",
+                            "id": "233F78BC-8E8B-4F8D-AF6B-4EE8651D3803",
+                            "isVisible": true,
+                            "label": "file",
+                            "name": "xzf ",
+                            "omit_if_blank": false,
+                            "order": 1,
+                            "required": true,
+                            "type": "FileInput",
+                            "validators": []
+                        }
+                    ],
+                    "type": ""
+                }
+            ],
+            "id": "F63C8AAB-5A06-48AD-A8F5-8E904FAA079A",
+            "label": "zip asplode",
+            "name": "zip asplode",
+            "published_date": "",
+            "references": [],
+            "tito": "F63C8AAB-5A06-48AD-A8F5-8E904FAA079A",
             "type": ""
         }
     ]

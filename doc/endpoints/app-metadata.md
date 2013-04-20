@@ -10,3 +10,4 @@
 * [App Rating Services](app-metadata/rating.md)
 * [App Editing Services](app-metadata/editing.md)
 * [Tool Request Services](app-metadata/tool-requests.md)
+* [Updated App Administration Services](app-metadata/updated-admin.md)
