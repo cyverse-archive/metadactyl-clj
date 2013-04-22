@@ -566,9 +566,10 @@
       (prop-value-tx/normalize-property-values)
       (cheshire/encode)))
 
-(defn get-app-rerun-info
-  "Obtains analysis JSON with the property values from a previous experiment
-   plugged into the appropriate properties."
+(defn- get-unformatted-app-rerun-info
+  "Obtains an analysis representation with the property values from a previous experiment
+   plugged into the appropriate properties. The analysis representation is left in a Clojure
+   data structure so that further processing can be done prior to serialization."
   [job-id]
   (let [values        (cheshire/decode (get-property-values job-id) true)
         app           (cheshire/decode (get-app (:analysis_id values)) true)
@@ -581,7 +582,21 @@
         update-props  #(map update-prop %)
         update-group  #(update-in % [:properties] update-props)
         update-groups #(map update-group %)]
-    (success-response (update-in app [:groups] update-groups))))
+    (update-in app [:groups] update-groups)))
+
+(defn get-app-rerun-info
+  "Obtains analysis JSON with the property values from a previous experiment
+   plugged into the appropriate properties."
+  [job-id]
+  (success-response (get-unformatted-app-rerun-info job-id)))
+
+(defn get-new-app-rerun-info
+  "Obtains analysis JSON in the new format required by the DE with the property values from a
+   previous experiment plugged into the appropriate properties."
+  [job-id]
+  (-> (get-unformatted-app-rerun-info job-id)
+      (app-meta-tx/template-internal-to-external)
+      (success-response)))
 
 (defn list-reference-genomes
   "Lists the reference genomes in the database."
