@@ -563,7 +563,7 @@
   [job-id]
   (-> (.getPropertyValues (property-value-service) job-id)
       (cheshire/decode true)
-      (prop-value-tx/normalize-property-values)
+      (prop-value-tx/format-property-values-response)
       (cheshire/encode)))
 
 (defn- get-unformatted-app-rerun-info
@@ -571,7 +571,7 @@
    plugged into the appropriate properties. The analysis representation is left in a Clojure
    data structure so that further processing can be done prior to serialization."
   [job-id]
-  (let [values        (cheshire/decode (get-property-values job-id) true)
+  (let [values        (cheshire/decode (.getPropertyValues (property-value-service) job-id) true)
         app           (cheshire/decode (get-app (:analysis_id values)) true)
         pval-to-entry #(vector (:full_param_id %) (:param_value %))
         values        (into {} (map pval-to-entry (:parameters values)))
