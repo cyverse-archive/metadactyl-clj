@@ -7,7 +7,7 @@
         [kameleon.app-listing]
         [metadactyl.metadactyl :only [current-user]]
         [metadactyl.workspace]
-        [metadactyl.config]
+        [metadactyl.util.config]
         [metadactyl.util.conversions :only [to-long date->long]])
   (:require [cheshire.core :as cheshire]))
 

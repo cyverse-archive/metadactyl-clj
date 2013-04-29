@@ -1,4 +1,4 @@
-(ns metadactyl.config
+(ns metadactyl.util.config
   (:use [slingshot.slingshot :only [throw+]])
   (:require [cheshire.core :as cheshire]
             [clojure-commons.config :as cc]

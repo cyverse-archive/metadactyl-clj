@@ -4,7 +4,7 @@
         [kameleon.queries]
         [kameleon.app-groups]
         [metadactyl.metadactyl :only [current-user]]
-        [metadactyl.config])
+        [metadactyl.util.config])
   (:require [cheshire.core :as cheshire]))
 
 (defn- create-default-workspace-subgroups

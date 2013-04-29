@@ -6,7 +6,7 @@
         [kameleon.app-groups]
         [kameleon.queries :only
          [get-or-create-user get-or-create-workspace-for-user]]
-        [metadactyl.config]
+        [metadactyl.util.config]
         [metadactyl.json :only [to-json from-json]]
         [metadactyl.util.service :only [success-response]]
         [metadactyl.validation]

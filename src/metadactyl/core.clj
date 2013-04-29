@@ -19,7 +19,7 @@
             [clojure.tools.logging :as log]
             [clojure-commons.clavin-client :as cl]
             [clojure-commons.error-codes :as ce]
-            [metadactyl.config :as config]
+            [metadactyl.util.config :as config]
             [ring.adapter.jetty :as jetty]))
 
 (defroutes secured-routes

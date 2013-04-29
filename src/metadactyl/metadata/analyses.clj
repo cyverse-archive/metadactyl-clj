@@ -3,7 +3,7 @@
         [clj-time.format :only [formatter parse]]
         [kameleon.entities :only [transformation_activity workspace]]
         [korma.core]
-        [metadactyl.config :only [osm-base-url osm-jobs-bucket]]
+        [metadactyl.util.config :only [osm-base-url osm-jobs-bucket]]
         [metadactyl.util.conversions :only [to-long]]
         [slingshot.slingshot :only [throw+]])
   (:require [cheshire.core :as cheshire]

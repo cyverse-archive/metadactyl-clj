@@ -2,7 +2,7 @@
   (:use [clojure.java.io :only [reader]]
         [metadactyl.app-validation]
         [metadactyl.beans]
-        [metadactyl.config]
+        [metadactyl.util.config]
         [metadactyl.metadata.analyses
          :only [get-analyses-for-workspace-id get-selected-analyses
                 delete-analyses]]
