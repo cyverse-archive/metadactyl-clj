@@ -4,20 +4,20 @@
 
 (deftest string-value
   (is (= {:parameters [{:param_value {:value "foo"}}]})
-      (normalize-property-values
+      (format-property-values-response
        {:parameters [{:param_value "foo"}]})))
 
 (deftest int-value
   (is (= {:parameters [{:param_value {:value 1}}]}
-         (normalize-property-values
+         (format-property-values-response
           {:parameters [{:param_value 1}]}))))
 
 (deftest array-value
   (is (= {:parameters [{:param_value {:value ["foo" "bar" "baz"]}}]}
-         (normalize-property-values
+         (format-property-values-response
           {:parameters [{:param_value ["foo" "bar" "baz"]}]}))))
 
 (deftest object-value
   (is (= {:parameters [{:param_value {:value {:foo "bar" :baz "quux"}}}]}
-         (normalize-property-values
+         (format-property-values-response
           {:parameters [{:param_value {:foo "bar" :baz "quux"}}]}))))
