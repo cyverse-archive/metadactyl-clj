@@ -3,8 +3,7 @@
 (defn- normalize-property-value
   "Normalizes the parameter value within a property in the property value service."
   [prop]
-  (if (and (= (:param_type prop) "Input")
-           (sequential? (:param_value prop)))
+  (if (and (sequential? (:param_value prop)))
     (map #(assoc prop :param_value {:value %}) (:param_value prop))
     [(update-in prop [:param_value] (fn [v] {:value v}))]))
 
