@@ -10,7 +10,7 @@
         [metadactyl.kormadb]
         [metadactyl.metadactyl]
         [metadactyl.metadata.tool-requests]
-        [metadactyl.service.app-metadata :only [relabel-app]]
+        [metadactyl.service.app-metadata :only [preview-command-line relabel-app]]
         [metadactyl.util.service]
         [metadactyl.zoidberg]
         [ring.middleware keyword-params nested-params])
@@ -227,6 +227,9 @@
 
   (GET "/tool-request/:uuid" [uuid]
        (trap #(get-tool-request uuid)))
+
+  (POST "/arg-preview" [:as {body :body}]
+       (ce/trap "arg-preview" #(preview-command-line body)))
 
   (context "/secured" [:as {params :params}]
            (store-current-user secured-routes params))
