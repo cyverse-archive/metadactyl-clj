@@ -523,3 +523,15 @@ identical to the template JSON format above, and multi-step apps are condensed
 so that they appear to contain just one step. Please see
 [Template JSON](#template-json) above for more information about the format of
 the response body.
+
+## Previewing Command Line Arguments
+
+*Unsecured Endpoint:* POST /arg-preview
+
+The app integration utility in the DE uses this service to obtain an example
+list of command-line arguments so that the user can tell what the command-line
+might look like without having to run a job using the app that is being
+integrated first. The request body is in the format described by
+[Template JSON](#template-json), above. The response body is in the same format
+as the `/arg-preview` service in the JEX. Please see the JEX documentation for
+more information.
