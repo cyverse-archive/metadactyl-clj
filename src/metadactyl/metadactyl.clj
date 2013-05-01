@@ -422,6 +422,9 @@
    (workflow-import-service)
    (-> (parse-json body)
        (app-meta-tx/template-external-to-internal)
+       (assoc :implementation
+         {:implementor       (.getShortUsername current-user)
+          :implementor_email (.getEmail current-user)})
        (cheshire/encode))))
 
 (defn update-workflow-from-json
