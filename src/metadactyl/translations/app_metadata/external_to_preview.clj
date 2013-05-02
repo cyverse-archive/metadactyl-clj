@@ -3,9 +3,9 @@
 
 (defn- translate-property
   [prop]
-  {:name  (:name prop)
-   :value (:value prop)
-   :order (:order prop)})
+  {:name  (:name prop "--unnamed-parameter")
+   :value (:value prop "")
+   :order (:order prop 0)})
 
 (defn- translate-property-group
   [group]

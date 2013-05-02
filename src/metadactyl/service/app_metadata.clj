@@ -3,7 +3,7 @@
   (:use [clojure.java.io :only [reader]]
         [metadactyl.util.service :only [build-url success-response parse-json]]
         [korma.db :only [transaction]]
-        [slingshot.slingshot :only [throw+]])
+        [slingshot.slingshot :only [try+ throw+]])
   (:require [cheshire.core :as cheshire]
             [clj-http.client :as client]
             [clojure.tools.logging :as log]
@@ -24,9 +24,11 @@
   [body]
   (let [in-req  (parse-json body)
         jex-req (atx/template-cli-preview-req in-req)]
-    (client/post
-     (build-url (config/jex-base-url) "arg-preview")
-     {:body             (cheshire/encode jex-req)
-      :content-type     :json
-      :throw-exceptions false
-      :as               :stream})))
+    (cheshire/decode-stream
+     ((comp reader :body)
+      (client/post
+       (build-url (config/jex-base-url) "arg-preview")
+       {:body             (cheshire/encode jex-req)
+        :content-type     :json
+        :as               :stream}))
+     true)))
