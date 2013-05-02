@@ -547,7 +547,6 @@
       (:objects)
       (first)
       (app-meta-tx/template-internal-to-external)
-      ((fn [app] {:objects [app]}))
       (cheshire/encode)))
 
 (defn copy-app

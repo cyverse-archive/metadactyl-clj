@@ -15,7 +15,8 @@
 (def ^:private multiplicities-and-prop-types
   [["FileInput"         "One"]
    ["FolderInput"       "Folder"]
-   ["MultiFileSelector" "Many"]])
+   ["MultiFileSelector" "Many"]
+   ["Output"            "One"]])
 
 (def multiplicity-for
   (into {} multiplicities-and-prop-types))
