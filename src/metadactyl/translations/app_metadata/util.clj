@@ -7,22 +7,53 @@
   #{"Input" "FileInput" "FolderInput" "MultiFileSelector"})
 
 (def output-property-types
-  #{"Output"})
+  #{"Output" "FileOutput" "FolderOutput" "MultiFileOutput"})
 
 (def io-property-types
   (set/union input-property-types output-property-types))
 
-(def ^:private multiplicities-and-prop-types
+(def ^:private input-multiplicities-and-prop-types
   [["FileInput"         "One"]
    ["FolderInput"       "Folder"]
-   ["MultiFileSelector" "Many"]
-   ["Output"            "One"]])
+   ["MultiFileSelector" "Many"]])
 
-(def multiplicity-for
-  (into {} multiplicities-and-prop-types))
+(def ^:private output-multiplicities-and-prop-types
+  [["FileOutput"      "One"]
+   ["FolderOutput"    "Folder"]
+   ["MultiFileOutput" "Many"]])
 
-(def property-type-for
-  (into {} (map (comp vec reverse) multiplicities-and-prop-types)))
+(def ^:private input-multiplicity-for
+  (into {} input-multiplicities-and-prop-types))
+
+(def ^:private input-property-type-for
+  (into {} (map (comp vec reverse) input-multiplicities-and-prop-types)))
+
+(def ^:private output-multiplicity-for
+  (into {} output-multiplicities-and-prop-types))
+
+(def ^:private output-property-type-for
+  (into {} (map (comp vec reverse)  output-multiplicities-and-prop-types)))
+
+(defn multiplicity-for
+  [prop-type mult]
+  (cond
+   (input-property-types prop-type)  (input-multiplicity-for prop-type mult)
+   (output-property-types prop-type) (output-multiplicity-for prop-type mult)
+   :else                             mult))
+
+(defn property-type-for
+  [prop-type mult]
+  (cond
+   (input-property-types prop-type)  (input-property-type-for mult prop-type)
+   (output-property-types prop-type) (output-property-type-for mult prop-type)
+   :else                             mult))
+
+(defn generic-property-type-for
+  [prop-type]
+  (cond
+   (input-property-types prop-type)  "Input"
+   (output-property-types prop-type) "Output"
+   :else                             prop-type))
 
 (defn get-property-groups
   "Gets the list of property groups "

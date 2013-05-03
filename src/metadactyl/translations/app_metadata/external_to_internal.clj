@@ -43,7 +43,7 @@
     :validator   (build-validator-for-property property)
     :value       (get-default-value property)
     :data_object (populate-data-object property (:data_object property {}))
-    :type        (if (contains? input-property-types (:type property)) "Input" (:type property))))
+    :type        (generic-property-type-for (:type property))))
 
 (defn translate-property-group
   "Translates a property group from its external format to its internal format."

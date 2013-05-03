@@ -51,9 +51,7 @@
         :label        (:name data-obj (:label property))
         :order        (:order data-obj (:order property))
         :required     (:required data-obj (:required property false))
-        :type         (if (input-property-types (:type property))
-                        (property-type-for (:multiplicity data-obj))
-                        (:type property))))))
+        :type         (property-type-for (:type property) (:multiplicity data-obj))))))
 
 (defn translate-property-group
   "Translates a property group from its internal format to its external format."
