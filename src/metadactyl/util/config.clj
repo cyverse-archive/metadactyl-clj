@@ -1,11 +1,9 @@
-(ns metadactyl.config
-  (:use [clojure.data.json :only [read-json]]
-        [clojure.string :only [blank? split]]
-        [slingshot.slingshot :only [throw+]])
-  (:require [clojure-commons.config :as cc]
+(ns metadactyl.util.config
+  (:use [slingshot.slingshot :only [throw+]])
+  (:require [cheshire.core :as cheshire]
+            [clojure-commons.config :as cc]
             [clojure-commons.error-codes :as ce]
-            [clojure.string :as str]
-            [clojure.tools.logging :as log]))
+            [clojure.string :as str]))
 
 (def ^:private props
   "A ref for storing the configuration properties."
@@ -161,4 +159,4 @@
 (def get-default-app-groups
   (memoize
   (fn []
-    (read-json (str/replace (workspace-default-app-groups) #"\\," ",")))))
+    (cheshire/decode (str/replace (workspace-default-app-groups) #"\\," ",") true))))

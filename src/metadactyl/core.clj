@@ -9,13 +9,17 @@
         [metadactyl.collaborators]
         [metadactyl.kormadb]
         [metadactyl.metadactyl]
-        [metadactyl.service]
+        [metadactyl.metadata.tool-requests]
+        [metadactyl.service.app-metadata :only [preview-command-line relabel-app]]
+        [metadactyl.util.service]
+        [metadactyl.zoidberg]
         [ring.middleware keyword-params nested-params])
   (:require [compojure.route :as route]
             [compojure.handler :as handler]
             [clojure.tools.logging :as log]
             [clojure-commons.clavin-client :as cl]
-            [metadactyl.config :as config]
+            [clojure-commons.error-codes :as ce]
+            [metadactyl.util.config :as config]
             [ring.adapter.jetty :as jetty]))
 
 (defroutes secured-routes
@@ -24,6 +28,9 @@
 
   (GET "/template/:app-id" [app-id]
        (get-app app-id))
+
+  (GET "/app/:app-id" [app-id]
+       (ce/trap "app" #(get-app-new-format app-id)))
 
   (PUT "/workspaces/:workspace-id/newexperiment" [workspace-id :as {body :body}]
        (run-experiment body workspace-id))
@@ -62,11 +69,23 @@
   (GET "/edit-template/:app-id" [app-id]
        (edit-app app-id))
 
+  (GET "/edit-app/:app-id" [app-id]
+       (edit-app-new-format app-id))
+
+  (GET "/edit-workflow/:app-id" [app-id]
+       (edit-workflow app-id))
+
   (GET "/copy-template/:app-id" [app-id]
        (copy-app app-id))
 
+  (GET "/copy-workflow/:app-id" [app-id]
+       (copy-workflow app-id))
+
   (PUT "/update-template" [:as {body :body}]
-        (trap #(update-template-secured body)))
+       (trap #(update-template-secured body)))
+
+  (PUT "/update-app" [:as {body :body}]
+       (ce/trap "update-app" #(update-app-secured body)))
 
   (POST "/make-analysis-public" [:as {body :body}]
         (make-app-public body))
@@ -85,6 +104,15 @@
 
   (PUT "/reference-genomes" [:as {body :body}]
        (replace-reference-genomes (slurp body)))
+
+  (PUT "/tool-request" [:as {body :body}]
+       (submit-tool-request (.getUsername current-user) body))
+
+  (POST "/tool-request" [:as {body :body}]
+        (update-tool-request (config/uid-domain) (.getUsername current-user) body))
+
+  (GET "/tool-requests" [:as {:keys [params]}]
+       (list-tool-requests (.getUsername current-user) params))
 
   (route/not-found (unrecognized-path-response)))
 
@@ -137,6 +165,9 @@
   (GET "/export-template/:template-id" [template-id]
        (trap #(export-template template-id)))
 
+  (GET "/export-app/:app-id" [app-id]
+       (ce/trap "export-app" #(export-app app-id)))
+
   (GET "/export-workflow/:app-id" [app-id]
        (trap #(export-workflow app-id)))
 
@@ -176,14 +207,29 @@
   (POST "/update-analysis" [:as {body :body}]
         (trap #(update-app body)))
 
+  (POST "/update-app-labels" [:as {body :body}]
+        (ce/trap "update-app-labels" #(relabel-app body)))
+
   (GET "/get-property-values/:job-id" [job-id]
        (trap #(get-property-values job-id)))
 
   (GET "/analysis-rerun-info/:job-id" [job-id]
        (trap #(get-app-rerun-info job-id)))
 
+  (GET "/app-rerun-info/:job-id" [job-id]
+       (trap #(get-new-app-rerun-info job-id)))
+
   (GET "/get-app-description/:app-id" [app-id]
        (trap #(get-app-description app-id)))
+
+  (POST "/tool-request" [:as {body :body}]
+        (trap #(update-tool-request (config/uid-domain) body)))
+
+  (GET "/tool-request/:uuid" [uuid]
+       (trap #(get-tool-request uuid)))
+
+  (POST "/arg-preview" [:as {body :body}]
+       (ce/trap "arg-preview" #(preview-command-line body)))
 
   (context "/secured" [:as {params :params}]
            (store-current-user secured-routes params))

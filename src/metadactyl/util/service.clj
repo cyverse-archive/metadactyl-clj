@@ -1,9 +1,10 @@
-(ns metadactyl.service
-  (:use [clojure.data.json :only (json-str)]
+(ns metadactyl.util.service
+  (:use [clojure.java.io :only [reader]]
         [clojure.string :only (join upper-case)]
-        [slingshot.slingshot :only [try+]])
-  (:require [clj-http.client :as client]
-            [clojure.tools.logging :as log]))
+        [slingshot.slingshot :only [try+ throw+]])
+  (:require [cheshire.core :as cheshire]
+            [clojure.tools.logging :as log]
+            [clojure-commons.error-codes :as ce]))
 
 (defn empty-response []
   {:status 200})
@@ -11,7 +12,7 @@
 (defn success-response
   ([map]
      {:status       200
-      :body         (json-str (merge {:success true} map))
+      :body         (cheshire/encode (merge {:success true} map))
       :content-type :json})
   ([]
      (success-response {})))
@@ -19,15 +20,15 @@
 (defn failure-response [e]
   (log/error e "bad request")
   {:status       400
-   :body         (json-str {:success false :reason (.getMessage e)})
+   :body         (cheshire/encode {:success false :reason (.getMessage e)})
    :content-type :json})
 
 (defn slingshot-failure-response [m]
   (log/error "bad request:" m)
   {:status       400
-   :body         (json-str (assoc (dissoc m :type)
-                             :code    (upper-case (name (:type m)))
-                             :success false))
+   :body         (cheshire/encode (assoc (dissoc m :type)
+                                    :code    (upper-case (name (or (:type m) (:code m))))
+                                    :success false))
    :content-type :json})
 
 (defn forbidden-response [e]
@@ -37,13 +38,13 @@
 (defn error-response [e]
   (log/error e "internal error")
   {:status 500
-   :body (json-str {:success false :reason (.getMessage e)})
+   :body (cheshire/encode {:success false :reason (.getMessage e)})
    :content-type :json})
 
 (defn unrecognized-path-response []
   "Builds the response to send for an unrecognized service path."
   (let [msg "unrecognized service path"]
-    (json-str {:success false :reason msg})))
+    (cheshire/encode {:success false :reason msg})))
 
 (defn trap
   "Traps any exception thrown by a service and returns an appropriate
@@ -72,22 +73,13 @@
    :headers (dissoc (:headers request) "content-length" "content-type")
    :body body})
 
-(defn forward-get
-  "Forwards a GET request to a remote service."
-  [url request]
-  (client/get url (prepare-forwarded-request request)))
-
-(defn forward-post
-  "Forwards a POST request to a remote service."
-  [url request body]
-  (client/post url (prepare-forwarded-request request body)))
-
-(defn forward-put
-  "Forwards a PUT request to a remote service."
-  [url request body]
-  (client/put url (prepare-forwarded-request request body)))
-
-(defn forward-delete
-  "Forwards a DELETE request to a remote service."
-  [url request]
-  (client/delete url (prepare-forwarded-request request)))
+(defn parse-json
+  "Parses a JSON request body."
+  [body]
+  (try+
+    (if (string? body)
+      (cheshire/decode body true)
+      (cheshire/decode-stream (reader body) true))
+    (catch Exception e
+      (throw+ {:error_code ce/ERR_INVALID_JSON
+               :detail     (str e)}))))

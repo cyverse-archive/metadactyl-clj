@@ -3,10 +3,10 @@
         [clj-time.format :only [formatter parse]]
         [kameleon.entities :only [transformation_activity workspace]]
         [korma.core]
-        [metadactyl.config :only [osm-base-url osm-jobs-bucket]]
+        [metadactyl.util.config :only [osm-base-url osm-jobs-bucket]]
         [metadactyl.util.conversions :only [to-long]]
         [slingshot.slingshot :only [throw+]])
-  (:require [clojure.data.json :as json]
+  (:require [cheshire.core :as cheshire]
             [clojure.string :as string]
             [clojure.tools.logging :as log]
             [clojure-commons.osm :as osm]))
@@ -111,7 +111,7 @@
   ([query f]
      (->> query
           (osm/query (create-osm-client))
-          json/read-json
+          (#(cheshire/decode % true))
           :objects
           (map f))))
 
@@ -146,7 +146,8 @@
   "Filters analyses according to a filter specification."
   [filt analyses]
   (if-not (nil? filt)
-    (filter #(analysis-matches-filters? (json/read-json filt) %) analyses)
+    (let [filt (cheshire/decode filt true)]
+      (filter #(analysis-matches-filters? filt %) analyses))
     analyses))
 
 (defn- get-sort-fn
@@ -197,9 +198,8 @@
     state  :state}]
   (if (:deleted state false)
     (log/warn "job" (:uuid state) "is already deleted")
-    ((comp clojure.pprint/pprint json/read-json)
-     (osm/update-object (create-osm-client) osm-id
-                        (assoc state :deleted true)))))
+    (osm/update-object (create-osm-client) osm-id
+                       (assoc state :deleted true))))
 
 (defn- delete-analyses-for-job
   "Marks all analyses associated with a job and a workspace as deleted."

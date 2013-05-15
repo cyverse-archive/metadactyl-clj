@@ -1,27 +1,25 @@
 (ns metadactyl.metadactyl
-  (:use [clojure.data.json :only [read-json]]
-        [slingshot.slingshot :only [throw+]]
+  (:use [clojure.java.io :only [reader]]
         [metadactyl.app-validation]
         [metadactyl.beans]
-        [metadactyl.config]
+        [metadactyl.util.config]
         [metadactyl.metadata.analyses
          :only [get-analyses-for-workspace-id get-selected-analyses
                 delete-analyses]]
         [metadactyl.metadata.reference-genomes
          :only [get-reference-genomes put-reference-genomes]]
         [metadactyl.metadata.element-listings :only [list-elements]]
-        [metadactyl.service]
+        [metadactyl.util.service]
         [metadactyl.transformers]
         [metadactyl.validation :only [validate-json-array-field]]
-        [ring.util.codec :only [url-decode]])
+        [ring.util.codec :only [url-decode]]
+        [slingshot.slingshot :only [throw+]])
   (:import [com.mchange.v2.c3p0 ComboPooledDataSource]
            [java.util HashMap]
            [org.iplantc.authn.service UserSessionService]
            [org.iplantc.authn.user User]
            [org.iplantc.workflow.client OsmClient]
-           [org.iplantc.workflow HibernateTemplateFetcher]
-           [org.iplantc.workflow.experiment
-            AnalysisRetriever ExperimentRunner IrodsUrlAssembler]
+           [org.iplantc.workflow.experiment ExperimentRunner IrodsUrlAssembler]
            [org.iplantc.workflow.integration.validation
             ChainingTemplateValidator OutputRedirectionTemplateValidator
             TemplateValidator]
@@ -31,11 +29,13 @@
             TemplateGroupService UserService WorkflowElementRetrievalService
             WorkflowExportService AnalysisListingService WorkflowPreviewService
             WorkflowImportService AnalysisDeletionService RatingService
-            WorkflowElementSearchService PropertyValueService]
-           [org.iplantc.workflow.template.notifications NotificationAppender]
+            WorkflowElementSearchService PropertyValueService UiAnalysisService]
            [org.springframework.orm.hibernate3.annotation
             AnnotationSessionFactoryBean])
-  (:require [clojure.tools.logging :as log]))
+  (:require [cheshire.core :as cheshire]
+            [clojure.tools.logging :as log]
+            [metadactyl.translations.app-metadata :as app-meta-tx]
+            [metadactyl.translations.property-values :as prop-value-tx]))
 
 (defn- get-property-type-validator
   "Gets an implementation of the TemplateValidator interface that can be used
@@ -87,7 +87,7 @@
   (log/debug user-attributes)
   (let [uid (user-attributes :user)]
     (if (empty? uid)
-      (throw+ {:type :metadactyl.service/unauthorized,
+      (throw+ {:type :metadactyl.util.service/unauthorized,
                :user user-attributes,
                :message "Invalid user credentials provided."}))
     (doto (User.)
@@ -241,18 +241,6 @@
     (AnalysisDeletionService. (session-factory))))
 
 (register-bean
-  (defbean app-fetcher
-    "Retrieves apps from the database."
-    (doto (HibernateTemplateFetcher.)
-      (.setSessionFactory (session-factory)))))
-
-(register-bean
-  (defbean notification-appender
-    "Appends UI notifications to an app."
-    (doto (NotificationAppender.)
-      (.setSessionFactory (session-factory)))))
-
-(register-bean
   (defbean analysis-edit-service
     "Services to make apps available for editing in Tito."
     (doto (AnalysisEditService.)
@@ -261,19 +249,12 @@
       (.setWorkflowImportService (workflow-import-service)))))
 
 (register-bean
-  (defbean analysis-retriever
-    "Used by several services to retrieve apps from the daatabase."
-    (doto (AnalysisRetriever.)
-      (.setSessionFactory (session-factory)))))
-
-(register-bean
   (defbean rating-service
     "Services to associate user ratings with or remove user ratings from
      apps."
     (doto (RatingService.)
       (.setSessionFactory (session-factory))
-      (.setUserSessionService user-session-service)
-      (.setAnalysisRetriever (analysis-retriever)))))
+      (.setUserSessionService user-session-service))))
 
 (register-bean
   (defbean url-assembler
@@ -298,6 +279,12 @@
       (.setSessionFactory (session-factory))
       (.setOsmClient (osm-job-request-client)))))
 
+(register-bean
+ (defbean ui-app-service
+   "Services to retrieve apps in the format expected by the UI."
+   (doto (UiAnalysisService.)
+     (.setSessionFactory (session-factory)))))
+
 (defn get-workflow-elements
   "A service to get information about workflow elements."
   [element-type params]
@@ -309,11 +296,6 @@
   "A service to search information about deployed components."
   [search-term]
   (.searchDeployedComponents (workflow-element-search-service) search-term))
-
-(defn get-all-app-ids
-  "A service to get the list of app identifiers."
-  []
-  (.getAnalysisIds (workflow-export-service)))
 
 (defn delete-categories
   "A service used to delete app categories."
@@ -349,13 +331,28 @@
 (defn get-app
   "A service used to get an app in the format required by the DE."
   [app-id]
-  (.appendNotificationToTemplate (notification-appender)
-    (.fetchTemplateByName (app-fetcher) app-id)))
+  (.getAnalysis (ui-app-service) app-id))
+
+(defn get-app-new-format
+  "This service will retrieve an app in the format required by the DE as of version 1.8."
+  [app-id]
+  (-> (get-app app-id)
+      (cheshire/decode true)
+      (app-meta-tx/template-internal-to-external)
+      (cheshire/encode)))
 
 (defn export-template
   "This service will export the template with the given identifier."
   [template-id]
   (.exportTemplate (workflow-export-service) template-id))
+
+(defn export-app
+  "This service will export a single-step app in the format used by the UI."
+  [app-id]
+  (-> (export-template app-id)
+      (cheshire/decode true)
+      (app-meta-tx/template-internal-to-external)
+      (cheshire/encode)))
 
 (defn export-workflow
   "This service will export a workflow with the given identifier."
@@ -388,8 +385,7 @@
 (defn import-workflow
   "This service will import a workflow into the DE."
   [body]
-  (.importWorkflow (workflow-import-service) (slurp body))
-  (empty-response))
+  (.importWorkflow (workflow-import-service) (slurp body)))
 
 (defn import-tools
   "This service will import deployed components into the DE and send
@@ -418,18 +414,35 @@
   [body]
   (.updateTemplate (workflow-import-service) (slurp body)))
 
+(defn update-app-secured
+  "This service will either update an existing single-step app or import a new one. The app ID
+   is returned in the response body."
+  [body]
+  (.updateTemplate
+   (workflow-import-service)
+   (-> (parse-json body)
+       (app-meta-tx/template-external-to-internal)
+       (assoc :implementation
+         {:implementor       (.getShortUsername current-user)
+          :implementor_email (.getEmail current-user)})
+       (cheshire/encode))))
+
+(defn update-workflow-from-json
+  "This service will either update an existing workflow or import a new workflow
+   from the given JSON string."
+  [json]
+  (.updateWorkflow (workflow-import-service) json))
+
 (defn update-workflow
   "This service will either update an existing workflow or import a new workflow."
   [body]
-  (.updateWorkflow (workflow-import-service) (slurp body))
-  (empty-response))
+  (update-workflow-from-json (slurp body)))
 
 (defn force-update-workflow
   "This service will either update an existing workflow or import a new workflow.
    Vetted workflows may be updated."
   [body {:keys [update-mode]}]
-  (.forceUpdateWorkflow (workflow-import-service) (slurp body) update-mode)
-  (empty-response))
+  (.forceUpdateWorkflow (workflow-import-service) (slurp body) update-mode))
 
 (defn delete-workflow
   "This service will logically remove a workflow from the DE."
@@ -449,22 +462,6 @@
   []
   (object->json-str (.getCurrentUserInfo (user-service))))
 
-(defn- get-analysis
-  "Gets an app from the database."
-  [app-id]
-  (if (nil? app-id)
-    nil
-    (try
-      (.getTransformationActivity (analysis-retriever) app-id)
-      (catch Exception e nil))))
-
-(defn get-app-description
-  "Gets an app description from the database."
-  [app-id]
-  (log/debug "looking up the description for app" app-id)
-  (let [app (get-analysis app-id)]
-    (if (nil? app) "" (.getDescription app))))
-
 (defn run-experiment
   "This service accepts a job submission from a user then reformats it and
    submits it to the JEX."
@@ -472,7 +469,7 @@
   (->> (add-workspace-id (slurp body) workspace-id)
        object->json-obj
        (.runExperiment (experiment-runner))
-       read-json
+       (#(cheshire/decode % true))
        :job_id
        vector
        (get-selected-analyses (string->long workspace-id))
@@ -491,7 +488,7 @@
   "This service retrieves information about selected jobs that the user has
    submitted."
   [workspace-id body]
-  (let [m            (read-json (slurp body))
+  (let [m            (cheshire/decode-stream (reader body) true)
         _            (validate-json-array-field m :executions)
         workspace-id (string->long workspace-id)
         analyses     (get-selected-analyses workspace-id (:executions m))
@@ -503,7 +500,7 @@
   "This service marks experiments as deleted so that they no longer show up
    in the Analyses window."
   [body workspace-id]
-  (let [ids (:executions (read-json (slurp body)))]
+  (let [ids (:executions (cheshire/decode-stream (reader body) true))]
     (delete-analyses (string->long workspace-id) ids)
     (success-response)))
 
@@ -540,6 +537,18 @@
   [app-id]
   (.prepareAnalysisForEditing (analysis-edit-service) app-id))
 
+(defn edit-app-new-format
+  "This service makes an app available for editing in Tito and returns a
+   representation of it in the JSON format required by the DE as of version
+   1.8."
+  [app-id]
+  (-> (edit-app app-id)
+      (cheshire/decode true)
+      (:objects)
+      (first)
+      (app-meta-tx/template-internal-to-external)
+      (cheshire/encode)))
+
 (defn copy-app
   "This service makes a copy of an app available in Tito for editing."
   [app-id]
@@ -554,14 +563,18 @@
 (defn get-property-values
   "Gets the property values for a previously submitted job."
   [job-id]
-  (.getPropertyValues (property-value-service) job-id))
+  (-> (.getPropertyValues (property-value-service) job-id)
+      (cheshire/decode true)
+      (prop-value-tx/format-property-values-response)
+      (cheshire/encode)))
 
-(defn get-app-rerun-info
-  "Obtains analysis JSON with the property values from a previous experiment
-   plugged into the appropriate properties."
+(defn- get-unformatted-app-rerun-info
+  "Obtains an analysis representation with the property values from a previous experiment
+   plugged into the appropriate properties. The analysis representation is left in a Clojure
+   data structure so that further processing can be done prior to serialization."
   [job-id]
-  (let [values        (read-json (get-property-values job-id))
-        app           (read-json (get-app (:analysis_id values)))
+  (let [values        (cheshire/decode (.getPropertyValues (property-value-service) job-id) true)
+        app           (cheshire/decode (get-app (:analysis_id values)) true)
         pval-to-entry #(vector (:full_param_id %) (:param_value %))
         values        (into {} (map pval-to-entry (:parameters values)))
         update-prop   #(let [id (:id %)]
@@ -571,7 +584,21 @@
         update-props  #(map update-prop %)
         update-group  #(update-in % [:properties] update-props)
         update-groups #(map update-group %)]
-    (success-response (update-in app [:groups] update-groups))))
+    (update-in app [:groups] update-groups)))
+
+(defn get-app-rerun-info
+  "Obtains analysis JSON with the property values from a previous experiment
+   plugged into the appropriate properties."
+  [job-id]
+  (success-response (get-unformatted-app-rerun-info job-id)))
+
+(defn get-new-app-rerun-info
+  "Obtains analysis JSON in the new format required by the DE with the property values from a
+   previous experiment plugged into the appropriate properties."
+  [job-id]
+  (-> (get-unformatted-app-rerun-info job-id)
+      (app-meta-tx/template-internal-to-external)
+      (success-response)))
 
 (defn list-reference-genomes
   "Lists the reference genomes in the database."
@@ -582,5 +609,5 @@
   "Replaces teh reference genomes in the database with a new set of reference
    genomes."
   [body]
-  (put-reference-genomes (:genomes (read-json body)))
+  (put-reference-genomes (:genomes (cheshire/decode body true)))
   (success-response))

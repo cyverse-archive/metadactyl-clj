@@ -2,6 +2,7 @@ pom.xml
 *jar
 /lib/
 /classes/
+.lein-repl-history
 .lein-deps-sum
 .lein-plugins
 /bin
@@ -16,4 +17,5 @@ pom.xml
 /target
 *~
 \#*
-
+.dir-locals.el
+.*.eld

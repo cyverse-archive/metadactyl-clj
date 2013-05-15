@@ -1,6 +1,5 @@
 (ns metadactyl.app-listings
-  (:use [clojure.data.json :only [read-json json-str]]
-        [slingshot.slingshot :only [try+ throw+]]
+  (:use [slingshot.slingshot :only [try+ throw+]]
         [korma.core]
         [kameleon.core]
         [kameleon.entities]
@@ -8,8 +7,9 @@
         [kameleon.app-listing]
         [metadactyl.metadactyl :only [current-user]]
         [metadactyl.workspace]
-        [metadactyl.config]
-        [metadactyl.util.conversions :only [to-long date->long]]))
+        [metadactyl.util.config]
+        [metadactyl.util.conversions :only [to-long date->long]])
+  (:require [cheshire.core :as cheshire]))
 
 (defn- add-subgroups
   [group groups]
@@ -34,7 +34,7 @@
   [workspace-id]
   (let [workspace-id    (to-long workspace-id)
         root-app-groups (get-visible-root-app-group-ids workspace-id)]
-    (json-str {:groups (map format-app-group-hierarchy root-app-groups)})))
+    (cheshire/encode {:groups (map format-app-group-hierarchy root-app-groups)})))
 
 (defn- validate-app-pipeline-eligibility
   "Validates an App for pipeline eligibility, throwing a slingshot stone ."
@@ -43,32 +43,32 @@
         step_count (:step_count app)
         overall_job_type (:overall_job_type app)]
     (if (< step_count 1)
-           (throw+ {:reason
-                    (str "Analysis, "
-                         app_id
-                         ", has too few steps for a pipeline.")}))
+      (throw+ {:reason
+               (str "Analysis, "
+                    app_id
+                    ", has too few steps for a pipeline.")}))
     (if (> step_count 1)
-           (throw+ {:reason
-                    (str "Analysis, "
-                         app_id
-                         ", has too many steps for a pipeline.")}))
+      (throw+ {:reason
+               (str "Analysis, "
+                    app_id
+                    ", has too many steps for a pipeline.")}))
     (if-not (= overall_job_type "executable")
-           (throw+ {:reason
-                    (str "Job type, "
-                         overall_job_type
-                         ", can't currently be included in a pipeline.")}))))
+      (throw+ {:reason
+               (str "Job type, "
+                    overall_job_type
+                    ", can't currently be included in a pipeline.")}))))
 
 (defn- format-app-pipeline-eligibility
   "Validates an App for pipeline eligibility, reformatting its :overall_job_type value, and
    replacing it with a :pipeline_eligibility map"
   [app]
   (let [pipeline_eligibility (try+
-                               (validate-app-pipeline-eligibility app)
-                               {:is_valid true
-                                :reason ""}
-                               (catch map? {:keys [reason]}
-                                 {:is_valid false
-                                  :reason reason}))
+                              (validate-app-pipeline-eligibility app)
+                              {:is_valid true
+                               :reason ""}
+                              (catch map? {:keys [reason]}
+                                {:is_valid false
+                                 :reason reason}))
         app (dissoc app :overall_job_type)]
     (assoc app :pipeline_eligibility pipeline_eligibility)))
 
@@ -112,14 +112,14 @@
         app_group (get-app-group app_group_id)
         total (count-apps-in-group-for-user app_group_id)
         apps_in_group (get-apps-in-group-for-user
-                        app_group_id
-                        workspace
-                        (workspace-favorites-app-group-index)
-                        params)
+                       app_group_id
+                       workspace
+                       (workspace-favorites-app-group-index)
+                       params)
         apps_in_group (map #(format-app %) apps_in_group)]
-    (json-str (assoc app_group
-                     :template_count total
-                     :templates apps_in_group))))
+    (cheshire/encode (assoc app_group
+                       :template_count total
+                       :templates apps_in_group))))
 
 (defn search-apps
   "This service searches for apps in the user's workspace and all public app
@@ -129,13 +129,13 @@
         workspace (get-or-create-workspace (.getUsername current-user))
         total (count-search-apps-for-user search_term (:id workspace))
         search_results (search-apps-for-user
-                         search_term
-                         workspace
-                         (workspace-favorites-app-group-index)
-                         params)
+                        search_term
+                        workspace
+                        (workspace-favorites-app-group-index)
+                        params)
         search_results (map #(format-app %) search_results)]
-    (json-str {:template_count total
-               :templates search_results})))
+    (cheshire/encode {:template_count total
+                      :templates search_results})))
 
 (defn- load-app-details
   "Retrieves the details for a single app."
@@ -198,4 +198,34 @@
     (when (> (count components) 1)
       (throw (IllegalArgumentException.
               (str "pipeline, " app-id ", can't be displayed by this service"))))
-    (json-str (format-app-details details (first components)))))
+    (cheshire/encode (format-app-details details (first components)))))
+
+(defn load-app-ids
+  "Loads the identifiers for all apps that refer to valid deployed components from the database."
+  []
+  (map :id
+       (select [:transformation_activity :app]
+               (modifier "distinct")
+               (fields :app.id)
+               (join [:transformation_task_steps :tts]
+                     {:app.hid :tts.transformation_task_id})
+               (join [:transformation_steps :ts]
+                     {:tts.transformation_step_id :ts.id})
+               (join [:transformations :tx]
+                     {:ts.transformation_id :tx.id})
+               (where (not [(sqlfn :exists (subselect [:template :t]
+                                                      (join [:deployed_components :dc]
+                                                            {:t.component_id :dc.id})
+                                                      (where {:tx.template_id :t.id
+                                                              :t.component_id nil})))]))
+               (order :id :ASC))))
+
+(defn get-all-app-ids
+  "This service obtains the identifiers of all apps that refer to valid deployed components."
+  []
+  (cheshire/encode {:analysis_ids (load-app-ids)}))
+
+(defn get-app-description
+  "This service obtains the description of an app."
+  [app-id]
+  (:description (first (select transformation_activity (where {:id app-id}))) ""))
