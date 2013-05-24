@@ -56,7 +56,7 @@
   (GET "/search-analyses" [:as {params :params}]
        (search-apps params))
 
-  (GET "/get-only-app-groups" []
+  (GET "/app-groups" []
        (trap #(get-only-app-groups)))
 
   (GET "/get-analyses-in-group/:app-group-id"
