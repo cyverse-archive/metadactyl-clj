@@ -81,7 +81,7 @@
     (.addValidator (get-deployed-component-validator))
     (.addValidator (build-private-template-validator))))
 
-(defn- user-from-attributes
+(defn user-from-attributes
   "Creates an instance of org.iplantc.authn.user.User from the given map."
   [user-attributes]
   (log/debug user-attributes)
@@ -96,15 +96,19 @@
       (.setEmail (user-attributes :email))
       (.setShortUsername uid))))
 
+(defmacro with-user
+  "Performs a task with the given user information bound to current-user."
+  [[user] & body]
+  `(binding [current-user (user-from-attributes ~user)]
+     (do ~@body)))
+
 (defn store-current-user
   "Creates a function that takes a request, binds current-user to a new instance
    of org.iplantc.authn.user.User that is built from the user attributes found
    in the given params map, then passes request to the given handler."
   [handler params]
   (fn [request]
-    (trap
-      #(binding [current-user (user-from-attributes params)]
-         (handler request)))))
+    (trap #(with-user [params] (handler request)))))
 
 (register-bean
   (defbean db-url
