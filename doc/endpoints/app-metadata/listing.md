@@ -605,6 +605,8 @@ $ curl -s http://by-tor:8888/analysis-data-objects/19F78CC1-7E14-481B-9D80-85EBC
 
 *Unsecured Endpoint:* GET /get-only-analysis-groups/{workspace-token}
 
+*Secured Endpoint:* GET /secured/app-groups
+
 This service is used by the DE and (indirectly) by Tito to obtain the list of
 analysis groups that are visible to the user. This list includes analysis groups
 that are in the user's workspace along with any analysis groups that are in a
@@ -671,6 +673,40 @@ Here's an example using a username:
 
 ```
 $ curl -s http://by-tor:8888/get-only-analysis-groups/nobody@iplantcollaborative.org | python -mjson.tool
+{
+    "groups": [
+        {
+            "description": "",
+            "groups": [
+                {
+                    "description": "",
+                    "id": "b9a1a3b8-fef6-4576-bbfe-9ad17eb4c2ab",
+                    "is_public": false,
+                    "name": "Apps Under Development",
+                    "template_count": 0
+                },
+                {
+                    "description": "",
+                    "id": "2948ed96-9564-489f-ad73-e099b171a9a5",
+                    "is_public": false,
+                    "name": "Favorite Apps",
+                    "template_count": 0
+                }
+            ],
+            "id": "57a39832-3577-4ee3-8ff4-3fc9d1cf9e34",
+            "is_public": false,
+            "name": "Workspace",
+            "template_count": 0
+        },
+        ...
+    ]
+}
+```
+
+Here's an example using the secured endpoint:
+
+```
+$ curl -s "http://by-tor:8888/secured/app-groups?user=nobody&email=nobody@iplantcollaborative.org" | python -mjson.tool
 {
     "groups": [
         {
