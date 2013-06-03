@@ -29,12 +29,17 @@
     (add-subgroups root groups)))
 
 (defn get-only-app-groups
-  "Retrieves the list of app groups that are visible to the user with the given
-   workspace ID."
-  [workspace-id]
-  (let [workspace-id    (to-long workspace-id)
-        root-app-groups (get-visible-root-app-group-ids workspace-id)]
-    (cheshire/encode {:groups (map format-app-group-hierarchy root-app-groups)})))
+  "Retrieves the list of app groups that are visible to a user."
+  ([]
+     (-> (.getUsername current-user)
+         (get-or-create-workspace)
+         (:id)
+         (str)
+         (get-only-app-groups)))
+  ([workspace-id]
+     (let [workspace-id    (to-long workspace-id)
+           root-app-groups (get-visible-root-app-group-ids workspace-id)]
+       (cheshire/encode {:groups (map format-app-group-hierarchy root-app-groups)}))))
 
 (defn- validate-app-pipeline-eligibility
   "Validates an App for pipeline eligibility, throwing a slingshot stone ."
