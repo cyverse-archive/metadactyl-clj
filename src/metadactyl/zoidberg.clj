@@ -202,13 +202,13 @@
     (when (empty? analysis)
       (throw+ {:code cc-errs/ERR_DOES_NOT_EXIST,
                :message (str "Workflow, " app-id ", not found")}))
-    (verify-workflow-editable analysis)
     analysis))
 
 (defn edit-workflow
   "This service prepares a JSON response for editing a workflow in the client."
   [app-id]
   (let [analysis (get-analysis app-id)
+        _  (verify-workflow-editable analysis)
         analysis (format-analysis analysis)
         template-ids (:templates analysis)
         templates (map #(format-template %) (get-templates template-ids))
