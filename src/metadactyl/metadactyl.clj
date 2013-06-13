@@ -26,10 +26,10 @@
            [org.iplantc.workflow.service
             AnalysisCategorizationService AnalysisEditService CategoryService
             ExportService InjectableWorkspaceInitializer PipelineService
-            TemplateGroupService UserService WorkflowElementRetrievalService
-            WorkflowExportService AnalysisListingService WorkflowPreviewService
-            WorkflowImportService AnalysisDeletionService RatingService
-            WorkflowElementSearchService PropertyValueService UiAnalysisService]
+            TemplateGroupService UserService WorkflowExportService
+            AnalysisListingService WorkflowPreviewService WorkflowImportService
+            AnalysisDeletionService RatingService WorkflowElementSearchService
+            PropertyValueService UiAnalysisService]
            [org.springframework.orm.hibernate3.annotation
             AnnotationSessionFactoryBean])
   (:require [cheshire.core :as cheshire]
@@ -137,13 +137,6 @@
                                     "hibernate.hbm2ddl.auto" "validate"
                                     "hibernate.jdbc.batch-size" "50"}))
         (.afterPropertiesSet)))))
-
-(register-bean
-  (defbean workflow-element-service
-    "Services used to obtain elements that are commonly shared by multiple
-     apps in the metadata model (for example, property types)."
-    (doto (WorkflowElementRetrievalService.)
-      (.setSessionFactory (session-factory)))))
 
 (register-bean
   (defbean workflow-element-search-service
@@ -292,9 +285,7 @@
 (defn get-workflow-elements
   "A service to get information about workflow elements."
   [element-type params]
-  (let [handler-fn #(.getElements (workflow-element-service) element-type)
-        listings   (list-elements element-type params handler-fn)]
-    (success-response listings)))
+  (success-response (list-elements element-type params)))
 
 (defn search-deployed-components
   "A service to search information about deployed components."

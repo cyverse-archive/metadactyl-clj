@@ -1,6 +1,7 @@
 (ns metadactyl.util.service
   (:use [clojure.java.io :only [reader]]
-        [clojure.string :only (join upper-case)]
+        [clojure.string :only [join upper-case]]
+        [ring.util.response :only [charset]]
         [slingshot.slingshot :only [try+ throw+]])
   (:require [cheshire.core :as cheshire]
             [clojure.tools.logging :as log]
@@ -11,25 +12,31 @@
 
 (defn success-response
   ([map]
-     {:status       200
-      :body         (cheshire/encode (merge {:success true} map))
-      :content-type :json})
+     (charset
+      {:status       200
+       :body         (cheshire/encode (merge {:success true} map))
+       :content-type :json}
+      "UTF-8"))
   ([]
      (success-response {})))
 
 (defn failure-response [e]
   (log/error e "bad request")
-  {:status       400
-   :body         (cheshire/encode {:success false :reason (.getMessage e)})
-   :content-type :json})
+  (charset
+   {:status       400
+    :body         (cheshire/encode {:success false :reason (.getMessage e)})
+    :content-type :json}
+   "UTF-8"))
 
 (defn slingshot-failure-response [m]
   (log/error "bad request:" m)
-  {:status       400
-   :body         (cheshire/encode (assoc (dissoc m :type)
-                                    :code    (upper-case (name (or (:type m) (:code m))))
-                                    :success false))
-   :content-type :json})
+  (charset
+   {:status       400
+    :body         (cheshire/encode (assoc (dissoc m :type)
+                                     :code    (upper-case (name (or (:type m) (:code m))))
+                                     :success false))
+    :content-type :json}
+   "UTF-8"))
 
 (defn forbidden-response [e]
   (log/error e "unauthorized")
@@ -37,9 +44,11 @@
 
 (defn error-response [e]
   (log/error e "internal error")
-  {:status 500
-   :body (cheshire/encode {:success false :reason (.getMessage e)})
-   :content-type :json})
+  (charset
+   {:status 500
+    :body (cheshire/encode {:success false :reason (.getMessage e)})
+    :content-type :json}
+   "UTF-8"))
 
 (defn unrecognized-path-response []
   "Builds the response to send for an unrecognized service path."
