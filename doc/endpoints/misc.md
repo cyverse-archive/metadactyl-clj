@@ -25,12 +25,14 @@ Welcome to Metadactyl!
 
 The DE calls this service as soon as the user logs in. If the user has never
 logged in before then the service initializes the user's workspace and returns
-the user's workspace ID. If the user has logged in before then the service
-merely returns the user's workspace ID. The response body for this service is in
-the following format:
+the user's workspace ID along with a flag indicating that the workspace was just
+created. If the user has logged in before then the service merely returns the
+user's workspace ID along with a flag indicating that the workspace already
+existed. The response body for this service is in the following format:
 
 ```json
 {
+    "newWorkspace": new-workspace-flag,
     "workspaceId": workspace-id
 }
 ```
@@ -40,6 +42,7 @@ Here's an example:
 ```
 $ curl -s "http://by-tor:8888/secured/bootstrap?user=snow-dog&email=sd@example.org" | python -mjson.tool
 {
+    "newWorkspace": false,
     "workspaceId": "4"
 }
 ```
