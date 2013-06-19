@@ -5,12 +5,11 @@
 
 (defn build-validator-for-property
   "Builds a validator for a property in its external format."
-  [{rules :validators required :required args :arguments default-value :defaultValue
-    :or {rules [] required false}}]
+  [{rules :validators required :required args :arguments default-value :defaultValue}]
   (if (or required (seq rules) (seq args))
     (let [add-default-flag (fn [arg] (assoc arg :isDefault (= default-value arg)))
           rules            (mapv (fn [{:keys [type params]}] {(keyword type) params}) rules)]
-      {:required required
+      {:required (true? required)
        :rules    (if (seq args)
                    (conj rules {:MustContain (map add-default-flag args)})
                    rules)})))
@@ -26,12 +25,12 @@
   [property data-object]
   (when (contains? io-property-types (:type property))
     (assoc data-object
-      :cmdSwitch    (:name property)
-      :description  (:description property)
+      :cmdSwitch    (:name property "")
+      :description  (:description property "")
       :id           (:id property)
-      :name         (:label property)
-      :order        (:order property)
-      :required     (:required property)
+      :name         (:label property "")
+      :order        (:order property 0)
+      :required     (:required property false)
       :multiplicity (multiplicity-for (:type property) (:multiplicity data-object)))))
 
 (defn translate-property
