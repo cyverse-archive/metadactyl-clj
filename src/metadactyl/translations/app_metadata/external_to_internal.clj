@@ -5,13 +5,12 @@
 
 (defn build-validator-for-property
   "Builds a validator for a property in its external format."
-  [{rules :validators required :required args :arguments default-value :defaultValue}]
+  [{rules :validators required :required args :arguments}]
   (if (or required (seq rules) (seq args))
-    (let [add-default-flag (fn [arg] (assoc arg :isDefault (= default-value arg)))
-          rules            (mapv (fn [{:keys [type params]}] {(keyword type) params}) rules)]
+    (let [rules (mapv (fn [{:keys [type params]}] {(keyword type) params}) rules)]
       {:required (true? required)
        :rules    (if (seq args)
-                   (conj rules {:MustContain (map add-default-flag args)})
+                   (conj rules {:MustContain args})
                    rules)})))
 
 (defn get-default-value
