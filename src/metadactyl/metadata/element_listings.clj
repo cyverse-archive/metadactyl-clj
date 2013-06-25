@@ -14,7 +14,8 @@
       (fields :property_type.hid :property_type.id :property_type.name
               [:value_type.name :value_type] :property_type.description)
       (join value_type)
-      (where {:deprecated false})))
+      (where {:deprecated false})
+      (order :display_order)))
 
 (defn- get-tool-type-id
   "Gets the internal identifier associated with a tool type name."
@@ -44,6 +45,46 @@
         (not (nil? component-id)) (get-tool-type-for-component-id component-id)
         :else                     nil))
 
+(defn- list-data-formats
+  "Obtains a listing of data formats known to the DE."
+  [_]
+  {:formats
+   (select data_formats
+           (fields [:id :hid] [:guid :id] :name :label)
+           (order :display_order))})
+
+(defn- list-data-sources
+  "Obtains a listing of data sources."
+  [_]
+  {:data_sources
+   (select data_source
+           (fields [:id :hid] [:uuid :id] :name :label)
+           (order :id))})
+
+(defn- list-deployed-components
+  "Obtains a listing of deployed components for the metadata element listing service."
+  [_]
+  {:components
+   (select deployed_components
+           (fields [:deployed_components.id :id]
+                   [:deployed_components.name :name]
+                   [:deployed_components.description :description]
+                   [:deployed_components.hid :hid]
+                   [:deployed_components.location :location]
+                   [:tool_types.name :type]
+                   [:deployed_components.version :version]
+                   [:deployed_components.attribution :attribution])
+           (join tool_types))})
+
+(defn- list-info-types
+  "Obtains a listing of information types for the metadata element listing service."
+  [_]
+  {:info_types
+   (select info_type
+           (fields :id :name :label :description :hid)
+           (where {:deprecated false})
+           (order :display_order))})
+
 (defn- list-property-types
   "Obtains the property types for the metadata element listing service.
    Property types may be filtered by tool type or deployed component.  If the
@@ -59,27 +100,60 @@
        (select (base-property-type-query))
        (property-types-for-tool-type (base-property-type-query) tool-type-id))}))
 
+(defn- list-rule-types
+  "Obtains the list of rule types for the metadata element listing service."
+  [_]
+  {:rule_types
+   (mapv
+    (fn [m]
+      (assoc (dissoc m :value_type)
+        :value_types             (mapv :name (:value_type m))
+        :rule_description_format (:rule_description_format m "")))
+    (select rule_type
+            (fields [:rule_type.id :id]
+                    [:rule_type.name :name]
+                    [:rule_type.label :label]
+                    [:rule_type.description :description]
+                    [:rule_type.hid :hid]
+                    [:rule_subtype.name :subtype]
+                    [:rule_type.rule_description_format :rule_description_format])
+            (join rule_subtype)
+            (with value_type)))})
+
 (defn- list-tool-types
   "Obtains the list of tool types for the metadata element listing service."
-  [params]
+  [_]
   {:tool_types (select tool_types)})
+
+(defn- list-value-types
+  "Obtains the list of value types for the metadata element listing service."
+  [_]
+  {:value_types
+   (select value_type
+           (fields :hid :id :name :description))})
 
 (def ^:private listing-fns
   "The listing functions to use for various metadata element types."
-  {"property-types" list-property-types
-   "tool-types"     list-tool-types})
+  {"components"     list-deployed-components
+   "data-sources"   list-data-sources
+   "formats"        list-data-formats
+   "info-types"     list-info-types
+   "property-types" list-property-types
+   "rule-types"     list-rule-types
+   "tool-types"     list-tool-types
+   "value-types"    list-value-types})
 
 (defn- list-all
   "Lists all of the element types that are available to the listing service."
-  [params handler-fn]
-  (let [initial-results (cheshire/decode (handler-fn) true)]
-    (reduce merge initial-results (map #(% params) (vals listing-fns)))))
+  [params]
+  (reduce merge {} (map #(% params) (vals listing-fns))))
 
 (defn list-elements
   "Lists selected workflow elements.  This function handles requests to list
    various different types of workflow elements."
-  [elm-type params handler-fn]
+  [elm-type params]
   (cond
-   (= elm-type "all")               (list-all params handler-fn)
+   (= elm-type "all")               (list-all params)
    (contains? listing-fns elm-type) ((listing-fns elm-type) params)
-   :else                            (cheshire/decode (handler-fn) true)))
+   :else                            (throw+ {:type ::unrecognized_workflow_component_type
+                                             :name elm-type})))
