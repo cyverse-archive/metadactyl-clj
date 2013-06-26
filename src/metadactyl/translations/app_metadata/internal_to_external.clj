@@ -15,15 +15,20 @@
   [rules]
   (:MustContain (first (filter :MustContain rules)) []))
 
+(defn find-default-arg
+  "Finds the default argument in a property's argument list."
+  [args]
+  (first (filter #(Boolean/parseBoolean (str (:isDefault %))) args)))
+
 (defn get-default-value
   "Gets the default value for a property and a set of list of selectable arguments."
   [property args]
-  (or (if (seq args)
-        (-> (filter #(Boolean/parseBoolean (str (:isDefault %))) args)
-            (first)
-            (dissoc :isDefault))
-        (:value property))
-      ""))
+  (let [default-value (:value property)]
+    (or (cond
+         (not (seq args))        default-value
+         (map? default-value)    default-value
+         (vector? default-value) default-value
+         :else                   (find-default-arg args)))))
 
 (defn translate-property
   "Translates a property from its internal format to its external format."
@@ -34,12 +39,12 @@
         type     (:type property)]
     (if (nil? data-obj)
       (assoc (dissoc property :validator :value)
-        :arguments    (map #(dissoc % :isDefault) args)
+        :arguments    args
         :required     (get-in property [:validator :required] false)
         :validators   (validators-from-rules rules)
         :defaultValue (get-default-value property args))
       (assoc (dissoc property :validator :value)
-        :arguments    (map #(dissoc % :isDefault) args)
+        :arguments    args
         :validators   (validators-from-rules rules)
         :defaultValue (get-default-value property args)
         :data_object  (dissoc data-obj
