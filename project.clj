@@ -26,7 +26,7 @@
          :init metadactyl.core/load-config-from-file}
   :iplant-rpm {:summary "iPlant Discovery Environment Metadata Services"
                :provides "metadactyl"
-               :dependencies ["iplant-service-config >= 0.1.0-5"]
+               :dependencies ["iplant-service-config >= 0.1.0-5" "iplant-clavin"]
                :config-files ["log4j.properties"]
                :config-path "conf/main"}
   :uberjar-exclusions [#"(?i)META-INF/[^/]*[.](SF|DSA|RSA)"]
