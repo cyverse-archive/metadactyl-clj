@@ -497,9 +497,13 @@ see [Template JSON](#template-json) above.
 *Unsecured Endpoint:* GET /export-app/{app-id}
 
 This service exports a template in a format similar to the format required by
-tool integration. This service is not used by the DE and has been superceded by
-the secured `/edit-app/{app-id}` endpoint. Please see
-[Template JSON](#template-json) above for more information.
+tool integration. Please see [Template JSON](#template-json) above for more
+information.
+
+This service is not used by the DE and has been superceded by the secured
+`/edit-app/{app-id}` endpoint. There are still some utilities in the SCM
+repository that use this endpoint, however, so this endpoint will be retained
+until those utilities can be migrated.
 
 ## Obtaining an App Representation for Editing
 

@@ -2563,10 +2563,14 @@ Please see the [examples file](examples.md#app-json-for-ui).
 *Unsecured Endpoint:* GET /export-template/{template-id}
 
 This service exports a template in a format similar to the format required by
-tool integration. This service is not used by the DE and has been superceded by
-the secured `/edit-template` and `/copy-template` endpoints. The response body
-for this service is fairly large, so it will not be documented here. Please see
-[Template JSON](#template-json) above for more information.
+tool integration. The response body for this service is fairly large, so it will
+not be documented here. Please see [Template JSON](#template-json) above for
+more information.
+
+This service is not used by the DE and has been superceded by the secured
+`/edit-template` and `/copy-template` endpoints. There are still some utilities
+in the SCM repository that use this endpoint, however, so this endpoint will be
+retained until those utilities can be migrated.
 
 ## Exporting an Analysis
 
