@@ -168,9 +168,6 @@
   (GET "/export-template/:template-id" [template-id]
        (trap #(export-template template-id)))
 
-  (GET "/export-app/:app-id" [app-id]
-       (ce/trap "export-app" #(export-app app-id)))
-
   (GET "/export-workflow/:app-id" [app-id]
        (trap #(export-workflow app-id)))
 
