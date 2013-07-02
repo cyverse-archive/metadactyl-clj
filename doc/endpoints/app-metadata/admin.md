@@ -66,6 +66,14 @@
     * [Previewing Templates](#previewing-templates)
     * [Previewing Analyses](#previewing-analyses)
     * [Updating an Existing Template](#updating-an-existing-template)
+    * [Updating an Analysis](#updating-an-analysis)
+    * [Forcing an Analysis to be Updated](#forcing-an-analysis-to-be-updated)
+    * [Importing a Template](#importing-a-template)
+    * [Importing an Analysis](#importing-an-analysis)
+    * [Updating Template Labels](#updating-template-labels)
+    * [Importing Tools](#importing-tools)
+    * [Updating Top-Level Analysis Information](#updating-top-level-analysis-information)
+    * [Updating the Favorite Analyses List](#updating-the-favorite-analyses-list)
 
 # Overview
 
@@ -3384,7 +3392,6 @@ $ curl -sd @app.json http://by-tor:8888/update-template | python -mjson.tool
 }
 ```
 
-```
 A copy of app.json can be found [here](app.json).
 
 ```
