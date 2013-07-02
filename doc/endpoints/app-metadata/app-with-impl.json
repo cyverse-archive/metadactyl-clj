@@ -60,6 +60,10 @@
         }
     ],
     "id": "auto-gen",
+    "implementation": {
+        "implementor": "nobody",
+        "implementor_email": "nobody@iplantcollaborative.org"
+    },
     "label": "App Endpoint Test",
     "name": "App Endpoint Test",
     "published_date": "",

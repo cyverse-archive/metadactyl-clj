@@ -1,7 +1,7 @@
 {
     "analyses": [
         {
-            "analysis_id": "2976DE6C-03E3-4109-AECD-3D9CAEDD3122",
+            "analysis_id": "auto-gen",
             "analysis_name": "Find Unique Values",
             "deleted": false,
             "description": "GNU uniq: Discard all but one of successive identical lines from a sorted INPUT file, writing to an OUTPUT file",
@@ -20,7 +20,6 @@
                 {
                     "config": {},
                     "description": "GNU uniq: Discard all but one of successive identical lines from INPUT, writing to OUTPUT",
-                    "id": "s8384791fa91a45be89aef0b5faf3f7ac",
                     "name": "Find or count unique values",
                     "template_ref": "Find or count unique values"
                 }
@@ -59,7 +58,6 @@
                 "groups": [
                     {
                         "description": "",
-                        "id": "8724F26F-256B-B627-8DD9-08163C4B2B85",
                         "isVisible": true,
                         "label": "Inputs",
                         "name": "",
@@ -70,10 +68,7 @@
                                     "data_source": "file",
                                     "description": "",
                                     "file_info_type": "PlainText",
-                                    "file_info_type_id": "6270AB49-D6B6-4D8C-B15A-89657B4227A4",
                                     "format": "Unspecified",
-                                    "format_id": "E806880B-383D-4AD6-A4AB-8CDD88810A33",
-                                    "id": "6086ADB0-513A-1FCA-463A-45BDC92893FD",
                                     "is_implicit": false,
                                     "multiplicity": "One",
                                     "name": "Select an input file",
@@ -82,7 +77,6 @@
                                     "retain": false
                                 },
                                 "description": "",
-                                "id": "6086ADB0-513A-1FCA-463A-45BDC92893FD",
                                 "isVisible": true,
                                 "label": "Select an input file",
                                 "name": "",
@@ -90,7 +84,6 @@
                                 "order": 7,
                                 "type": "Input",
                                 "validator": {
-                                    "id": "v830a719b4b0545b3944d44336e26104f",
                                     "name": "",
                                     "required": true,
                                     "rules": []
@@ -102,14 +95,12 @@
                     },
                     {
                         "description": "",
-                        "id": "CC56EB41-FD18-26E6-E5A0-BE44A426303E",
                         "isVisible": true,
                         "label": "Options",
                         "name": "",
                         "properties": [
                             {
                                 "description": "",
-                                "id": "BFBA9726-6676-D16A-6D8D-EDE11C49DC3A",
                                 "isVisible": true,
                                 "label": "Ignore case while doing comparisons",
                                 "name": "--ignore-case",
@@ -120,7 +111,6 @@
                             },
                             {
                                 "description": "",
-                                "id": "A4549AA8-0F0E-5B62-4097-A38B1542FBD0",
                                 "isVisible": true,
                                 "label": "Prefix unique lines by the number of occurrences",
                                 "name": "--count",
@@ -131,7 +121,6 @@
                             },
                             {
                                 "description": "",
-                                "id": "2D50BC00-D747-C0A8-64CA-189EF0BA5AB4",
                                 "isVisible": true,
                                 "label": "Only print duplicate lines",
                                 "name": "--repeated",
@@ -142,7 +131,6 @@
                             },
                             {
                                 "description": "",
-                                "id": "3CAF0548-5E41-90A9-F161-723CE5740C9C",
                                 "isVisible": true,
                                 "label": "Only print unique lines",
                                 "name": "--unique",
@@ -153,7 +141,6 @@
                             },
                             {
                                 "description": "A field is a run of whitespace, then non-whitespace characters.",
-                                "id": "4F650FA8-E03C-38DB-EC9D-A8239CE6EDED",
                                 "isVisible": true,
                                 "label": "Avoid comparing the first N fields",
                                 "name": "--skip-fields",
@@ -164,7 +151,6 @@
                             },
                             {
                                 "description": "Fields are skipped before chars.",
-                                "id": "E261EDE5-A2B2-B929-204A-60A8E2AA02AC",
                                 "isVisible": true,
                                 "label": "Avoid comparing the first N characters",
                                 "name": "--skip-chars",
@@ -179,10 +165,7 @@
                                     "data_source": "file",
                                     "description": "",
                                     "file_info_type": "PlainText",
-                                    "file_info_type_id": "6270AB49-D6B6-4D8C-B15A-89657B4227A4",
                                     "format": "Unspecified",
-                                    "format_id": "E806880B-383D-4AD6-A4AB-8CDD88810A33",
-                                    "id": "6EDC0122-650B-3C89-AAF4-1F8CA424396D",
                                     "is_implicit": false,
                                     "multiplicity": "One",
                                     "order": 8,
@@ -191,7 +174,6 @@
                                     "retain": true
                                 },
                                 "description": "",
-                                "id": "6EDC0122-650B-3C89-AAF4-1F8CA424396D",
                                 "isVisible": false,
                                 "label": "uniq_output.txt",
                                 "name": "",
@@ -209,11 +191,10 @@
                 "label": "",
                 "name": ""
             },
-            "id": "2976DE6C-03E3-4109-AECD-3D9CAEDD3122",
+            "id": "auto-gen",
             "label": "Find or count unique values",
             "name": "Find or count unique values",
             "published_date": "",
-            "tito": "2976DE6C-03E3-4109-AECD-3D9CAEDD3122",
             "type": ""
         }
     ]
