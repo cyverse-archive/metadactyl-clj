@@ -1,0 +1,73 @@
+{
+    "component": "",
+    "description": "Testing new /*-app endpoints.",
+    "edited_date": "",
+    "groups": [
+        {
+            "description": "",
+            "id": "898AA533-8073-4B10-B480-0D486BB5CA55",
+            "isVisible": true,
+            "label": "Grp1",
+            "name": "",
+            "properties": [
+                {
+                    "arguments": [],
+                    "data_object": {
+                        "data_source": "file",
+                        "file_info_type": "File",
+                        "format": "Unspecified",
+                        "is_implicit": false,
+                        "retain": false
+                    },
+                    "defaultValue": "",
+                    "description": "File input tool tip",
+                    "id": "7b67ad54-57ba-46b3-b72a-ab577496e246",
+                    "isVisible": true,
+                    "label": "Input File",
+                    "name": "-f",
+                    "omit_if_blank": true,
+                    "order": 1,
+                    "required": true,
+                    "type": "FileInput",
+                    "validators": []
+                },
+                {
+                    "arguments": [],
+                    "defaultValue": "",
+                    "description": "TextBox tool tip",
+                    "id": "96449f56-fdea-4379-9be8-3750d2fa21f2",
+                    "isVisible": true,
+                    "label": "TextBox",
+                    "name": "-b",
+                    "omit_if_blank": true,
+                    "order": 2,
+                    "required": false,
+                    "type": "Text",
+                    "validators": []
+                },
+                {
+                    "arguments": [],
+                    "defaultValue": "",
+                    "description": "checkbox tool tip",
+                    "id": "51980858-7bc2-4516-911c-910329c46bf5",
+                    "isVisible": true,
+                    "label": "Checkbox",
+                    "name": "-c",
+                    "omit_if_blank": true,
+                    "order": 3,
+                    "required": false,
+                    "type": "Flag",
+                    "validators": []
+                }
+            ],
+            "type": ""
+        }
+    ],
+    "id": "0DFE3E35-F6F0-4995-BC31-24B94EE7EADA",
+    "label": "App Endpoint Test",
+    "name": "App Endpoint Test",
+    "published_date": "",
+    "references": [],
+    "tito": "0DFE3E35-F6F0-4995-BC31-24B94EE7EADA",
+    "type": ""
+}
