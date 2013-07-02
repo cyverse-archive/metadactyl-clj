@@ -10,7 +10,6 @@
     * [Template JSON Example](#template-json-example)
 * [Updated Administrative Services](#updated-administrative-services)
     * [Updating or Importing a Single-Step App](#updating-or-importing-a-single-step-app)
-    * [Exporting a Single-Step App](#exporting-a-single-step-app)
     * [Obtaining an App Representation for Editing](#obtaining-an-app-representation-for-editing)
     * [Obtaining App Information for Job Submission](#obtaining-app-information-for-job-submission)
     * [Previewing Command Line Arguments](#previewing-command-line-arguments)
