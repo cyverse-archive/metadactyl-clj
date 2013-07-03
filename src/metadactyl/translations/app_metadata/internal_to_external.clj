@@ -12,7 +12,7 @@
 
 (defn- uuid
   []
-  (str (java.util.UUID/randomUUID)))
+  (.toUpperCase (str (java.util.UUID/randomUUID))))
 
 (defn get-property-arguments
   "Gets the property arguments from a list of validation rules."
