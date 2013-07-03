@@ -10,10 +10,15 @@
   (mapcat (partial map (fn [[k v]] {:type (name k) :params v}))
           (remove :MustContain rules)))
 
+(defn- uuid
+  []
+  (str (java.util.UUID/randomUUID)))
+
 (defn get-property-arguments
   "Gets the property arguments from a list of validation rules."
   [rules]
-  (:MustContain (first (filter :MustContain rules)) []))
+  (mapv #(when-not (contains? %1 :id) (assoc %1 :id (uuid))) 
+        (:MustContain (first (filter :MustContain rules)) [])))
 
 (defn find-default-arg
   "Finds the default argument in a property's argument list."
