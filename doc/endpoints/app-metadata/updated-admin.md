@@ -461,8 +461,8 @@ A750DD7B-7EBC-4809-B9EC-6F717220A1D1
 
 The app integration utility in the DE uses this service to obtain the app
 description JSON so that the analysis can be edited. The app must have been
-integrated by the requesting user, and it must not already be public. For
-editing apps with more than 1 step, the client uses the
+integrated by the requesting user. For editing apps with more than 1 step, the
+client uses the
 [edit-workflow](editing.md#making-a-pipeline-available-for-editing) endpoint.
 Please see [Template JSON](#template-json) above for more information about the
 format of the response body.
