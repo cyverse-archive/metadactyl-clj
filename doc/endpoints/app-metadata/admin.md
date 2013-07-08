@@ -3106,11 +3106,11 @@ This service physically removes an analysis from the database, which allows
 administrators to completely remove analyses that are causing problems. As far
 as I know, this service hasn't been used in quite a while, and it can probably
 be removed at some point in the near future. The request body is in the
-following format for the deletion of a private analysis:
+following format for the deletion of one or more private analyses:
 
 ```json
 {
-    "analysis_id": "analysis-id",
+    "analysis_ids": ["some-analysis-id", "another-analysis-id", ...],
     "full_username": "username"
 }
 ```
@@ -3118,32 +3118,32 @@ following format for the deletion of a private analysis:
 This service also supports deleting analyses by name, but this practice isn't
 recommended because analysis names are not guaranteed to be unique. When
 deletion by name is requested, the request body is in this format for the
-deletion of a private analysis:
+deletion of one or more private analyses:
 
 ```json
 {
-    "analysis_name": "analysis-name",
+    "analysis_names": ["some-analysis-name", "another-name", ...],
     "full_username": "username"
 }
 ```
 
 Public analyses may be deleted by this service as well, but the service has to
 be explicitly told that a public analysis is being deleted. The request body for
-the deletion of a public analysis by ID is in this format:
+the deletion of one or more public analyses by ID is in this format:
 
 ```json
 {
-    "analysis_id": "analysis-id",
+    "analysis_ids": ["some-analysis-id", "another-analysis-id", ...],
     "root_deletion_request": true
 }
 ```
 
-Similarly, the request body for the deletion of a public analysis by name is in
-this format:
+Similarly, the request body for the deletion of one or more public analyses by
+name is in this format:
 
 ```json
 {
-    "analysis_name": "analysis-name",
+    "analysis_names": ["some-analysis-name", "another-name", ...],
     "root_deletion_request": true
 }
 ```
@@ -3155,42 +3155,42 @@ This service has no response body.
 *Unsecured Endpoint:* POST /delete-workflow
 
 An app can be marked as deleted in the DE without being completely removed from
-the database using this service. To mark a private app as deleted using the app
-identifier, the request body should be in the following format:
+the database using this service. To mark one or more private apps as deleted
+using the app identifiers, the request body should be in the following format:
 
 ```json
 {
-    "analysis_id": "some-analysis-id",
+    "analysis_ids": ["some-analysis-id", "another-analysis-id", ...],
     "full_username": "somebody@example.org"
 }
 ```
 
-To mark a private app as deleted using the app name, the request body should be
-in the following format:
+To mark one or more private apps as deleted using the app names, the request
+body should be in the following format:
 
 ```json
 {
-    "analysis_name": "some-analysis-name",
+    "analysis_names": ["some-analysis-name", "another-name", ...],
     "full_username": "somebody@example.org"
 }
 ```
 
-To mark a public app as deleted using the app identifier, the request body
-should be in the following format:
+To mark one or more public apps as deleted using the app identifiers, the
+request body should be in the following format:
 
 ```json
 {
-    "analysis_id": "some-analysis-id",
+    "analysis_ids": ["some-analysis-id", "another-analysis-id", ...],
     "root_deletion_request": true
 }
 ```
 
-To mark a public app as deleted using the app name, the request body should be
-in the following format:
+To mark one or more public apps as deleted using the app names, the request body
+should be in the following format:
 
 ```json
 {
-    "analysis_name": "some-analysis-name",
+    "analysis_names": ["some-analysis-name", "another-name", ...],
     "root_deletion_request": true
 }
 ```
