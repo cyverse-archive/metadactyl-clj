@@ -14,10 +14,18 @@
   []
   (.toUpperCase (str (java.util.UUID/randomUUID))))
 
+(defn- add-default-field-value
+  "Adds a field to a map with a default value if that field is not already present in the map."
+  [field value-fn m]
+  (if-not (contains? m field)
+    (assoc m field (value-fn))
+    m))
+
 (defn get-property-arguments
   "Gets the property arguments from a list of validation rules."
   [rules]
-  (mapv #(when-not (contains? %1 :id) (assoc %1 :id (uuid))) 
+  (mapv (comp (partial add-default-field-value :id #(uuid))
+              (partial add-default-field-value :isDefault (constantly false)))
         (:MustContain (first (filter :MustContain rules)) [])))
 
 (defn find-default-arg
