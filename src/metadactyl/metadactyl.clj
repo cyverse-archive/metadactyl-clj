@@ -91,10 +91,12 @@
                :user user-attributes,
                :message "Invalid user credentials provided."}))
     (doto (User.)
-      (.setUsername (str uid "@" (uid-domain)))
-      (.setPassword (user-attributes :password))
-      (.setEmail (user-attributes :email))
-      (.setShortUsername uid))))
+      (.setUsername      (str uid "@" (uid-domain)))
+      (.setPassword      (:password user-attributes ""))
+      (.setEmail         (:email user-attributes ""))
+      (.setShortUsername uid)
+      (.setFirstName     (:first-name user-attributes ""))
+      (.setLastName      (:last-name user-attributes "")))))
 
 (defmacro with-user
   "Performs a task with the given user information bound to current-user."
@@ -341,14 +343,6 @@
   [template-id]
   (.exportTemplate (workflow-export-service) template-id))
 
-(defn export-app
-  "This service will export a single-step app in the format used by the UI."
-  [app-id]
-  (-> (export-template app-id)
-      (cheshire/decode true)
-      (app-meta-tx/template-internal-to-external)
-      (cheshire/encode)))
-
 (defn export-workflow
   "This service will export a workflow with the given identifier."
   [app-id]
@@ -418,7 +412,7 @@
    (-> (parse-json body)
        (app-meta-tx/template-external-to-internal)
        (assoc :implementation
-         {:implementor       (.getShortUsername current-user)
+         {:implementor       (str (.getFirstName current-user) " " (.getLastName current-user))
           :implementor_email (.getEmail current-user)})
        (cheshire/encode))))
 

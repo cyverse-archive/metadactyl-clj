@@ -163,10 +163,26 @@
         (throw+ {:error_code ce/ERR_ILLEGAL_ARGUMENT
                  :reason     :property_missing_must_contain_rule})))))
 
+(defn update-data-object-labels
+  "Updates the labels in a data object."
+  ([hid label description]
+     (when hid
+       (update data_object
+               (set-fields
+                (remove-nil-values
+                 {:name        label
+                  :description description}))
+               (where {:hid hid}))))
+  ([hid {:keys [type label description]}]
+     (cond
+      (= type "MultiFileSelector") (update-data-object-labels hid label description)
+      (re-find #"Input$" type)     (update-data-object-labels hid label description)
+      (re-find #"Output$" type)    (update-data-object-labels hid nil description))))
+
 (defn update-property-labels
   "Updates the labels in a property."
   [group-id {:keys [id name description label arguments] :as prop}]
-  (let [hid (:hid (get-property-in-group group-id id))]
+  (let [{:keys [hid dataobject_id]} (get-property-in-group group-id id)]
     (update property
             (set-fields
              (remove-nil-values
@@ -174,6 +190,7 @@
                :description description
                :label       label}))
             (where {:hid hid}))
+    (update-data-object-labels dataobject_id prop)
     (when (seq arguments)
       (update-must-contain-rules-in-validator hid arguments))))
 

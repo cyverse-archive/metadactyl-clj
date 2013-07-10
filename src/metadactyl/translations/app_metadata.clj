@@ -7,7 +7,7 @@
 
 (defn- log-as-json
   [msg obj]
-  (log/warn msg (cheshire/encode obj {:pretty true})))
+  (log/trace msg (cheshire/encode obj {:pretty true})))
 
 (defn template-external-to-internal
   "Translates the external template format to the internal template format."

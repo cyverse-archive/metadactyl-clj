@@ -603,17 +603,15 @@ $ curl -s http://by-tor:8888/analysis-data-objects/19F78CC1-7E14-481B-9D80-85EBC
 
 ## Listing Analysis Groups
 
-*Unsecured Endpoint:* GET /get-only-analysis-groups/{workspace-token}
+*Unsecured Endpoint:* GET /get-only-analysis-groups/{workspace-id}
 
 *Secured Endpoint:* GET /secured/app-groups
 
-This service is used by the DE and (indirectly) by Tito to obtain the list of
-analysis groups that are visible to the user. This list includes analysis groups
-that are in the user's workspace along with any analysis groups that are in a
-workspace that is marked as public in the database. The `workspace-token`
-argument can either be the workspace ID or the user's fully qualified username.
-(The DE sends the workspace ID; Tito sends the username.) The response is in the
-following format:
+This service is used by the DE to obtain the list of analysis groups that are
+visible to the user. This list includes analysis groups that are in the user's
+workspace along with any analysis groups that are in a workspace that is marked
+as public in the database. The `workspace-id` argument is the user's numeric
+workspace identifier. The response is in the following format:
 
 ```json
 {
@@ -626,7 +624,8 @@ following format:
             "id": "analysis-group-id",
             "is_public": "public-flag",
             "name": "analysis-group-name",
-            "template_count": "template-count"
+            "template_count": "template-count",
+            "workspace_id": "workspace-id"
         }
     ]
 }
@@ -638,7 +637,7 @@ or more other analysis groups.
 Here's an example using a workspace ID:
 
 ```
-$ curl -s http://by-tor:8888/get-only-analysis-groups/4 | python -mjson.tool
+$ curl -s http://by-tor:8888/get-only-analysis-groups/42 | python -mjson.tool
 {
     "groups": [
         {
@@ -649,54 +648,42 @@ $ curl -s http://by-tor:8888/get-only-analysis-groups/4 | python -mjson.tool
                     "id": "b9a1a3b8-fef6-4576-bbfe-9ad17eb4c2ab",
                     "is_public": false,
                     "name": "Apps Under Development",
-                    "template_count": 0
+                    "template_count": 0,
+                    "workspace_id": 42
                 },
                 {
                     "description": "",
                     "id": "2948ed96-9564-489f-ad73-e099b171a9a5",
                     "is_public": false,
                     "name": "Favorite Apps",
-                    "template_count": 0
+                    "template_count": 0,
+                    "workspace_id": 42
                 }
             ],
             "id": "57a39832-3577-4ee3-8ff4-3fc9d1cf9e34",
             "is_public": false,
             "name": "Workspace",
-            "template_count": 0
+            "template_count": 0,
+            "workspace_id": 42,
         },
-        ...
-    ]
-}
-```
-
-Here's an example using a username:
-
-```
-$ curl -s http://by-tor:8888/get-only-analysis-groups/nobody@iplantcollaborative.org | python -mjson.tool
-{
-    "groups": [
         {
             "description": "",
             "groups": [
                 {
                     "description": "",
-                    "id": "b9a1a3b8-fef6-4576-bbfe-9ad17eb4c2ab",
-                    "is_public": false,
-                    "name": "Apps Under Development",
-                    "template_count": 0
+                    "id": "g5401bd146c144470aedd57b47ea1b979",
+                    "is_public": true,
+                    "name": "Beta",
+                    "template_count": 47,
+                    "workspace_id": 0
                 },
-                {
-                    "description": "",
-                    "id": "2948ed96-9564-489f-ad73-e099b171a9a5",
-                    "is_public": false,
-                    "name": "Favorite Apps",
-                    "template_count": 0
-                }
+                ...
             ],
-            "id": "57a39832-3577-4ee3-8ff4-3fc9d1cf9e34",
-            "is_public": false,
-            "name": "Workspace",
-            "template_count": 0
+            "id": "g12c7a585ec233352e31302e323112a7ccf18bfd7364",
+            "is_public": true,
+            "name": "Public Apps",
+            "template_count": "325",
+            "workspace_id": 0
         },
         ...
     ]
@@ -717,20 +704,23 @@ $ curl -s "http://by-tor:8888/secured/app-groups?user=nobody&email=nobody@iplant
                     "id": "b9a1a3b8-fef6-4576-bbfe-9ad17eb4c2ab",
                     "is_public": false,
                     "name": "Apps Under Development",
-                    "template_count": 0
+                    "template_count": 0,
+                    "workspace_id": 42
                 },
                 {
                     "description": "",
                     "id": "2948ed96-9564-489f-ad73-e099b171a9a5",
                     "is_public": false,
                     "name": "Favorite Apps",
-                    "template_count": 0
+                    "template_count": 0,
+                    "workspace_id": 42
                 }
             ],
             "id": "57a39832-3577-4ee3-8ff4-3fc9d1cf9e34",
             "is_public": false,
             "name": "Workspace",
-            "template_count": 0
+            "template_count": 0,
+            "workspace_id": 42
         },
         ...
     ]

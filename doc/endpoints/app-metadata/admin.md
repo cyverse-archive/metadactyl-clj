@@ -2563,10 +2563,187 @@ Please see the [examples file](examples.md#app-json-for-ui).
 *Unsecured Endpoint:* GET /export-template/{template-id}
 
 This service exports a template in a format similar to the format required by
-tool integration. This service is not used by the DE and has been superceded by
-the secured `/edit-template` and `/copy-template` endpoints. The response body
-for this service is fairly large, so it will not be documented here. Please see
-[Template JSON](#template-json) above for more information.
+tool integration. The response body for this service is fairly large, so it will
+not be documented here. Please see [Template JSON](#template-json) above for
+more information.
+
+This service is not used by the DE and has been superceded by the secured
+`/edit-template` and `/copy-template` endpoints. There are still some utilities
+in the SCM repository that use this endpoint, however, so this endpoint will be
+retained until those utilities can be migrated.
+
+Here's an example:
+
+```
+$ curl -s http://by-tor:8888/export-template/2976DE6C-03E3-4109-AECD-3D9CAEDD3122 | python -mjson.tool{
+    "component": "uniq",
+    "component_id": "c4e6f548cc0ee431da7f2ddfdf3ace761",
+    "description": "",
+    "edited_date": "1326391418682",
+    "groups": {
+        "description": "",
+        "groups": [
+            {
+                "description": "",
+                "id": "8724F26F-256B-B627-8DD9-08163C4B2B85",
+                "isVisible": true,
+                "label": "Inputs",
+                "name": "",
+                "properties": [
+                    {
+                        "data_object": {
+                            "cmdSwitch": "",
+                            "data_source": "file",
+                            "description": "",
+                            "file_info_type": "PlainText",
+                            "file_info_type_id": "6270AB49-D6B6-4D8C-B15A-89657B4227A4",
+                            "format": "Unspecified",
+                            "format_id": "E806880B-383D-4AD6-A4AB-8CDD88810A33",
+                            "id": "6086ADB0-513A-1FCA-463A-45BDC92893FD",
+                            "is_implicit": false,
+                            "multiplicity": "One",
+                            "name": "Select an input file",
+                            "order": 7,
+                            "required": false,
+                            "retain": false
+                        },
+                        "description": "",
+                        "id": "6086ADB0-513A-1FCA-463A-45BDC92893FD",
+                        "isVisible": true,
+                        "label": "Select an input file",
+                        "name": "",
+                        "omit_if_blank": true,
+                        "order": 7,
+                        "type": "Input",
+                        "validator": {
+                            "id": "v830a719b4b0545b3944d44336e26104f",
+                            "name": "",
+                            "required": true,
+                            "rules": []
+                        },
+                        "value": ""
+                    }
+                ],
+                "type": ""
+            },
+            {
+                "description": "",
+                "id": "CC56EB41-FD18-26E6-E5A0-BE44A426303E",
+                "isVisible": true,
+                "label": "Options",
+                "name": "",
+                "properties": [
+                    {
+                        "description": "",
+                        "id": "BFBA9726-6676-D16A-6D8D-EDE11C49DC3A",
+                        "isVisible": true,
+                        "label": "Ignore case while doing comparisons",
+                        "name": "--ignore-case",
+                        "omit_if_blank": false,
+                        "order": 2,
+                        "type": "Flag",
+                        "value": "false"
+                    },
+                    {
+                        "description": "",
+                        "id": "A4549AA8-0F0E-5B62-4097-A38B1542FBD0",
+                        "isVisible": true,
+                        "label": "Prefix unique lines by the number of occurrences",
+                        "name": "--count",
+                        "omit_if_blank": false,
+                        "order": 1,
+                        "type": "Flag",
+                        "value": "false"
+                    },
+                    {
+                        "description": "",
+                        "id": "2D50BC00-D747-C0A8-64CA-189EF0BA5AB4",
+                        "isVisible": true,
+                        "label": "Only print duplicate lines",
+                        "name": "--repeated",
+                        "omit_if_blank": false,
+                        "order": 3,
+                        "type": "Flag",
+                        "value": "false"
+                    },
+                    {
+                        "description": "",
+                        "id": "3CAF0548-5E41-90A9-F161-723CE5740C9C",
+                        "isVisible": true,
+                        "label": "Only print unique lines",
+                        "name": "--unique",
+                        "omit_if_blank": false,
+                        "order": 6,
+                        "type": "Flag",
+                        "value": "false"
+                    },
+                    {
+                        "description": "A field is a run of whitespace, then non-whitespace characters.",
+                        "id": "4F650FA8-E03C-38DB-EC9D-A8239CE6EDED",
+                        "isVisible": true,
+                        "label": "Avoid comparing the first N fields",
+                        "name": "--skip-fields",
+                        "omit_if_blank": true,
+                        "order": 5,
+                        "type": "Double",
+                        "value": ""
+                    },
+                    {
+                        "description": "Fields are skipped before chars.",
+                        "id": "E261EDE5-A2B2-B929-204A-60A8E2AA02AC",
+                        "isVisible": true,
+                        "label": "Avoid comparing the first N characters",
+                        "name": "--skip-chars",
+                        "omit_if_blank": true,
+                        "order": 4,
+                        "type": "Double",
+                        "value": ""
+                    },
+                    {
+                        "data_object": {
+                            "cmdSwitch": "",
+                            "data_source": "file",
+                            "description": "",
+                            "file_info_type": "PlainText",
+                            "file_info_type_id": "6270AB49-D6B6-4D8C-B15A-89657B4227A4",
+                            "format": "Unspecified",
+                            "format_id": "E806880B-383D-4AD6-A4AB-8CDD88810A33",
+                            "id": "6EDC0122-650B-3C89-AAF4-1F8CA424396D",
+                            "is_implicit": false,
+                            "multiplicity": "One",
+                            "order": 8,
+                            "output_filename": "uniq_output.txt",
+                            "required": true,
+                            "retain": true
+                        },
+                        "description": "",
+                        "id": "6EDC0122-650B-3C89-AAF4-1F8CA424396D",
+                        "isVisible": false,
+                        "label": "uniq_output.txt",
+                        "name": "",
+                        "omit_if_blank": true,
+                        "order": 8,
+                        "type": "Output",
+                        "value": ""
+                    }
+                ],
+                "type": ""
+            }
+        ],
+        "id": "--root-PropertyGroupContainer--",
+        "isVisible": true,
+        "label": "",
+        "name": ""
+    },
+    "id": "2976DE6C-03E3-4109-AECD-3D9CAEDD3122",
+    "label": "Find or count unique values",
+    "name": "Find or count unique values",
+    "published_date": "1281373930000",
+    "references": [],
+    "tito": "2976DE6C-03E3-4109-AECD-3D9CAEDD3122",
+    "type": ""
+}
+```
 
 ## Exporting an Analysis
 
@@ -2578,6 +2755,232 @@ multi-step analyses. This service is used by the export script to export
 analyses from the DE. The response body for this service is fairly large, so it
 will not be documented here. Please see [Template JSON](#template-json) above
 for more information.
+
+Here's an example:
+
+```
+$ curl -s http://by-tor:8888/export-workflow/2976DE6C-03E3-4109-AECD-3D9CAEDD3122 | python -mjson.tool
+{
+    "analyses": [
+        {
+            "analysis_id": "2976DE6C-03E3-4109-AECD-3D9CAEDD3122",
+            "analysis_name": "Find Unique Values",
+            "deleted": false,
+            "description": "GNU uniq: Discard all but one of successive identical lines from a sorted INPUT file, writing to an OUTPUT file",
+            "implementation": {
+                "implementor": "Nobody",
+                "implementor_email": "nobody@iplantcollaborative.org"
+            },
+            "ratings": [
+                {
+                    "rating": 4,
+                    "username": "nobody@iplantcollaborative.org"
+                }
+            ],
+            "references": [],
+            "steps": [
+                {
+                    "config": {},
+                    "description": "GNU uniq: Discard all but one of successive identical lines from INPUT, writing to OUTPUT",
+                    "id": "s8384791fa91a45be89aef0b5faf3f7ac",
+                    "name": "Find or count unique values",
+                    "template_ref": "Find or count unique values"
+                }
+            ],
+            "suggested_groups": [],
+            "type": "",
+            "wiki_url": "https://pods.iplantcollaborative.org/wiki/display/DEapps/Find+Unique+Values"
+        }
+    ],
+    "components": [
+        {
+            "attribution": "nobody",
+            "description": "Scan for unique values",
+            "id": "c4e6f548cc0ee431da7f2ddfdf3ace761",
+            "implementation": {
+                "implementor": "No name",
+                "implementor_email": "noreply@iplantcollaborative.org",
+                "test": {
+                    "input_files": [],
+                    "output_files": []
+                }
+            },
+            "location": "/usr/bin/",
+            "name": "uniq",
+            "type": "executable",
+            "version": "1.00"
+        }
+    ],
+    "templates": [
+        {
+            "component_ref": "uniq",
+            "description": "",
+            "edited_date": "",
+            "groups": {
+                "description": "",
+                "groups": [
+                    {
+                        "description": "",
+                        "id": "8724F26F-256B-B627-8DD9-08163C4B2B85",
+                        "isVisible": true,
+                        "label": "Inputs",
+                        "name": "",
+                        "properties": [
+                            {
+                                "data_object": {
+                                    "cmdSwitch": "",
+                                    "data_source": "file",
+                                    "description": "",
+                                    "file_info_type": "PlainText",
+                                    "file_info_type_id": "6270AB49-D6B6-4D8C-B15A-89657B4227A4",
+                                    "format": "Unspecified",
+                                    "format_id": "E806880B-383D-4AD6-A4AB-8CDD88810A33",
+                                    "id": "6086ADB0-513A-1FCA-463A-45BDC92893FD",
+                                    "is_implicit": false,
+                                    "multiplicity": "One",
+                                    "name": "Select an input file",
+                                    "order": 7,
+                                    "required": false,
+                                    "retain": false
+                                },
+                                "description": "",
+                                "id": "6086ADB0-513A-1FCA-463A-45BDC92893FD",
+                                "isVisible": true,
+                                "label": "Select an input file",
+                                "name": "",
+                                "omit_if_blank": true,
+                                "order": 7,
+                                "type": "Input",
+                                "validator": {
+                                    "id": "v830a719b4b0545b3944d44336e26104f",
+                                    "name": "",
+                                    "required": true,
+                                    "rules": []
+                                },
+                                "value": ""
+                            }
+                        ],
+                        "type": ""
+                    },
+                    {
+                        "description": "",
+                        "id": "CC56EB41-FD18-26E6-E5A0-BE44A426303E",
+                        "isVisible": true,
+                        "label": "Options",
+                        "name": "",
+                        "properties": [
+                            {
+                                "description": "",
+                                "id": "BFBA9726-6676-D16A-6D8D-EDE11C49DC3A",
+                                "isVisible": true,
+                                "label": "Ignore case while doing comparisons",
+                                "name": "--ignore-case",
+                                "omit_if_blank": false,
+                                "order": 2,
+                                "type": "Flag",
+                                "value": "false"
+                            },
+                            {
+                                "description": "",
+                                "id": "A4549AA8-0F0E-5B62-4097-A38B1542FBD0",
+                                "isVisible": true,
+                                "label": "Prefix unique lines by the number of occurrences",
+                                "name": "--count",
+                                "omit_if_blank": false,
+                                "order": 1,
+                                "type": "Flag",
+                                "value": "false"
+                            },
+                            {
+                                "description": "",
+                                "id": "2D50BC00-D747-C0A8-64CA-189EF0BA5AB4",
+                                "isVisible": true,
+                                "label": "Only print duplicate lines",
+                                "name": "--repeated",
+                                "omit_if_blank": false,
+                                "order": 3,
+                                "type": "Flag",
+                                "value": "false"
+                            },
+                            {
+                                "description": "",
+                                "id": "3CAF0548-5E41-90A9-F161-723CE5740C9C",
+                                "isVisible": true,
+                                "label": "Only print unique lines",
+                                "name": "--unique",
+                                "omit_if_blank": false,
+                                "order": 6,
+                                "type": "Flag",
+                                "value": "false"
+                            },
+                            {
+                                "description": "A field is a run of whitespace, then non-whitespace characters.",
+                                "id": "4F650FA8-E03C-38DB-EC9D-A8239CE6EDED",
+                                "isVisible": true,
+                                "label": "Avoid comparing the first N fields",
+                                "name": "--skip-fields",
+                                "omit_if_blank": true,
+                                "order": 5,
+                                "type": "Double",
+                                "value": ""
+                            },
+                            {
+                                "description": "Fields are skipped before chars.",
+                                "id": "E261EDE5-A2B2-B929-204A-60A8E2AA02AC",
+                                "isVisible": true,
+                                "label": "Avoid comparing the first N characters",
+                                "name": "--skip-chars",
+                                "omit_if_blank": true,
+                                "order": 4,
+                                "type": "Double",
+                                "value": ""
+                            },
+                            {
+                                "data_object": {
+                                    "cmdSwitch": "",
+                                    "data_source": "file",
+                                    "description": "",
+                                    "file_info_type": "PlainText",
+                                    "file_info_type_id": "6270AB49-D6B6-4D8C-B15A-89657B4227A4",
+                                    "format": "Unspecified",
+                                    "format_id": "E806880B-383D-4AD6-A4AB-8CDD88810A33",
+                                    "id": "6EDC0122-650B-3C89-AAF4-1F8CA424396D",
+                                    "is_implicit": false,
+                                    "multiplicity": "One",
+                                    "order": 8,
+                                    "output_filename": "uniq_output.txt",
+                                    "required": true,
+                                    "retain": true
+                                },
+                                "description": "",
+                                "id": "6EDC0122-650B-3C89-AAF4-1F8CA424396D",
+                                "isVisible": false,
+                                "label": "uniq_output.txt",
+                                "name": "",
+                                "omit_if_blank": true,
+                                "order": 8,
+                                "type": "Output",
+                                "value": ""
+                            }
+                        ],
+                        "type": ""
+                    }
+                ],
+                "id": "--root-PropertyGroupContainer--",
+                "isVisible": true,
+                "label": "",
+                "name": ""
+            },
+            "id": "2976DE6C-03E3-4109-AECD-3D9CAEDD3122",
+            "label": "Find or count unique values",
+            "name": "Find or count unique values",
+            "published_date": "",
+            "tito": "2976DE6C-03E3-4109-AECD-3D9CAEDD3122",
+            "type": ""
+        }
+    ]
+}
+```
 
 ## Exporting Selected Deployed Components
 
@@ -2703,11 +3106,11 @@ This service physically removes an analysis from the database, which allows
 administrators to completely remove analyses that are causing problems. As far
 as I know, this service hasn't been used in quite a while, and it can probably
 be removed at some point in the near future. The request body is in the
-following format for the deletion of a private analysis:
+following format for the deletion of one or more private analyses:
 
 ```json
 {
-    "analysis_id": "analysis-id",
+    "analysis_ids": ["some-analysis-id", "another-analysis-id", ...],
     "full_username": "username"
 }
 ```
@@ -2715,32 +3118,32 @@ following format for the deletion of a private analysis:
 This service also supports deleting analyses by name, but this practice isn't
 recommended because analysis names are not guaranteed to be unique. When
 deletion by name is requested, the request body is in this format for the
-deletion of a private analysis:
+deletion of one or more private analyses:
 
 ```json
 {
-    "analysis_name": "analysis-name",
+    "analysis_names": ["some-analysis-name", "another-name", ...],
     "full_username": "username"
 }
 ```
 
 Public analyses may be deleted by this service as well, but the service has to
 be explicitly told that a public analysis is being deleted. The request body for
-the deletion of a public analysis by ID is in this format:
+the deletion of one or more public analyses by ID is in this format:
 
 ```json
 {
-    "analysis_id": "analysis-id",
+    "analysis_ids": ["some-analysis-id", "another-analysis-id", ...],
     "root_deletion_request": true
 }
 ```
 
-Similarly, the request body for the deletion of a public analysis by name is in
-this format:
+Similarly, the request body for the deletion of one or more public analyses by
+name is in this format:
 
 ```json
 {
-    "analysis_name": "analysis-name",
+    "analysis_names": ["some-analysis-name", "another-name", ...],
     "root_deletion_request": true
 }
 ```
@@ -2752,42 +3155,42 @@ This service has no response body.
 *Unsecured Endpoint:* POST /delete-workflow
 
 An app can be marked as deleted in the DE without being completely removed from
-the database using this service. To mark a private app as deleted using the app
-identifier, the request body should be in the following format:
+the database using this service. To mark one or more private apps as deleted
+using the app identifiers, the request body should be in the following format:
 
 ```json
 {
-    "analysis_id": "some-analysis-id",
+    "analysis_ids": ["some-analysis-id", "another-analysis-id", ...],
     "full_username": "somebody@example.org"
 }
 ```
 
-To mark a private app as deleted using the app name, the request body should be
-in the following format:
+To mark one or more private apps as deleted using the app names, the request
+body should be in the following format:
 
 ```json
 {
-    "analysis_name": "some-analysis-name",
+    "analysis_names": ["some-analysis-name", "another-name", ...],
     "full_username": "somebody@example.org"
 }
 ```
 
-To mark a public app as deleted using the app identifier, the request body
-should be in the following format:
+To mark one or more public apps as deleted using the app identifiers, the
+request body should be in the following format:
 
 ```json
 {
-    "analysis_id": "some-analysis-id",
+    "analysis_ids": ["some-analysis-id", "another-analysis-id", ...],
     "root_deletion_request": true
 }
 ```
 
-To mark a public app as deleted using the app name, the request body should be
-in the following format:
+To mark one or more public apps as deleted using the app names, the request body
+should be in the following format:
 
 ```json
 {
-    "analysis_name": "some-analysis-name",
+    "analysis_names": ["some-analysis-name", "another-name", ...],
     "root_deletion_request": true
 }
 ```
@@ -2806,6 +3209,56 @@ response body for this service is the in the format produced by the
 `/get-analysis` service. For more information about the response body format,
 please see [App JSON for UI](#app-json-for-ui) above.
 
+```
+$ curl -sd @app.json http://by-tor:8888/preview-template | python -mjson.tool
+{
+    "analyses": [
+        {
+            "groups": [
+                {
+                    "id": "898AA533-8073-4B10-B480-0D486BB5CA55",
+                    "label": "Grp1",
+                    "name": "",
+                    "properties": [
+                        {
+                            "description": "File input tool tip",
+                            "id": "App Endpoint Test_7b67ad54-57ba-46b3-b72a-ab577496e246",
+                            "isVisible": true,
+                            "label": "Input File",
+                            "name": "-f",
+                            "type": "FileInput"
+                        },
+                        {
+                            "description": "TextBox tool tip",
+                            "id": "App Endpoint Test_96449f56-fdea-4379-9be8-3750d2fa21f2",
+                            "isVisible": true,
+                            "label": "TextBox",
+                            "name": "-b",
+                            "type": "Text"
+                        },
+                        {
+                            "description": "checkbox tool tip",
+                            "id": "App Endpoint Test_51980858-7bc2-4516-911c-910329c46bf5",
+                            "isVisible": true,
+                            "label": "Checkbox",
+                            "name": "-c",
+                            "type": "Flag"
+                        }
+                    ],
+                    "type": ""
+                }
+            ],
+            "id": "0DFE3E35-F6F0-4995-BC31-24B94EE7EADA",
+            "label": "App Endpoint Test",
+            "name": "App Endpoint Test",
+            "type": ""
+        }
+    ]
+}
+```
+
+A copy of app.json can be found [here](app.json).
+
 ## Previewing Analyses
 
 *Unsecured Endpoint:* POST /preview-workflow
@@ -2818,6 +3271,109 @@ service is in the format produced by the `/get-analysis` service. For more
 information about the format of the response body, please see
 [App JSON for UI](#app-json-for-ui), above.
 
+Here's an example:
+
+```
+$ curl -sd @workflow.json http://by-tor:8888/preview-workflow | python -mjson.tool
+{
+    "analyses": [
+        {
+            "groups": [
+                {
+                    "id": "8724F26F-256B-B627-8DD9-08163C4B2B85",
+                    "label": "Inputs",
+                    "name": "",
+                    "properties": [
+                        {
+                            "description": "",
+                            "id": "Find or count unique values_6086ADB0-513A-1FCA-463A-45BDC92893FD",
+                            "isVisible": true,
+                            "label": "Select an input file",
+                            "name": "",
+                            "type": "FileInput",
+                            "validator": {
+                                "label": "",
+                                "name": "",
+                                "required": false
+                            }
+                        }
+                    ],
+                    "type": ""
+                },
+                {
+                    "id": "CC56EB41-FD18-26E6-E5A0-BE44A426303E",
+                    "label": "Options",
+                    "name": "",
+                    "properties": [
+                        {
+                            "description": "",
+                            "id": "Find or count unique values_BFBA9726-6676-D16A-6D8D-EDE11C49DC3A",
+                            "isVisible": true,
+                            "label": "Ignore case while doing comparisons",
+                            "name": "--ignore-case",
+                            "type": "Flag",
+                            "value": "false"
+                        },
+                        {
+                            "description": "",
+                            "id": "Find or count unique values_A4549AA8-0F0E-5B62-4097-A38B1542FBD0",
+                            "isVisible": true,
+                            "label": "Prefix unique lines by the number of occurrences",
+                            "name": "--count",
+                            "type": "Flag",
+                            "value": "false"
+                        },
+                        {
+                            "description": "",
+                            "id": "Find or count unique values_2D50BC00-D747-C0A8-64CA-189EF0BA5AB4",
+                            "isVisible": true,
+                            "label": "Only print duplicate lines",
+                            "name": "--repeated",
+                            "type": "Flag",
+                            "value": "false"
+                        },
+                        {
+                            "description": "",
+                            "id": "Find or count unique values_3CAF0548-5E41-90A9-F161-723CE5740C9C",
+                            "isVisible": true,
+                            "label": "Only print unique lines",
+                            "name": "--unique",
+                            "type": "Flag",
+                            "value": "false"
+                        },
+                        {
+                            "description": "A field is a run of whitespace, then non-whitespace characters.",
+                            "id": "Find or count unique values_4F650FA8-E03C-38DB-EC9D-A8239CE6EDED",
+                            "isVisible": true,
+                            "label": "Avoid comparing the first N fields",
+                            "name": "--skip-fields",
+                            "type": "Double",
+                            "value": ""
+                        },
+                        {
+                            "description": "Fields are skipped before chars.",
+                            "id": "Find or count unique values_E261EDE5-A2B2-B929-204A-60A8E2AA02AC",
+                            "isVisible": true,
+                            "label": "Avoid comparing the first N characters",
+                            "name": "--skip-chars",
+                            "type": "Double",
+                            "value": ""
+                        }
+                    ],
+                    "type": ""
+                }
+            ],
+            "id": "2976DE6C-03E3-4109-AECD-3D9CAEDD3122",
+            "label": "Find Unique Values",
+            "name": "Find Unique Values",
+            "type": ""
+        }
+    ]
+}
+```
+
+A copy of workflow.json can be found [here](workflow.json).
+
 ## Updating an Existing Template
 
 *Unsecured Endpoint:* POST /update-template
@@ -2825,6 +3381,24 @@ information about the format of the response body, please see
 This service either imports a new template or updates an existing template in
 the database. For more information about the format of the request body, please
 see [Template JSON](#template-json) above.
+
+Here are some examples:
+
+```
+$ curl -sd @app.json http://by-tor:8888/update-template | python -mjson.tool
+{
+    "reason": "org.json.JSONException: JSONObject[\"implementation\"] not found.",
+    "success": false
+}
+```
+
+A copy of app.json can be found [here](app.json).
+
+```
+$ curl -sd @app-with-impl.json http://by-tor:8888/update-template
+```
+
+A copy of app-with-impl.json can be found [here](app-with-impl.json).
 
 ## Updating an Analysis
 
@@ -2836,6 +3410,28 @@ The difference between this service and the `/update-template` service is that
 this service can support multi-step analyses. For information about the format
 of the request body, please see [App JSON](#app-json) above.
 
+The response body consists of a JSON object containing the identifiers of all of
+the analyses, components and templates that are imported into the database.
+
+Here's an example:
+
+```
+$ curl -sd @workflow.json http://by-tor:8888/update-workflow | python -mjson.tool
+{
+    "analyses": [
+        "F0A35441-46A9-42F3-862A-FAA89ECB0D1E"
+    ],
+    "components": [
+        "c4e6f548cc0ee431da7f2ddfdf3ace761"
+    ],
+    "templates": [
+        "B9F7496C-D3A8-4D05-A505-01D7AFBECCBB"
+    ]
+}
+```
+
+A copy of workflow.json can be found [here](workflow.json).
+
 ## Forcing an Analysis to be Updated
 
 *Unsecured Endpoint:* POST /force-update-workflow
@@ -2846,6 +3442,25 @@ service. The analysis import script uses this service to import analyses that
 have previously been exported. For information about the format of the request
 body, please see [App JSON](#app-json) above.
 
+The response body consists of a JSON object containing the identifiers of all of
+the analyses, components and templates that are imported into the database.
+Here's an example:
+
+```
+$ curl -sd @workflow.json http://by-tor:8888/force-update-workflow | python -mjson.tool
+{
+    "analyses": [
+        "EEFC9B65-C81D-4DE1-A9B8-90C5BD0237F6"
+    ],
+    "components": [
+        "c4e6f548cc0ee431da7f2ddfdf3ace761"
+    ],
+    "templates": [
+        "81B5AF13-4990-4026-A67C-22FEDB682DBF"
+    ]
+}
+```
+
 ## Importing a Template
 
 *Unsecured Endpoint:* POST /import-template
@@ -2855,6 +3470,24 @@ existing template. To overwrite an existing template, please use the
 `/update-template` service. For information about the format of the request
 body, please see [Template JSON](#template-json) above.
 
+Here are some examples:
+
+```
+$ curl -sd @app.json http://by-tor:8888/import-template | python -mjson.tool
+{
+    "reason": "org.json.JSONException: JSONObject[\"implementation\"] not found.",
+    "success": false
+}
+```
+
+A copy of app.json can be found [here](app.json).
+
+```
+$ curl -sd @app-with-impl.json http://by-tor:8888/import-template
+```
+
+A copy of app-with-impl.json can be found [here](app-with-impl.json).
+
 ## Importing an Analysis
 
 *Unsecured Endpoint:* POST /import-workflow
@@ -2863,6 +3496,27 @@ This service imports a new analysis into the DE; it will not overwrite an
 existing analysis. To overwrite an existing analysis, please use the
 `/update-workflow` service. For information about the format of the request
 body, please see [App JSON](#app-json) above.
+
+The response body consists of a JSON object containing the identifiers of all of
+the analyses, components and templates that are imported into the database.
+Here's an example:
+
+```
+$ curl -sd @workflow.json http://by-tor:8888/import-workflow | python -mjson.tool
+{
+    "analyses": [
+        "5574A263-3807-4005-AC3E-3EFAFAEEB5F1"
+    ],
+    "components": [
+        "c4e6f548cc0ee431da7f2ddfdf3ace761"
+    ],
+    "templates": [
+        "5C74B636-9E44-4F59-B3F2-B781A0A2C501"
+    ]
+}
+```
+
+A copy of workflow.json can be found [here](workflow.json).
 
 ## Updating Template Labels
 
@@ -3026,7 +3680,9 @@ $ curl -sd @jaguarundi.json http://by-tor:8888/update-app-labels | python -mjson
 *Unsecured Endpoint:* POST /import-tools
 
 This service imports deployed components into the DE. In metadactyl, this
-service is identical to the `/import-workflow` service.
+service is identical to the `/import-workflow` service; and is provided for the
+sake the clarity of the code in the SCM repository. Please see
+[Importing an Analysis](#importing-an-analysis) for more information.
 
 ## Updating Top-Level Analysis Information
 

@@ -12,9 +12,9 @@
   "Gets an implementor object with details from the current-user, needed to save
    workflows."
   []
-  {:implementor (.getShortUsername current-user)
+  {:implementor       (str (.getFirstName current-user) " " (.getLastName current-user))
    :implementor_email (.getEmail current-user)
-   :test {:params []}})
+   :test              {:params []}})
 
 (defn- get-integrator-email
   "Fetches the integrator email for the given integration data ID."
@@ -28,7 +28,7 @@
   "Verifies that the current user owns the analysis that is being edited."
   [analysis]
   (let [owner (get-integrator-email (:integration_data_id analysis))]
-    (if (not= owner (.getUsername current-user))
+    (if (not= owner (.getEmail current-user))
       (throw+ {:code cc-errs/ERR_NOT_OWNER,
                :username (.getUsername current-user),
                :message (str

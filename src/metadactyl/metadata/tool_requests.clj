@@ -76,7 +76,7 @@
                       :source_url           (required-field req :src_url :src_upload_file)
                       :doc_url              (required-field req :documentation_url)
                       :version              (required-field req :version)
-                      :attribution          (:attribution req)
+                      :attribution          (:attribution req "")
                       :multithreaded        (multithreaded-str-to-flag (:multithreaded req))
                       :test_data_path       (required-field req :test_data_file)
                       :instructions         (required-field req :cmd_line)
