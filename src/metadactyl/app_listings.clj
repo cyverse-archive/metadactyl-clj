@@ -29,8 +29,7 @@
    :description    ""
    :workspace_id   workspace-id
    :is_public      "false"
-   :template_count (count-public-apps-by-user (.getFirstName current-user)
-                                              (.getLastName current-user))})
+   :template_count (count-public-apps-by-user (.getEmail current-user))})
 
 (defn list-my-public-apps
   "Lists the public apps belonging to the user with the given workspace."
@@ -38,8 +37,7 @@
   (list-public-apps-by-user
    workspace
    (workspace-favorites-app-group-index)
-   (.getFirstName current-user)
-   (.getLastName current-user)
+   (.getEmail current-user)
    params))
 
 (def ^:private virtual-group-fns
@@ -170,7 +168,7 @@
   "Counts the number of apps in an app group, including virtual app groups that may be included."
   [{root-group-hid :root_analysis_group_id} {:keys [hid id] :as app-group}]
   (if (= root-group-hid hid)
-    (count-apps-in-group-for-user id (.getFirstName current-user) (.getLastName current-user))
+    (count-apps-in-group-for-user id (.getEmail current-user))
     (count-apps-in-group-for-user id)))
 
 (defn- get-apps-in-group
@@ -180,9 +178,7 @@
     (println "root-group-hid =" root-group-hid)
     (println "hid =" hid)
     (if (= root-group-hid hid)
-      (get-apps-in-group-for-user id workspace faves-index params
-                                  (.getFirstName current-user)
-                                  (.getLastName current-user))
+      (get-apps-in-group-for-user id workspace faves-index params (.getEmail current-user))
       (get-apps-in-group-for-user id workspace faves-index params))))
 
 (defn- list-apps-in-real-group
