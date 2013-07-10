@@ -9,7 +9,8 @@
         [metadactyl.workspace]
         [metadactyl.util.config]
         [metadactyl.util.conversions :only [to-long date->long]])
-  (:require [cheshire.core :as cheshire]))
+  (:require [cheshire.core :as cheshire]
+            [clojure.tools.logging :as log]))
 
 (defn- add-subgroups
   [group groups]
@@ -20,13 +21,55 @@
         result    (dissoc result :app_count :parent_hid :hid)]
     result))
 
+(defn- format-my-public-apps-group
+  "Formats the virtual group for the user's public apps."
+  [workspace-id]
+  {:id             :my-public-apps
+   :name           "My public apps"
+   :description    ""
+   :workspace_id   workspace-id
+   :is_public      "false"
+   :template_count (count-public-apps-by-user (.getFirstName current-user)
+                                              (.getLastName current-user))})
+
+(defn list-my-public-apps
+  "Lists the public apps belonging to the user with the given workspace."
+  [workspace params]
+  (list-public-apps-by-user
+   workspace
+   (workspace-favorites-app-group-index)
+   (.getFirstName current-user)
+   (.getLastName current-user)
+   params))
+
+(def ^:private virtual-group-fns
+  {:my-public-apps {:format-group   format-my-public-apps-group
+                    :format-listing list-my-public-apps}})
+
+(defn- format-virtual-groups
+  "Formats any virtual groups that should appear in a user's workspace."
+  [workspace-id]
+  (map (fn [[_ {f :format-group}]] (f workspace-id)) virtual-group-fns))
+
+(defn- add-virtual-groups
+  [group workspace-id]
+  (if current-user
+    (let [virtual-groups (format-virtual-groups workspace-id)
+          virtual-count  (reduce + (map :template_count virtual-groups))]
+      (-> group
+          (update-in [:groups] concat virtual-groups)
+          (update-in [:template_count] + virtual-count)))))
+
 (defn- format-app-group-hierarchy
   "Formats the app group hierarchy rooted at the app group with the given
    identifier."
-  [root-id]
+  [user-workspace-id {root-id :root_analysis_group_id workspace-id :id}]
   (let [groups (get-app-group-hierarchy root-id)
-        root   (first (filter #(= root-id (:hid %)) groups))]
-    (add-subgroups root groups)))
+        root   (first (filter #(= root-id (:hid %)) groups))
+        result (add-subgroups root groups)]
+    (if (= user-workspace-id workspace-id)
+      (add-virtual-groups result workspace-id)
+      result)))
 
 (defn get-only-app-groups
   "Retrieves the list of app groups that are visible to a user."
@@ -37,9 +80,15 @@
          (str)
          (get-only-app-groups)))
   ([workspace-id]
-     (let [workspace-id    (to-long workspace-id)
-           root-app-groups (get-visible-root-app-group-ids workspace-id)]
-       (cheshire/encode {:groups (map format-app-group-hierarchy root-app-groups)}))))
+     (let [workspace-id (to-long workspace-id)
+           workspaces   (get-visible-workspaces workspace-id)]
+       (cheshire/encode
+        {:groups (map (partial format-app-group-hierarchy workspace-id) workspaces)}))))
+
+(defn get-public-app-groups
+  "Retrieves the list of app groups that are visible to all users. TODO: refactor me."
+  []
+  (get-only-app-groups "-1"))
 
 (defn- validate-app-pipeline-eligibility
   "Validates an App for pipeline eligibility, throwing a slingshot stone ."
@@ -109,22 +158,53 @@
       (format-app-ratings)
       (format-app-pipeline-eligibility)))
 
+(defn- list-apps-in-virtual-group
+  "Formats a listing for a virtual group."
+  [workspace group-id params]
+  (let [group-key (keyword group-id)]
+    (when-let [format-fns (group-key virtual-group-fns)]
+      (assoc ((:format-group format-fns) (:id workspace))
+        :templates (map format-app ((:format-listing format-fns) workspace params))))))
+
+(defn- count-apps-in-group
+  "Counts the number of apps in an app group, including virtual app groups that may be included."
+  [{root-group-hid :root_analysis_group_id} {:keys [hid id] :as app-group}]
+  (if (= root-group-hid hid)
+    (count-apps-in-group-for-user id (.getFirstName current-user) (.getLastName current-user))
+    (count-apps-in-group-for-user id)))
+
+(defn- get-apps-in-group
+  "Gets the apps in an app group, including virtual app groups that may be included."
+  [{root-group-hid :root_analysis_group_id :as workspace} {:keys [hid id]} params]
+  (let [faves-index (workspace-favorites-app-group-index)]
+    (println "root-group-hid =" root-group-hid)
+    (println "hid =" hid)
+    (if (= root-group-hid hid)
+      (get-apps-in-group-for-user id workspace faves-index params
+                                  (.getFirstName current-user)
+                                  (.getLastName current-user))
+      (get-apps-in-group-for-user id workspace faves-index params))))
+
+(defn- list-apps-in-real-group
+  "This service lists all of the apps in a real app group and all of its descendents."
+  [workspace app_group_id params]
+  (let [app_group      (get-app-group app_group_id)
+        root_group_hid (:root_analysis_group_id workspace)
+        total          (count-apps-in-group workspace app_group)
+        apps_in_group  (get-apps-in-group workspace app_group params)
+        apps_in_group  (map format-app apps_in_group)]
+    (assoc app_group
+      :template_count total
+      :templates apps_in_group)))
+
 (defn list-apps-in-group
   "This service lists all of the apps in an app group and all of its
    descendents."
-  [app_group_id params]
-  (let [workspace (get-or-create-workspace (.getUsername current-user))
-        app_group (get-app-group app_group_id)
-        total (count-apps-in-group-for-user app_group_id)
-        apps_in_group (get-apps-in-group-for-user
-                       app_group_id
-                       workspace
-                       (workspace-favorites-app-group-index)
-                       params)
-        apps_in_group (map #(format-app %) apps_in_group)]
-    (cheshire/encode (assoc app_group
-                       :template_count total
-                       :templates apps_in_group))))
+  [app-group-id params]
+  (let [workspace (get-or-create-workspace (.getUsername current-user))]
+    (cheshire/encode
+     (or (list-apps-in-virtual-group workspace app-group-id params)
+         (list-apps-in-real-group workspace app-group-id params)))))
 
 (defn search-apps
   "This service searches for apps in the user's workspace and all public app
@@ -138,7 +218,7 @@
                         workspace
                         (workspace-favorites-app-group-index)
                         params)
-        search_results (map #(format-app %) search_results)]
+        search_results (map format-app search_results)]
     (cheshire/encode {:template_count total
                       :templates search_results})))
 

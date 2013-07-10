@@ -33,7 +33,6 @@
 
 (defn- selection-prop-translation
   [prop]
-  (clojure.pprint/pprint prop)
   [(prop-from-selection
     (:defaultValue prop "")
     (:order prop 0))])
