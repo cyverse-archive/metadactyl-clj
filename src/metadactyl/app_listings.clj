@@ -175,8 +175,6 @@
   "Gets the apps in an app group, including virtual app groups that may be included."
   [{root-group-hid :root_analysis_group_id :as workspace} {:keys [hid id]} params]
   (let [faves-index (workspace-favorites-app-group-index)]
-    (println "root-group-hid =" root-group-hid)
-    (println "hid =" hid)
     (if (= root-group-hid hid)
       (get-apps-in-group-for-user id workspace faves-index params (.getEmail current-user))
       (get-apps-in-group-for-user id workspace faves-index params))))
