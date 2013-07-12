@@ -64,7 +64,7 @@ $ curl -sd '
 
 ## Categorizing Analyses
 
-*Unsecured Endpoint:* POST /categorize_analyses
+*Unsecured Endpoint:* POST /categorize-analyses
 
 When services are exported and re-imported, the analysis categorization
 information also needs to be exported and re-imported. This service allows the
@@ -241,7 +241,7 @@ $ curl -s http://by-tor:8888/get-analysis-categories/public | python -mjson.tool
 
 ## Adding Analyses to Analysis Groups
 
-*Unsecured Endpoint:* POST /add-analyses-to-group
+*Unsecured Endpoint:* POST /add-analysis-to-group
 
 Users in the Discovery Environment can add analyses to an analysis groups in
 some cases. The most common use case for this feature is when the user wants to

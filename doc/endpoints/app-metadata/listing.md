@@ -603,7 +603,7 @@ $ curl -s http://by-tor:8888/analysis-data-objects/19F78CC1-7E14-481B-9D80-85EBC
 
 ## Listing Analysis Groups
 
-*Unsecured Endpoint:* GET /get-only-analysis-groups/{workspace-id}
+*Unsecured Endpoint:* GET /public-app-groups
 
 *Secured Endpoint:* GET /secured/app-groups
 
@@ -634,38 +634,12 @@ workspace identifier. The response is in the following format:
 Note that this data structure is recursive; each analysis group may contain zero
 or more other analysis groups.
 
-Here's an example using a workspace ID:
+Here's an example call for getting only the public app groups:
 
 ```
-$ curl -s http://by-tor:8888/get-only-analysis-groups/42 | python -mjson.tool
+$ curl -s http://by-tor:8888/public-app-groups | python -mjson.tool
 {
     "groups": [
-        {
-            "description": "",
-            "groups": [
-                {
-                    "description": "",
-                    "id": "b9a1a3b8-fef6-4576-bbfe-9ad17eb4c2ab",
-                    "is_public": false,
-                    "name": "Apps Under Development",
-                    "template_count": 0,
-                    "workspace_id": 42
-                },
-                {
-                    "description": "",
-                    "id": "2948ed96-9564-489f-ad73-e099b171a9a5",
-                    "is_public": false,
-                    "name": "Favorite Apps",
-                    "template_count": 0,
-                    "workspace_id": 42
-                }
-            ],
-            "id": "57a39832-3577-4ee3-8ff4-3fc9d1cf9e34",
-            "is_public": false,
-            "name": "Workspace",
-            "template_count": 0,
-            "workspace_id": 42,
-        },
         {
             "description": "",
             "groups": [
