@@ -43,6 +43,7 @@
 * [GET /secured/edit-workflow/{analysis-id}](endpoints/app-metadata/editing.md#making-a-pipeline-available-for-editing)
 * [GET /secured/get-analyses-in-group/{group-id}](endpoints/app-metadata/listing.md#listing-analyses-in-an-analysis-group)
 * [GET /secured/get-components-in-analysis/{analysis-id}](endpoints/app-metadata/listing.md#listing-deployed-components-in-an-analysis)
+* [GET /secured/logout](endpoints/misc.md#recording-when-the-user-logs-out)
 * [POST /secured/make-analysis-public](endpoints/app-metadata/editing.md#submitting-an-analysis-for-public-use)
 * [POST /secured/rate-analysis](endpoints/app-metadata/rating.md#rating-analyses)
 * [GET /secured/reference-genomes](endpoints/reference-genomes.md#exporting-reference-genomes)
