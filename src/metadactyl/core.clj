@@ -23,8 +23,11 @@
             [ring.adapter.jetty :as jetty]))
 
 (defroutes secured-routes
-  (GET "/bootstrap" []
-       (bootstrap))
+  (GET "/bootstrap" [:as {params :params}]
+       (ce/trap "bootstrap" #(bootstrap (:ip-address params))))
+
+  (GET "/logout" [:as {params :params}]
+       (ce/trap "logout" #(logout params)))
 
   (GET "/template/:app-id" [app-id]
        (get-app app-id))

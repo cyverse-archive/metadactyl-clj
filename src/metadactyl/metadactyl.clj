@@ -1,5 +1,6 @@
 (ns metadactyl.metadactyl
   (:use [clojure.java.io :only [reader]]
+        [kameleon.queries :only [record-login record-logout]]
         [metadactyl.app-validation]
         [metadactyl.beans]
         [metadactyl.util.config]
@@ -13,7 +14,7 @@
         [metadactyl.transformers]
         [metadactyl.validation :only [validate-json-array-field]]
         [ring.util.codec :only [url-decode]]
-        [slingshot.slingshot :only [throw+]])
+        [slingshot.slingshot :only [throw+ try+]])
   (:import [com.mchange.v2.c3p0 ComboPooledDataSource]
            [java.util HashMap]
            [org.iplantc.authn.service UserSessionService]
@@ -33,7 +34,9 @@
            [org.springframework.orm.hibernate3.annotation
             AnnotationSessionFactoryBean])
   (:require [cheshire.core :as cheshire]
+            [clojure.string :as string]
             [clojure.tools.logging :as log]
+            [clojure-commons.error-codes :as ce]
             [metadactyl.translations.app-metadata :as app-meta-tx]
             [metadactyl.translations.property-values :as prop-value-tx]))
 
@@ -448,11 +451,42 @@
   (.physicallyDeleteAnalysis (analysis-deletion-service) (slurp body))
   (empty-response))
 
+(defn- validate-param
+  [param-value param-name]
+  (when (string/blank? param-value)
+    (throw+ {:error_code ce/ERR_ILLEGAL_ARGUMENT
+             :reason     :MISSING_OR_EMPTY_QUERY_STRING_PARAMETER
+             :param_name param-name})))
+
+(defn- string-to-long
+  [param-value param-name]
+  (try+
+   (Long/parseLong param-value)
+   (catch NumberFormatException e
+     (throw+ {:error_code ce/ERR_ILLEGAL_ARGUMENT
+              :reason     :LONG_INTEGER_EXPECTED
+              :param_name param-name}))))
+
 (defn bootstrap
   "This service obtains information about and initializes the workspace for
-   the authenticated user."
-  []
-  (object->json-str (.getCurrentUserInfo (user-service))))
+   the authenticated user. It also records the user's login so that we can
+   obtain statistics later."
+  [ip-address]
+  (validate-param ip-address :ip-address)
+  (let [user-info  (.getCurrentUserInfo (user-service))
+        login-time (record-login (.getUsername current-user) ip-address)]
+    {:workspaceId  (.getWorkspaceId user-info)
+     :newWorkspace (.isNewWorkspace user-info)
+     :loginTime    (str login-time)}))
+
+(defn logout
+  "This service records explicit logouts for users so that we can obtain
+   statistics later."
+  [{:keys [ip-address login-time]}]
+  (validate-param ip-address :ip-address)
+  (validate-param login-time :login-time)
+  (record-logout (.getUsername current-user) ip-address (string-to-long login-time :login-time))
+  {})
 
 (defn run-experiment
   "This service accepts a job submission from a user then reformats it and
