@@ -9,11 +9,66 @@ clear.
 
 Generally speaking, the metadactyl services that correspond to secured services
 in Donkey require user credentials, which are passed to the service in query
-parameters. For example, the first service that the Discovery Environment hits
-when a user logs in is the bootstrap service, which requires user credentials.
-This service can be accessed using the URL,
-`/bootstrap?user={username}&email={email}` where {username} refers to a user's
-login name, and {email} is that user's email address.
+parameters. The available query string parameters are:
+
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>user</td>
+            <td>
+                The short version of the username. That is, the username without
+                the domain name included. For example, if the full username is
+                `ipctest@iplantcollaborative.org` then the value of this
+                parameter would simply be `ipctest`.
+            </td>
+        </tr>
+        <tr>
+            <td>email</td>
+            <td>
+                The user's full email address. This may or may not be the same
+                as the full username of the user. For exmaple, it's possible to
+                have a username of `nobody@iplantcollaborative.org` and an email
+                address of `nobody-inparticular@example.org`. This parameter is
+                not required for all secured services, but it is required for
+                several of them.
+            </td>
+        </tr>
+        <tr>
+            <td>first-name</td>
+            <td>
+                The user's first name. At this time, this parameter is only
+                required for the secured endpoints that update apps or pipelines
+                This includes the following endpoints: `/secured/update-app`,
+                `/secured/copy-app`, `/secured/copy-workflow`, and
+                `/secured/make-analysis-public`.
+            </td>
+        </tr>
+        <tr>
+            <td>last-name</td>
+            <td>
+                The user's last name. This parameter is required by the same
+                endpoints as `first-name`.
+            </td>
+        </tr>
+        <tr>
+            <td>ip-address</td>
+            <td>
+                The IP address of the originating request. Because these
+                services are called by the DE on behalf of the user it is not
+                possible to obtain the IP address of the originating request
+                from the socket connection. This field is currently only
+                required for the `/secured/bootstrap` and `/secured/logout`
+                endpoints.
+            </td>
+        </tr>
+    </tbody>
+</thead>
 
 Secured services can be distinguished from unsecured services by looking at the
 path in the URL. The paths for all secured endpoints begin with `/secured`

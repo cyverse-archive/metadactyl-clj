@@ -260,7 +260,7 @@ $ curl -s http://by-tor:8888/analysis-details/009CECFD-0DF7-4B3D-98EF-82105C8483
 
 ## Getting an App Description
 
-Unsecured Endpoint: GET /get-app-descrioption/{analysis-id}
+Unsecured Endpoint: GET /get-app-description/{analysis-id}
 
 This service is used by Donkey to get app descriptions for job status update
 notifications. There is no request body and the response body contains only the

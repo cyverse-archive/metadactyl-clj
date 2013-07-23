@@ -23,26 +23,60 @@ Welcome to Metadactyl!
 
 *Secured Endpoint:* GET /secured/bootstrap
 
-The DE calls this service as soon as the user logs in. If the user has never
-logged in before then the service initializes the user's workspace and returns
-the user's workspace ID along with a flag indicating that the workspace was just
-created. If the user has logged in before then the service merely returns the
-user's workspace ID along with a flag indicating that the workspace already
-existed. The response body for this service is in the following format:
+The DE calls this service as soon as the user logs in. This service always
+records the fact that the user logged in, and it also initializes the user's
+workspace if the user has never logged in before. If the service succeeds then
+the response body is in the following format:
 
 ```json
 {
+    "action": "bootstrap",
+    "loginTime": login-milliseconds,
     "newWorkspace": new-workspace-flag,
+    "status": "success",
     "workspaceId": workspace-id
 }
 ```
 
+This service required three query-string parameters:
+
+* user - the short version of the username
+* email - the user's email address
+* ip-address - the source IP address of the login request
+
 Here's an example:
 
 ```
-$ curl -s "http://by-tor:8888/secured/bootstrap?user=snow-dog&email=sd@example.org" | python -mjson.tool
+$ curl -s "http://by-tor:8888/secured/bootstrap?user=snow-dog&email=sd@example.org&ip-address=127.0.0.1" | python -mjson.tool
 {
+    "action": "bootstrap",
+    "loginTime": "1374180749466",
     "newWorkspace": false,
+    "status": "success",
     "workspaceId": "4"
+}
+```
+
+## Recording when the User Logs Out
+
+*Secured Endpoint:* GET /secured/logout
+
+The DE calls this service when the user explicitly logs out. This service simply
+records the time that the user logged out in the login record created by the
+`/secured/bootstrap` service. This service requires four query-string
+parameters:
+
+* user - the short version of the username
+* email - the user's email address
+* ip-address - the source IP address of the logout request
+* login-time - the login timestamp that was returned by the bootstrap service
+
+Here's an example:
+
+```
+$ curl -s "http://by-tor:8888/secured/bootstrap?user=snow-dog&email=sd@example.org&ip-address=127.0.0.1&login-time=1374180749466" | python -mjson.tool
+{
+    "action": "logout",
+    "status": "success"
 }
 ```

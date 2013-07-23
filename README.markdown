@@ -27,3 +27,4 @@ inside metadactyl-clj instead.  The Mule services no longer exist.
     * [App Execution Endpoints](doc/endpoints/app-execution.md)
     * [Collaborator List Management Endpoints](doc/endpoints/collaborators.md)
     * [Reference Genome Endpoints](doc/endpoints/reference-genomes.md)
+* [Endpoint Index](doc/endpoint-index.md)
