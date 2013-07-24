@@ -34,7 +34,11 @@ the response body is in the following format:
     "loginTime": login-milliseconds,
     "newWorkspace": new-workspace-flag,
     "status": "success",
-    "workspaceId": workspace-id
+    "workspaceId": workspace-id,
+    "usermame": username,
+    "email": email-address,
+    "firstName": first-name,
+    "lastName": last-name
 }
 ```
 
@@ -47,13 +51,17 @@ This service required three query-string parameters:
 Here's an example:
 
 ```
-$ curl -s "http://by-tor:8888/secured/bootstrap?user=snow-dog&email=sd@example.org&ip-address=127.0.0.1" | python -mjson.tool
+$ curl -s "http://by-tor:8888/secured/bootstrap?user=snow-dog&email=sd@example.org&first-name=Snow&last-name=Dog&ip-address=127.0.0.1" | python -mjson.tool
 {
     "action": "bootstrap",
     "loginTime": "1374180749466",
     "newWorkspace": false,
     "status": "success",
-    "workspaceId": "4"
+    "workspaceId": "4",
+    "username": "snow-dog",
+    "email": "sd@example.org",
+    "firstName": "Snow",
+    "lastName": "Dog"
 }
 ```
 
