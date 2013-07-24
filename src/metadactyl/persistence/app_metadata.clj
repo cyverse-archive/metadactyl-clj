@@ -79,6 +79,7 @@
    [:property_id prop-id]
    (first
     (select [:property :p]
+            (fields :p.hid :p.dataobject_id [:pt.name :type])
             (join [:property_group_property :pgp]
                   {:p.hid :pgp.property_id})
             (join [:property_group :pg]
@@ -182,7 +183,7 @@
 (defn update-property-labels
   "Updates the labels in a property."
   [group-id {:keys [id name description label arguments] :as prop}]
-  (let [{:keys [hid dataobject_id]} (get-property-in-group group-id id)]
+  (let [{:keys [hid dataobject_id type]} (get-property-in-group group-id id)]
     (update property
             (set-fields
              (remove-nil-values
@@ -190,7 +191,7 @@
                :description description
                :label       label}))
             (where {:hid hid}))
-    (update-data-object-labels dataobject_id prop)
+    (update-data-object-labels dataobject_id (assoc prop :type type))
     (when (seq arguments)
       (update-must-contain-rules-in-validator hid arguments))))
 
