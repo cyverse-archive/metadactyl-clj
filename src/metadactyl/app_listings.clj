@@ -28,7 +28,7 @@
    :name           "My public apps"
    :description    ""
    :workspace_id   workspace-id
-   :is_public      "false"
+   :is_public      false
    :template_count (count-public-apps-by-user (.getEmail current-user))})
 
 (defn list-my-public-apps
