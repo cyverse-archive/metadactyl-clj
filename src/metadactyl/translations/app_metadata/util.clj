@@ -9,8 +9,11 @@
 (def output-property-types
   #{"Output" "FileOutput" "FolderOutput" "MultiFileOutput"})
 
+(def ref-genome-property-types
+  #{"ReferenceAnnotation" "ReferenceGenome" "ReferenceSequence"})
+
 (def io-property-types
-  (set/union input-property-types output-property-types))
+  (set/union input-property-types output-property-types ref-genome-property-types))
 
 (def ^:private input-multiplicities-and-prop-types
   [["FileInput"         "One"]
@@ -37,23 +40,26 @@
 (defn multiplicity-for
   [prop-type mult]
   (cond
-   (input-property-types prop-type)  (input-multiplicity-for prop-type mult)
-   (output-property-types prop-type) (output-multiplicity-for prop-type mult)
-   :else                             mult))
+   (input-property-types prop-type)      (input-multiplicity-for prop-type mult)
+   (output-property-types prop-type)     (output-multiplicity-for prop-type mult)
+   (ref-genome-property-types prop-type) "One"
+   :else                                 mult))
 
 (defn property-type-for
-  [prop-type mult]
+  [prop-type mult info-type]
   (cond
-   (input-property-types prop-type)  (input-property-type-for mult prop-type)
-   (output-property-types prop-type) (output-property-type-for mult prop-type)
-   :else                             mult))
+   (ref-genome-property-types info-type) info-type
+   (input-property-types prop-type)      (input-property-type-for mult prop-type)
+   (output-property-types prop-type)     (output-property-type-for mult prop-type)
+   :else                                 prop-type))
 
 (defn generic-property-type-for
   [prop-type]
   (cond
-   (input-property-types prop-type)  "Input"
-   (output-property-types prop-type) "Output"
-   :else                             prop-type))
+   (input-property-types prop-type)      "Input"
+   (output-property-types prop-type)     "Output"
+   (ref-genome-property-types prop-type) "Input"
+   :else                                  prop-type))
 
 (defn get-property-groups
   "Gets the list of property groups "
@@ -65,3 +71,9 @@
                                              :detail     :MISSING_PROPERTY_GROUP_LIST})
    :else                            (throw+ {:error_code ce/ERR_INVALID_JSON
                                              :detail     :INVALID_PROPERTY_GROUP_LIST})))
+
+(defn data-obj-type-for
+  [prop-type orig-data-obj-type]
+  (if (ref-genome-property-types prop-type)
+    prop-type
+    orig-data-obj-type))

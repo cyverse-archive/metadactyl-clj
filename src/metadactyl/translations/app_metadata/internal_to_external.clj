@@ -46,10 +46,12 @@
 (defn translate-property
   "Translates a property from its internal format to its external format."
   [property]
-  (let [rules    (get-in property [:validator :rules] [])
-        args     (get-property-arguments rules)
-        data-obj (:data_object property)
-        type     (:type property)]
+  (let [rules     (get-in property [:validator :rules] [])
+        args      (get-property-arguments rules)
+        data-obj  (:data_object property)
+        type      (:type property)
+        mult      (:multiplicity data-obj)
+        info-type (:file_info_type data-obj)]
     (if (nil? data-obj)
       (assoc (dissoc property :validator :value)
         :arguments    args
@@ -69,7 +71,7 @@
         :label        (:name data-obj (:label property))
         :order        (:order data-obj (:order property))
         :required     (:required data-obj (:required property false))
-        :type         (property-type-for (:type property) (:multiplicity data-obj))))))
+        :type         (property-type-for type mult info-type)))))
 
 (defn translate-property-group
   "Translates a property group from its internal format to its external format."

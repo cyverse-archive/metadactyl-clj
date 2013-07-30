@@ -477,7 +477,11 @@
         login-time (record-login (.getUsername current-user) ip-address)]
     {:workspaceId  (.getWorkspaceId user-info)
      :newWorkspace (.isNewWorkspace user-info)
-     :loginTime    (str login-time)}))
+     :loginTime    (str login-time)
+     :username     (.getShortUsername current-user)
+     :email        (.getEmail current-user)
+     :firstName    (.getFirstName current-user)
+     :lastName     (.getLastName current-user)}))
 
 (defn logout
   "This service records explicit logouts for users so that we can obtain
