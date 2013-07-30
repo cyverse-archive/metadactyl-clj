@@ -24,13 +24,14 @@
   [property data-object]
   (when (contains? io-property-types (:type property))
     (assoc data-object
-      :cmdSwitch    (:name property "")
-      :description  (:description property "")
-      :id           (:id property)
-      :name         (:label property "")
-      :order        (:order property 0)
-      :required     (:required property false)
-      :multiplicity (multiplicity-for (:type property) (:multiplicity data-object)))))
+      :cmdSwitch      (:name property "")
+      :description    (:description property "")
+      :id             (:id property)
+      :name           (:label property "")
+      :order          (:order property 0)
+      :required       (:required property false)
+      :file_info_type (data-obj-type-for (:type property) (:file_info_type data-object))
+      :multiplicity   (multiplicity-for (:type property) (:multiplicity data-object)))))
 
 (defn translate-property
   "Translates a property from its external format to its internal format."
