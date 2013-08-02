@@ -81,7 +81,7 @@
   (into {}
         (map #(vector (:id %) %)
              (select transformation_activity
-                     (fields :id :description :wikiurl)
+                     (fields :id :description :wikiurl :disabled)
                      (where {:id [in app-ids]})))))
 
 (defn- log-missing-app
@@ -122,7 +122,8 @@
   (if-let [app (app-fields app-id)]
     (assoc analysis
       :analysis_details (or (:description app) "")
-      :wiki_url         (or (:wikiurl app) ""))
+      :wiki_url         (or (:wikiurl app) "")
+      :app_disabled     (or (:disabled app) false))
     (do (log-missing-app app-id)
         analysis)))
 
