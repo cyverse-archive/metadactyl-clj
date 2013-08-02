@@ -609,6 +609,7 @@ $ curl -s "http://by-tor:8888/secured/app/A750DD7B-7EBC-4809-B9EC-6F717220A1D1?u
     "id": "A750DD7B-7EBC-4809-B9EC-6F717220A1D1",
     "label": "App Endpoint Test",
     "name": "App Endpoint Test",
+    "disabled": false,
     "type": ""
 }
 ```

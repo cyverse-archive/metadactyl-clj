@@ -153,6 +153,7 @@ the property values from a specific job plugged in. Here's an example:
 ```
 $ curl -s http://by-tor:8888/analysis-rerun-info/j41bef770-f68c-40a2-8da4-2f53e22d4a9b | python -mjson.tool
 {
+    "disabled": false,
     "groups": [
         {
             "id": "3C17C860-AF27-468F-A8F2-64894B31DA23",
@@ -245,6 +246,7 @@ property values from a specific job plugged in. Here's an example:
 ```
 $ curl -s http://by-tor:8888/app-rerun-info/D3AE0C5C-CC74-4A98-8D26-224D6366F9D6 | python -mjson.tool
 {
+    "disabled": false,
     "groups": [
         {
             "id": "63D82E2F-30AC-426E-87BB-724FB148A1B0",
