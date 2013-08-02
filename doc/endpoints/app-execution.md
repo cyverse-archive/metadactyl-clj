@@ -445,6 +445,7 @@ following format:
             "analysis_details": "analysis-description",
             "analysis_id": "analysis-id",
             "analysis_name": "analysis-name",
+            "app_disabled": false,
             "description": "job-description",
             "enddate": "end-date-as-milliseconds-since-epoch",
             "id": "job-id",
