@@ -471,10 +471,11 @@
   "This service obtains information about and initializes the workspace for
    the authenticated user. It also records the user's login so that we can
    obtain statistics later."
-  [ip-address]
+  [ip-address user-agent]
   (validate-param ip-address :ip-address)
+  (validate-param user-agent :user-agent)
   (let [user-info  (.getCurrentUserInfo (user-service))
-        login-time (record-login (.getUsername current-user) ip-address)]
+        login-time (record-login (.getUsername current-user) ip-address user-agent)]
     {:workspaceId  (.getWorkspaceId user-info)
      :newWorkspace (.isNewWorkspace user-info)
      :loginTime    (str login-time)
