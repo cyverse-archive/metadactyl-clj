@@ -179,7 +179,7 @@ $ curl -sd '
     "name": "Where's the foo, again?",
     "wiki_url": "https://wiki.iplantcollaborative.org/docs/Foo+Foo"
 }
-' "http://by-tor:8888/secured/make-analysis-public?user=snow-dog&email=sd@example.org"
+' "http://by-tor:8888/secured/make-analysis-public?user=snow-dog&email=sd@example.org&first-name=Snow&last-name=Dog"
 {}
 ```
 
