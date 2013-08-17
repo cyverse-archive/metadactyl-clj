@@ -93,6 +93,9 @@
   (PUT "/update-app" [:as {body :body}]
        (ce/trap "update-app" #(update-app-secured body)))
 
+  (POST "/update-workflow" [:as {body :body}]
+        (trap #(update-workflow body)))
+
   (POST "/make-analysis-public" [:as {body :body}]
         (make-app-public body))
 
