@@ -3402,6 +3402,7 @@ A copy of app-with-impl.json can be found [here](app-with-impl.json).
 
 ## Updating an Analysis
 
+*Secured Endpoint:* POST /secured/update-workflow
 *Unsecured Endpoint:* POST /update-workflow
 
 This service either imports a new analysis or updates an existing analysis in
@@ -3409,6 +3410,11 @@ the database (as long as the analysis has not been submitted for public use).
 The difference between this service and the `/update-template` service is that
 this service can support multi-step analyses. For information about the format
 of the request body, please see [App JSON](#app-json) above.
+
+There is a minor difference between the secured and unsecured versions of this
+endpoint. The unsecured version requires the user details to be included in the
+implementation record of each app. The secured version automatically populates
+this data using the attributes of the authenticated user.
 
 The response body consists of a JSON object containing the identifiers of all of
 the analyses, components and templates that are imported into the database.

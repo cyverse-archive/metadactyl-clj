@@ -406,27 +406,39 @@
   [body]
   (.updateTemplate (workflow-import-service) (slurp body)))
 
+(defn- add-user-info
+  [m]
+  (if current-user
+    (let [full_name  (str (.getFirstName current-user) " " (.getLastName current-user))
+          email      (.getEmail current-user)
+          username   (.getUsername current-user)]
+      (assoc m
+        :implementation {:implementor       full_name
+                         :implementor_email email
+                         :test              {:params []}}
+        :full_username  username))
+    m))
+
 (defn update-app-secured
   "This service will either update an existing single-step app or import a new one. The app ID
    is returned in the response body."
   [body]
-  (let [full_name  (str (.getFirstName current-user) " " (.getLastName current-user))
-        email      (.getEmail current-user)
-        username   (.getUsername current-user)]
-    (.updateTemplate
-     (workflow-import-service)
-     (-> (parse-json body)
-         (app-meta-tx/template-external-to-internal)
-         (assoc :implementation {:implementor       full_name
-                                 :implementor_email email}
-                :full_username  username)
-         (cheshire/encode)))))
+  (.updateTemplate
+   (workflow-import-service)
+   (-> (parse-json body)
+       (app-meta-tx/template-external-to-internal)
+       (add-user-info)
+       (cheshire/encode))))
 
 (defn update-workflow-from-json
   "This service will either update an existing workflow or import a new workflow
    from the given JSON string."
   [json]
-  (.updateWorkflow (workflow-import-service) json))
+  (.updateWorkflow
+   (workflow-import-service)
+   (-> (parse-json json)
+       (update-in [:analyses] #(map add-user-info %))
+       (cheshire/encode))))
 
 (defn update-workflow
   "This service will either update an existing workflow or import a new workflow."

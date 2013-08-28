@@ -43,10 +43,11 @@
   (assoc (dissoc property
                  :arguments :validators :defaultValue :data_source :file_info_type :format
                  :is_implicit :multiplicity :retain)
-    :validator   (build-validator-for-property property)
-    :value       (get-default-value property)
-    :data_object (populate-data-object property (:data_object property {}))
-    :type        (generic-property-type-for (:type property))))
+    :validator     (build-validator-for-property property)
+    :value         (get-default-value property)
+    :data_object   (populate-data-object property (:data_object property {}))
+    :type          (generic-property-type-for (:type property))
+    :omit_if_blank (:omit_if_blank property false)))
 
 (defn translate-property-group
   "Translates a property group from its external format to its internal format."
