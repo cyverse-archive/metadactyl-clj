@@ -486,12 +486,14 @@
   [ip-address user-agent]
   (validate-param ip-address :ip-address)
   (validate-param user-agent :user-agent)
-  (let [user-info  (.getCurrentUserInfo (user-service))
+  (let [username   (.getUsername current-user)
+        user-info  (.getCurrentUserInfo (user-service))
         login-time (record-login (.getUsername current-user) ip-address user-agent)]
     {:workspaceId  (.getWorkspaceId user-info)
      :newWorkspace (.isNewWorkspace user-info)
      :loginTime    (str login-time)
      :username     (.getShortUsername current-user)
+     :full_username username
      :email        (.getEmail current-user)
      :firstName    (.getFirstName current-user)
      :lastName     (.getLastName current-user)}))
