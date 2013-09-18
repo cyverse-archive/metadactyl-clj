@@ -136,6 +136,11 @@
   [props config-valid configs]
   "metadactyl.uid.domain")
 
+(cc/defprop-str irods-home
+  "The path to the home directory in iRODS."
+  [props config-valid configs]
+  "metadactyl.irods.home")
+
 (defn- validate-config
   "Validates the configuration settings after they've been loaded."
   []

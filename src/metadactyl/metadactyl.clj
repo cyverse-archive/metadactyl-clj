@@ -271,7 +271,8 @@
       (.setUserService (user-service))
       (.setExecutionUrl (jex-base-url))
       (.setUrlAssembler (url-assembler))
-      (.setJobRequestOsmClient (osm-job-request-client)))))
+      (.setJobRequestOsmClient (osm-job-request-client))
+      (.setIrodsHome (string/replace (irods-home) #"/$" "")))))
 
 (register-bean
   (defbean property-value-service
