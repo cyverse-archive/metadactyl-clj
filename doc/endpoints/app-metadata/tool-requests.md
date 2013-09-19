@@ -264,10 +264,10 @@ of the results can be controlled by query-string parameters:
             <td>
                 The name of a status code to include in the results. The
                 name of the status code is case sensitive. Please see
-                [Updating the Status of a Tool Request](#updating-the-status-of-a-tool-request)
-                below for a list of known status codes. This parameter may be
-                specified multiple times to include tool requests in multiple
-                states in the results.
+                <a href="#updating-the-status-of-a-tool-request">Updating the
+                Status of a Tool Request</a> below for a list of known status
+                codes. This parameter may be specified multiple times to list
+                tool requests in multiple states.
             </td>
         </tr>
     </tbody>
