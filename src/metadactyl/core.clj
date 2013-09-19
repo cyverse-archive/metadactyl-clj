@@ -121,7 +121,7 @@
         (update-tool-request (config/uid-domain) (.getUsername current-user) body))
 
   (GET "/tool-requests" [:as {:keys [params]}]
-       (list-tool-requests (.getUsername current-user) params))
+       (list-tool-requests (assoc params :username (.getUsername current-user))))
 
   (route/not-found (unrecognized-path-response)))
 
@@ -234,6 +234,9 @@
   (GET "/tool-request/:uuid" [uuid]
        (trap #(get-tool-request uuid)))
 
+  (GET "/tool-requests" [:as {params :params}]
+       (trap #(list-tool-requests params)))
+
   (POST "/arg-preview" [:as {body :body}]
        (ce/trap "arg-preview" #(preview-command-line body)))
 
@@ -263,7 +266,6 @@
 (defn site-handler [routes]
   (-> routes
       wrap-keyword-params
-      wrap-nested-params
       wrap-query-params))
 
 (def app

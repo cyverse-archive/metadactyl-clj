@@ -185,16 +185,19 @@
      uuid)))
 
 (defn- get-tool-request-list
-  [username params]
+  [params]
   (let [limit      (params/optional-long [:limit] params)
         offset     (params/optional-long [:offset] params)
         sort-field (params/optional-keyword [:sortfield :sortField] params)
-        sort-order (params/optional-keyword [:sortdir :sortDir] params)]
-    (queries/list-tool-requests username
+        sort-order (params/optional-keyword [:sortdir :sortDir] params)
+        statuses   (params/optional-vector [:status] params)
+        username   (params/optional-string [:username] params)]
+    (queries/list-tool-requests :username   username
                                 :limit      limit
                                 :offset     offset
                                 :sort-field sort-field
-                                :sort-order sort-order)))
+                                :sort-order sort-order
+                                :statuses   statuses)))
 
 (def ^:private format-uuid
   "Formats a UUID."
@@ -248,12 +251,12 @@
   (success-response (get-tool-request-details (UUID/fromString uuid))))
 
 (defn list-tool-requests
-  "Lists tool requests for a user."
-  [username params]
-  (success-response
-   {:tool_requests
-    (map #(assoc %
-            :uuid           (format-uuid (:uuid %))
-            :date_submitted (format-timestamp (:date_submitted %))
-            :date_updated   (format-timestamp (:date_updated %)))
-         (get-tool-request-list username params))}))
+  "Lists tool requests."
+  ([params]
+     (success-response
+      {:tool_requests
+       (map #(assoc %
+               :uuid           (format-uuid (:uuid %))
+               :date_submitted (format-timestamp (:date_submitted %))
+               :date_updated   (format-timestamp (:date_updated %)))
+            (get-tool-request-list params))})))
