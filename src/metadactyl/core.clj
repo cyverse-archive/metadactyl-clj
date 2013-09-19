@@ -5,6 +5,7 @@
         [compojure.core]
         [metadactyl.app-categorization]
         [metadactyl.app-listings]
+        [metadactyl.app-validation :only [app-publishable?]]
         [metadactyl.beans]
         [metadactyl.collaborators]
         [metadactyl.kormadb]
@@ -98,6 +99,10 @@
 
   (POST "/make-analysis-public" [:as {body :body}]
         (make-app-public body))
+
+  (GET "/is-publishable/:app-id" [app-id]
+       (ce/trap "is-publishable"
+                (fn [] {:publishable (app-publishable? app-id)})))
 
   (GET "/collaborators" [:as {params :params}]
        (get-collaborators params))

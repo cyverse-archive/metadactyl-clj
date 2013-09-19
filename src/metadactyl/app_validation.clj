@@ -68,3 +68,42 @@
      (throw (MissingDeployedComponentException. (.getId template))))
    (when (nil? (get-deployed-component-from-database component-id))
      (throw (UnknownDeployedComponentException. component-id)))))
+
+(defn- template-ids-for-app
+  "Get the list of template IDs associated with an app."
+  [app-id]
+  (map :template_id
+       (select [:analysis_listing :a]
+               (fields :tx.template_id)
+               (join [:transformation_task_steps :tts]
+                     {:a.hid :tts.transformation_task_id})
+               (join [:transformation_steps :ts]
+                     {:tts.transformation_step_id :ts.id})
+               (join [:transformations :tx]
+                     {:ts.transformation_id :tx.id})
+               (where {:a.id app-id}))))
+
+(defn- all-templates-public?
+  "Determines whether or not all templates in a list of tempaltes are public. A template is public
+   if it's not associated with any single-step apps that are not public."
+  [template-ids]
+  (->> (select [:analysis_listing :a]
+               (fields :a.is_public)
+               (join [:transformation_task_steps :tts]
+                     {:a.hid :tts.transformation_task_id})
+               (join [:transformation_steps :ts]
+                     {:tts.transformation_step_id :ts.id})
+               (join [:transformations :tx]
+                     {:ts.transformation_id :tx.id})
+               (where {:tx.template_id [in template-ids]
+                       :a.step_count   1}))
+       (map :is_public)
+       (every? true?)))
+
+(defn app-publishable?
+  "Determines whether or not an app can be published. An app is publishable if none of the
+   templates in the app are associated with any single-step apps that are not public."
+  [app-id]
+  (let [template-ids (template-ids-for-app app-id)]
+    (or (= 1 (count template-ids))
+        (all-templates-public? template-ids))))
