@@ -52,6 +52,7 @@
 * [GET /secured/search-analyses](endpoints/app-metadata/listing.md#searching-for-analyses)
 * [GET /secured/template/{analysis-id}](endpoints/app-metadata/information.md#getting-analyses-in-the-json-format-required-by-the-de)
 * [PUT /secured/tool-request](endpoints/app-metadata/tool-requests.md#requesting-tool-installation)
+* [GET /secured/tool-requests](endpoints/app-metadata/tool-requests.md#listing-tool-requests)
 * [PUT /secured/update-app](endpoints/app-metadata/updated-admin.md#updating-or-importing-a-single-step-app)
 * [POST /secured/update-favorites](endpoints/app-metadata/admin.md#updating-the-favorite-analyses-list)
 * [POST /secured/update-workflow](endpoints/app-metadata/admin.md#updating-an-analysis)
