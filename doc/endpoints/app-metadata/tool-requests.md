@@ -213,6 +213,7 @@ $ curl -sX PUT -d '
 ## Listing Tool Requests
 
 Unsecured Endpoint: GET /tool-requests
+
 Secured Endpoint: GET /secured/tool-requests
 
 These endpoint list high level details about tool requests that have been
