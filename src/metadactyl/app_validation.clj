@@ -83,27 +83,32 @@
                      {:ts.transformation_id :tx.id})
                (where {:a.id app-id}))))
 
-(defn- all-templates-public?
-  "Determines whether or not all templates in a list of tempaltes are public. A template is public
-   if it's not associated with any single-step apps that are not public."
+(defn- private-apps-for
+  "Finds private single-step apps for a list of template IDs."
   [template-ids]
-  (->> (select [:analysis_listing :a]
-               (fields :a.is_public)
-               (join [:transformation_task_steps :tts]
-                     {:a.hid :tts.transformation_task_id})
-               (join [:transformation_steps :ts]
-                     {:tts.transformation_step_id :ts.id})
-               (join [:transformations :tx]
-                     {:ts.transformation_id :tx.id})
-               (where {:tx.template_id [in template-ids]
-                       :a.step_count   1}))
-       (map :is_public)
-       (every? true?)))
+  (select [:analysis_listing :a]
+          (fields :a.id :a.name)
+          (join [:transformation_task_steps :tts]
+                {:a.hid :tts.transformation_task_id})
+          (join [:transformation_steps :ts]
+                {:tts.transformation_step_id :ts.id})
+          (join [:transformations :tx]
+                {:ts.transformation_id :tx.id})
+          (where {:tx.template_id [in template-ids]
+                  :a.step_count   1
+                  :a.is_public    false})))
 
 (defn app-publishable?
   "Determines whether or not an app can be published. An app is publishable if none of the
-   templates in the app are associated with any single-step apps that are not public."
+   templates in the app are associated with any single-step apps that are not public. Returns
+   a flag indicating whether or not the app is publishable along with the reason the app isn't
+   publishable if it's not."
   [app-id]
-  (let [template-ids (template-ids-for-app app-id)]
-    (or (= 1 (count template-ids))
-        (all-templates-public? template-ids))))
+  (if (string/blank? app-id)
+    [false "no app ID provided"]
+    (let [template-ids (template-ids-for-app app-id)
+          private-apps (private-apps-for template-ids)]
+      (cond (zero? (count template-ids)) [false "no app ID provided"]
+            (= 1 (count template-ids))   [true]
+            (pos? (count private-apps))  [false "contains private apps" private-apps]
+            :else                        [true]))))

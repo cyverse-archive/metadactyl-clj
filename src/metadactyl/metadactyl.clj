@@ -604,7 +604,16 @@
   "This service copies an app from a user's private workspace to the public
    workspace."
   [body]
-  (.makeAnalysisPublic (template-group-service) (slurp body)))
+  (let [body                        (slurp body)
+        app-id                      (:analysis_id (parse-json body))
+        [publishable? msg bad-apps] (app-publishable? app-id)]
+    (if publishable?
+      (.makeAnalysisPublic (template-group-service) body)
+      (do (log/debug msg)
+          {:status 400
+           :body   (cheshire/encode {:success false
+                                     :reason  msg
+                                     :apps    (map :name bad-apps)})}))))
 
 (defn get-property-values
   "Gets the property values for a previously submitted job."

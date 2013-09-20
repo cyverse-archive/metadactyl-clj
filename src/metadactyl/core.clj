@@ -98,11 +98,11 @@
         (trap #(update-workflow body)))
 
   (POST "/make-analysis-public" [:as {body :body}]
-        (make-app-public body))
+        (trap #(make-app-public body)))
 
   (GET "/is-publishable/:app-id" [app-id]
        (ce/trap "is-publishable"
-                (fn [] {:publishable (app-publishable? app-id)})))
+                (fn [] {:publishable (first (app-publishable? app-id))})))
 
   (GET "/collaborators" [:as {params :params}]
        (get-collaborators params))
