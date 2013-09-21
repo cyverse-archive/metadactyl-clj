@@ -77,18 +77,16 @@
      (-> (.getUsername current-user)
          (get-or-create-workspace)
          (:id)
-         (str)
          (get-only-app-groups)))
   ([workspace-id]
-     (let [workspace-id (to-long workspace-id)
-           workspaces   (get-visible-workspaces workspace-id)]
+     (let [workspaces   (get-visible-workspaces workspace-id)]
        (cheshire/encode
         {:groups (map (partial format-app-group-hierarchy workspace-id) workspaces)}))))
 
 (defn get-public-app-groups
   "Retrieves the list of app groups that are visible to all users. TODO: refactor me."
   []
-  (get-only-app-groups "-1"))
+  (get-only-app-groups -1))
 
 (defn- validate-app-pipeline-eligibility
   "Validates an App for pipeline eligibility, throwing a slingshot stone ."
