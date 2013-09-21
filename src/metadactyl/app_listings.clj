@@ -53,10 +53,12 @@
   [group workspace-id]
   (if current-user
     (let [virtual-groups (format-virtual-groups workspace-id)
-          virtual-count  (reduce + (map :template_count virtual-groups))]
+          actual-count   (count-apps-in-group-for-user
+                           (:id group)
+                           (.getEmail current-user))]
       (-> group
           (update-in [:groups] concat virtual-groups)
-          (update-in [:template_count] + virtual-count)))))
+          (assoc :template_count actual-count)))))
 
 (defn- format-app-group-hierarchy
   "Formats the app group hierarchy rooted at the app group with the given
