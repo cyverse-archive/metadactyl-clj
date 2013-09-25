@@ -200,8 +200,17 @@ analysis. The response body is in the following format:
 
 ```json
 {
-    "component": "component-name",
-    "component_id": "component-id",
+    "components": [
+        {
+            "id": "component-id",
+            "name": "component-name",
+            "description": "component-description",
+            "location": "component-location",
+            "type": "executable",
+            "version": "component-version",
+            "attribution": "component-attribution"
+        }
+    ],
     "description": "analysis-description",
     "edited_date": "edited-date-milliseconds",
     "id": "analysis-id",
@@ -213,6 +222,12 @@ analysis. The response body is in the following format:
         "reference-2",
         ...,
         "reference-n"
+    ],
+    "groups": [
+        {
+            "name": "Beta",
+            "id": "g5401bd146c144470aedd57b47ea1b979"
+        }
     ],
     "tito": "analysis-id",
     "type": "component-type"
