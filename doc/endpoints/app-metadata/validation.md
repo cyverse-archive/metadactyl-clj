@@ -3,6 +3,7 @@
 * [App Validation Endoints](#app-validation-endoints)
     * [Validating Analyses for Pipelines](#validating-analyses-for-pipelines)
     * [Determining if an Analysis Can be Exported](#determining-if-an-analysis-can-be-exported)
+    * [Determining if an Analysis Can be Made Public](#determining-if-an-analysis-can-be-made-public)
 
 # App Validation Endoints
 
@@ -90,5 +91,33 @@ $ curl -sd '{"analysis_id": "BDB011B6-1F6B-443E-B94E-400930619978"}' http://by-t
 $ curl -sd '{"analysis_id": "19F78CC1-7E14-481B-9D80-85EBCCBFFCAF"}' http://by-tor:8888/can-export-analysis | python -mjson.tool
 {
     "can-export": true
+}
+```
+
+## Determining if an Analysis Can be Made Public
+
+*Secured Endpoint:* GET /is-publishable/{analysis-id}
+
+A multi-step analysis can't be made public if any of the apps that are included
+in the analysis are not public. This endpoint returns a true flag if the app is
+a single-step app or it's a multistep app in which all of the apps included in
+the pipeline are public. The response body is in the following format:
+
+```json
+{
+    "action": "is-publishable",
+    "publishable": true,
+    "status": "success"
+}
+```
+
+Here's an example:
+
+```
+$ curl -s "http://by-tor:8888/secured/is-publishable/3EDD7D2E-51DC-48AC-9084-802B973B563A?user=nobody" | python -mjson.tool
+{
+    "action": "is-publishable",
+    "publishable": false,
+    "status": "success"
 }
 ```

@@ -68,3 +68,47 @@
      (throw (MissingDeployedComponentException. (.getId template))))
    (when (nil? (get-deployed-component-from-database component-id))
      (throw (UnknownDeployedComponentException. component-id)))))
+
+(defn- template-ids-for-app
+  "Get the list of template IDs associated with an app."
+  [app-id]
+  (map :template_id
+       (select [:analysis_listing :a]
+               (fields :tx.template_id)
+               (join [:transformation_task_steps :tts]
+                     {:a.hid :tts.transformation_task_id})
+               (join [:transformation_steps :ts]
+                     {:tts.transformation_step_id :ts.id})
+               (join [:transformations :tx]
+                     {:ts.transformation_id :tx.id})
+               (where {:a.id app-id}))))
+
+(defn- private-apps-for
+  "Finds private single-step apps for a list of template IDs."
+  [template-ids]
+  (select [:analysis_listing :a]
+          (fields :a.id :a.name)
+          (join [:transformation_task_steps :tts]
+                {:a.hid :tts.transformation_task_id})
+          (join [:transformation_steps :ts]
+                {:tts.transformation_step_id :ts.id})
+          (join [:transformations :tx]
+                {:ts.transformation_id :tx.id})
+          (where {:tx.template_id [in template-ids]
+                  :a.step_count   1
+                  :a.is_public    false})))
+
+(defn app-publishable?
+  "Determines whether or not an app can be published. An app is publishable if none of the
+   templates in the app are associated with any single-step apps that are not public. Returns
+   a flag indicating whether or not the app is publishable along with the reason the app isn't
+   publishable if it's not."
+  [app-id]
+  (if (string/blank? app-id)
+    [false "no app ID provided"]
+    (let [template-ids (template-ids-for-app app-id)
+          private-apps (private-apps-for template-ids)]
+      (cond (zero? (count template-ids)) [false "no app ID provided"]
+            (= 1 (count template-ids))   [true]
+            (pos? (count private-apps))  [false "contains private apps" private-apps]
+            :else                        [true]))))

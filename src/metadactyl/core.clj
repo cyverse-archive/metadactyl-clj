@@ -5,6 +5,7 @@
         [compojure.core]
         [metadactyl.app-categorization]
         [metadactyl.app-listings]
+        [metadactyl.app-validation :only [app-publishable?]]
         [metadactyl.beans]
         [metadactyl.collaborators]
         [metadactyl.kormadb]
@@ -97,7 +98,11 @@
         (trap #(update-workflow body)))
 
   (POST "/make-analysis-public" [:as {body :body}]
-        (make-app-public body))
+        (trap #(make-app-public body)))
+
+  (GET "/is-publishable/:app-id" [app-id]
+       (ce/trap "is-publishable"
+                (fn [] {:publishable (first (app-publishable? app-id))})))
 
   (GET "/collaborators" [:as {params :params}]
        (get-collaborators params))
@@ -121,7 +126,7 @@
         (update-tool-request (config/uid-domain) (.getUsername current-user) body))
 
   (GET "/tool-requests" [:as {:keys [params]}]
-       (list-tool-requests (.getUsername current-user) params))
+       (list-tool-requests (assoc params :username (.getUsername current-user))))
 
   (route/not-found (unrecognized-path-response)))
 
@@ -234,6 +239,9 @@
   (GET "/tool-request/:uuid" [uuid]
        (trap #(get-tool-request uuid)))
 
+  (GET "/tool-requests" [:as {params :params}]
+       (trap #(list-tool-requests params)))
+
   (POST "/arg-preview" [:as {body :body}]
        (ce/trap "arg-preview" #(preview-command-line body)))
 
@@ -263,7 +271,6 @@
 (defn site-handler [routes]
   (-> routes
       wrap-keyword-params
-      wrap-nested-params
       wrap-query-params))
 
 (def app

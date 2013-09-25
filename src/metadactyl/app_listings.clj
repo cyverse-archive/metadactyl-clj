@@ -53,10 +53,12 @@
   [group workspace-id]
   (if current-user
     (let [virtual-groups (format-virtual-groups workspace-id)
-          virtual-count  (reduce + (map :template_count virtual-groups))]
+          actual-count   (count-apps-in-group-for-user
+                           (:id group)
+                           (.getEmail current-user))]
       (-> group
           (update-in [:groups] concat virtual-groups)
-          (update-in [:template_count] + virtual-count)))))
+          (assoc :template_count actual-count)))))
 
 (defn- format-app-group-hierarchy
   "Formats the app group hierarchy rooted at the app group with the given
@@ -75,18 +77,16 @@
      (-> (.getUsername current-user)
          (get-or-create-workspace)
          (:id)
-         (str)
          (get-only-app-groups)))
   ([workspace-id]
-     (let [workspace-id (to-long workspace-id)
-           workspaces   (get-visible-workspaces workspace-id)]
+     (let [workspaces   (get-visible-workspaces workspace-id)]
        (cheshire/encode
         {:groups (map (partial format-app-group-hierarchy workspace-id) workspaces)}))))
 
 (defn get-public-app-groups
   "Retrieves the list of app groups that are visible to all users. TODO: refactor me."
   []
-  (get-only-app-groups "-1"))
+  (get-only-app-groups -1))
 
 (defn- validate-app-pipeline-eligibility
   "Validates an App for pipeline eligibility, throwing a slingshot stone ."
@@ -227,7 +227,14 @@
   "Loads information about the deployed components associated with an app."
   [app-id]
   (select [:deployed_components :dc]
-          (fields :dc.id :dc.name [:tt.name :tool_type])
+          (fields
+            :dc.id
+            :dc.name
+            :dc.description
+            :dc.location
+            [:tt.name :type]
+            :dc.version
+            :dc.attribution)
           (join [:tool_types :tt]
                 {:dc.tool_type_id :tt.id})
           (join [:template :t]
@@ -252,7 +259,7 @@
 
 (defn- format-app-details
   "Formats information for the get-app-details service."
-  [details component]
+  [details components groups]
   {:published_date (timestamp-to-millis (:integration_date details))
    :edited_date    (timestamp-to-millis (:edited_date details))
    :id             (:id details)
@@ -261,23 +268,20 @@
    :name           (:name details "")
    :label          (:label details "")
    :tito           (:id details)
-   :component_id   (:id component)
-   :component      (:name component)
-   :type           (:tool_type component)})
+   :components     components
+   :groups         groups})
 
 (defn get-app-details
   "This service obtains the high-level details of an app."
   [app-id]
   (let [details    (load-app-details app-id)
-        components (load-deployed-components app-id)]
+        components (load-deployed-components app-id)
+        groups     (get-groups-for-app app-id)]
     (when (nil? details)
       (throw (IllegalArgumentException. (str "app, " app-id ", not found"))))
     (when (empty? components)
       (throw  (IllegalArgumentException. (str "no tools associated with app, " app-id))))
-    (when (> (count components) 1)
-      (throw (IllegalArgumentException.
-              (str "pipeline, " app-id ", can't be displayed by this service"))))
-    (cheshire/encode (format-app-details details (first components)))))
+    (cheshire/encode (format-app-details details components groups))))
 
 (defn load-app-ids
   "Loads the identifiers for all apps that refer to valid deployed components from the database."

@@ -212,11 +212,15 @@ $ curl -sX PUT -d '
 
 ## Listing Tool Requests
 
-Scured Endpoint: GET /tool-requests
+Unsecured Endpoint: GET /tool-requests
 
-This endpoint lists high level details about tool requests that have been
-submitted by a user. The number of results returned and the order of the results
-can be controlled by query-string parameters:
+Secured Endpoint: GET /secured/tool-requests
+
+These endpoint list high level details about tool requests that have been
+submitted. The unsecured endpoint is intended for use by administrators to track
+tool requests for all users. The secured endpoint is intended for use by users
+to track their own tool requests. The number of results returned and the order
+of the results can be controlled by query-string parameters:
 
 <table>
     <thead>
@@ -256,6 +260,17 @@ can be controlled by query-string parameters:
             <td>offset</td>
             <td>The index of the first result to return.</td>
         </tr>
+        <tr>
+            <td>status</td>
+            <td>
+                The name of a status code to include in the results. The
+                name of the status code is case sensitive. Please see
+                <a href="#updating-the-status-of-a-tool-request">Updating the
+                Status of a Tool Request</a> below for a list of known status
+                codes. This parameter may be specified multiple times to list
+                tool requests in multiple states.
+            </td>
+        </tr>
     </tbody>
 </table>
 
@@ -269,6 +284,7 @@ The response body is in the following format:
             "date_submitted": "timestamp",
             "date_updated": "timestamp",
             "name": "tool-name",
+            "requested_by": "username",
             "status": "tool-request-status",
             "updated_by": "username",
             "uuid": "tool-request-id",
@@ -290,6 +306,7 @@ $ curl -s "http://by-tor:8888/secured/tool-requests?user=nobody&limit=1" | pytho
             "date_submitted": "1363047831085",
             "date_updated": "1363047831085",
             "name": "jaguar",
+            "requested_by": "nobody@iplantcollaborative.org",
             "status": "Submitted",
             "updated_by": "nobody@iplantcollaborative.org",
             "uuid": "D38A108F-0626-481B-A4C9-356462916642",

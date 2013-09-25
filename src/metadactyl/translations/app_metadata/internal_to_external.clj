@@ -1,7 +1,9 @@
 (ns metadactyl.translations.app-metadata.internal-to-external
   (:use [metadactyl.translations.app-metadata.util]
         [slingshot.slingshot :only [throw+]])
-  (:require [clojure-commons.error-codes :as ce]))
+  (:require [clojure-commons.error-codes :as ce]
+            [clojure.string :as string]
+            [clojure.tools.logging :as log]))
 
 (defn validators-from-rules
   "Converts a list of rules from the internal JSON format to a list of validators for the
@@ -35,13 +37,18 @@
 
 (defn get-default-value
   "Gets the default value for a property and a set of list of selectable arguments."
-  [property args]
-  (let [default-value (:value property)]
-    (or (cond
-         (not (seq args))        default-value
-         (map? default-value)    default-value
-         (vector? default-value) default-value
-         :else                   (find-default-arg args)))))
+  ([property args]
+     (let [default-value (:value property)]
+       (or (cond
+            (not (seq args))        default-value
+            (map? default-value)    default-value
+            (vector? default-value) default-value
+            :else                   (find-default-arg args)))))
+  ([property args data-object]
+     (let [output-filename (:output_filename data-object)]
+       (if (string/blank? output-filename)
+         (get-default-value property args)
+         output-filename))))
 
 (defn translate-property
   "Translates a property from its internal format to its external format."
@@ -61,7 +68,7 @@
       (assoc (dissoc property :validator :value)
         :arguments    args
         :validators   (validators-from-rules rules)
-        :defaultValue (get-default-value property args)
+        :defaultValue (get-default-value property args data-obj)
         :data_object  (dissoc data-obj
                               :cmdSwitch :name :description :id :label :order :required
                               :file_info_type_id :format_id :multiplicity)
