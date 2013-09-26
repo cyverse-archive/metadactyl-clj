@@ -3,8 +3,8 @@
         [metadactyl.translations.app-metadata.external-to-internal]))
 
 (defn- external-selection-args
-  []
-  (mapv (fn [n] {:name n :value n :display n}) ["foo" "bar" "baz"]))
+  [& [default]]
+  (mapv (fn [n] {:isDefault (= default n) :name n :value n :display n}) ["foo" "bar" "baz"]))
 
 (defn- internal-selection-args
   ([]
@@ -36,43 +36,46 @@
   (is (= {:required     false
           :rules        [{:MustContain (internal-selection-args "foo")}]}
          (build-validator-for-property
-          {:arguments    (external-selection-args)
+          {:arguments    (external-selection-args "foo")
            :defaultValue {:name "foo" :value "foo" :display "foo"}}))))
 
 (deftest translate-property-test
-  (is (= {:value "foo" :validator nil :data_object nil :type nil}
+  (is (= {:omit_if_blank false :value "foo" :validator nil :data_object nil :type nil}
          (translate-property {:defaultValue "foo"}))))
 
 (deftest translate-empty-property-test
-  (is (= {:value nil :validator nil :data_object nil :type nil}
+  (is (= {:omit_if_blank false :value nil :validator nil :data_object nil :type nil}
          (translate-property {}))))
 
 (deftest translate-required-property-test
-  (is (= {:value       nil
-          :validator   {:required true
-                        :rules    []}
-          :data_object nil
-          :type        nil
-          :required    true}
+  (is (= {:omit_if_blank false
+          :value         nil
+          :validator     {:required true
+                          :rules    []}
+          :data_object   nil
+          :type          nil
+          :required      true}
          (translate-property
           {:required true}))))
 
 (deftest translate-property-with-rules-test
-  (is (= {:value       nil
-          :validator   {:required false
-                        :rules    [{:IntAbove [42]}]}
-          :data_object nil
-          :type        nil}
+  (is (= {:omit_if_blank false
+          :value         nil
+          :validator     {:required false
+                          :rules    [{:IntAbove [42]}]}
+          :data_object    nil
+          :type           nil}
          (translate-property
           {:validators [{:type   "IntAbove"
                          :params [42]}]}))))
 
 (deftest translate-property-with-args-test
-  (is (= {:value       nil
-          :validator   {:required false
-                        :rules    [{:MustContain (internal-selection-args)}]}
-          :data_object nil
-          :type        nil}
+  (is (= {:omit_if_blank false
+          :value         nil
+          :validator     {:required false
+                          :rules    [{:MustContain (internal-selection-args)}]}
+          :data_object   nil
+          :type          nil}
          (translate-property
           {:arguments (external-selection-args)}))))
 

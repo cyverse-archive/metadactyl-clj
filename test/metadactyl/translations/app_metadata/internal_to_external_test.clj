@@ -2,6 +2,19 @@
   (:use [clojure.test]
         [metadactyl.translations.app-metadata.internal-to-external]))
 
+(defn- remove-ids
+  [v]
+  (cond
+   (sequential? v) (map #(dissoc % :id) v)
+   (map? v)        (dissoc v :id)
+   :else           v))
+
+(defn- remove-ids-from-prop
+  [m]
+  (-> m
+      (update-in [:arguments] remove-ids)
+      (update-in [:defaultValue] remove-ids)))
+
 (deftest validators-from-rules-test
   (is (= [{:type "foo" :params ["bar" "baz"]}
           {:type "bar" :params ["baz" "quux"]}]
@@ -29,23 +42,25 @@
            :name      "foo"
            :value     "foo"
            :display   "foo"}]
-         (get-property-arguments
-          [{:MustContain
-            [{:isDefault "false"
-              :name      "foo"
-              :value     "foo"
-              :display   "foo"}]}]))))
+         (->> (get-property-arguments
+               [{:MustContain
+                 [{:isDefault "false"
+                   :name      "foo"
+                   :value     "foo"
+                   :display   "foo"}]}])
+              (remove-ids)))))
 
 (deftest get-empty-default-value-test
-  (is (= "" (get-default-value {} []))))
+  (is (= nil (get-default-value {} []))))
 
 (deftest get-default-value-from-prop-test
   (is (= "testing" (get-default-value {:value "testing"} []))))
 
 (deftest get-default-value-test
-  (is (= {:name    "foo"
-          :value   "foo"
-          :display "foo"}
+  (is (= {:isDefault "true"
+          :name      "foo"
+          :value     "foo"
+          :display   "foo"}
          (get-default-value
           {}
           [{:isDefault "true"
@@ -62,7 +77,7 @@
           :arguments    []
           :required     false
           :validators   []
-          :defaultValue ""}
+          :defaultValue nil}
          (translate-property {:name "prop-name"}))))
 
 (deftest translate-required-property-test
@@ -70,7 +85,7 @@
           :arguments    []
           :required     true
           :validators   []
-          :defaultValue ""}
+          :defaultValue nil}
          (translate-property
           {:name      "prop-name"
            :validator {:required true}}))))
@@ -91,20 +106,21 @@
           :required     false
           :validators   [{:type   "IntAbove"
                           :params [42]}]
-          :defaultValue ""}
+          :defaultValue nil}
          (translate-property
           {:name      "prop-name"
            :validator {:rules [{:IntAbove [42]}]}}))))
 
 (deftest translate-property-with-args-test
   (is (= {:name         "prop-name"
-          :arguments    [{:name    "foo"
-                          :value   "foo"
-                          :display "foo"}]
+          :arguments    [{:isDefault "false"
+                          :name      "foo"
+                          :value     "foo"
+                          :display   "foo"}]
           :required     false
           :validators   []
-          :defaultValue ""}
-         (translate-property
+          :defaultValue nil}
+         ((comp remove-ids-from-prop translate-property)
           {:name      "prop-name"
            :validator {:rules [{:MustContain [{:isDefault "false"
                                                :name      "foo"
@@ -113,18 +129,21 @@
 
 (deftest translate-property-with-default-arg-test
   (is (= {:name         "prop-name"
-          :arguments    [{:name    "foo"
-                          :value   "foo"
-                          :display "foo"}
-                         {:name    "bar"
-                          :value   "bar"
-                          :display "bar"}]
+          :arguments    [{:isDefault "true"
+                          :name      "foo"
+                          :value     "foo"
+                          :display   "foo"}
+                         {:isDefault "false"
+                          :name      "bar"
+                          :value     "bar"
+                          :display   "bar"}]
           :required     true
           :validators   []
-          :defaultValue {:name    "foo"
-                         :value   "foo"
-                         :display "foo"}}
-         (translate-property
+          :defaultValue {:isDefault "true"
+                         :name      "foo"
+                         :value     "foo"
+                         :display   "foo"}}
+         ((comp remove-ids-from-prop translate-property)
           {:name      "prop-name"
            :validator {:required true
                        :rules    [{:MustContain [{:isDefault "true"
@@ -138,19 +157,22 @@
 
 (deftest translate-property-with-args-and-rules-test
   (is (= {:name         "prop-name"
-          :arguments    [{:name    "foo"
-                          :value   "foo"
-                          :display "foo"}
-                         {:name    "bar"
-                          :value   "bar"
-                          :display "bar"}]
+          :arguments    [{:isDefault "true"
+                          :name      "foo"
+                          :value     "foo"
+                          :display   "foo"}
+                         {:isDefault "false"
+                          :name      "bar"
+                          :value     "bar"
+                          :display   "bar"}]
           :required     true
           :validators   [{:type   "IntAbove"
                           :params [42]}]
-          :defaultValue {:name    "foo"
-                         :value   "foo"
-                         :display "foo"}}
-         (translate-property
+          :defaultValue {:isDefault "true"
+                         :name      "foo"
+                         :value     "foo"
+                         :display   "foo"}}
+         ((comp remove-ids-from-prop translate-property)
           {:name      "prop-name"
            :validator {:required true
                        :rules    [{:MustContain [{:isDefault "true"
@@ -171,7 +193,7 @@
                   :format         "data-obj-format"
                   :is_implicit    false
                   :retain         true}
-   :defaultValue ""
+   :defaultValue nil
    :description  "data-obj-description"
    :id           "data-obj-id"
    :label        "data-obj-name"
@@ -222,7 +244,7 @@
                         :arguments    []
                         :required     false
                         :validators   []
-                        :defaultValue ""}]}
+                        :defaultValue nil}]}
          (translate-property-group
           {:name       "group-name"
            :properties [{:name "prop-name"}]}))))
@@ -234,7 +256,7 @@
                                   :arguments    []
                                   :required     false
                                   :validators   []
-                                  :defaultValue ""}]}]}
+                                  :defaultValue nil}]}]}
          (translate-template
           {:name   "template-name"
            :groups [{:name       "group-name"
