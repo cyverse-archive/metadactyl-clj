@@ -3448,12 +3448,50 @@ service. The analysis import script uses this service to import analyses that
 have previously been exported. For information about the format of the request
 body, please see [App JSON](#app-json) above.
 
+This endpoint requires one query-string parameter: `update-mode`. This parameter
+has three possible values:
+
+<table border='1'>
+    <thead>
+        <tr>
+            <th>Update Mode</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>ignore</td>
+            <td>
+                If a duplicate app or template is found, the app or template
+                will not be updated and no error will be raised. This setting
+                can be useful if, for example. you want to import a pipeline
+                and you don't know whether or not any of the templates in the
+                pipeline are already defined.
+            </td>
+        </tr>
+        <tr>
+            <td>replace</td>
+            <td>
+                If a duplicate app or template is found, the existing app or
+                template will be replaced.
+            </td>
+        </tr>
+        <tr>
+            <td>throw</td>
+            <td>
+                An error will be raised if a duplicate app or template is found.
+                This is the default behavior.
+            </td>
+        </tr>
+    </tbody>
+</table>
+
 The response body consists of a JSON object containing the identifiers of all of
 the analyses, components and templates that are imported into the database.
 Here's an example:
 
 ```
-$ curl -sd @workflow.json http://by-tor:8888/force-update-workflow | python -mjson.tool
+$ curl -sd @workflow.json http://by-tor:8888/force-update-workflow?update-mode=replace | python -mjson.tool
 {
     "analyses": [
         "EEFC9B65-C81D-4DE1-A9B8-90C5BD0237F6"
