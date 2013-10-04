@@ -259,29 +259,30 @@
 
 (defn- format-app-details
   "Formats information for the get-app-details service."
-  [details components groups]
-  {:published_date (timestamp-to-millis (:integration_date details))
-   :edited_date    (timestamp-to-millis (:edited_date details))
-   :id             (:id details)
-   :references     (map :reference_text (:transformation_activity_references details))
-   :description    (:description details "")
-   :name           (:name details "")
-   :label          (:label details "")
-   :tito           (:id details)
-   :components     components
-   :groups         groups})
+  [details components]
+  (let [app-id (:id details)]
+    {:published_date   (timestamp-to-millis (:integration_date details))
+     :edited_date      (timestamp-to-millis (:edited_date details))
+     :id               app-id
+     :references       (map :reference_text (:transformation_activity_references details))
+     :description      (:description details "")
+     :name             (:name details "")
+     :label            (:label details "")
+     :tito             app-id
+     :components       components
+     :groups           (get-groups-for-app app-id)
+     :suggested_groups (get-suggested-groups-for-app app-id)}))
 
 (defn get-app-details
   "This service obtains the high-level details of an app."
   [app-id]
   (let [details    (load-app-details app-id)
-        components (load-deployed-components app-id)
-        groups     (get-groups-for-app app-id)]
+        components (load-deployed-components app-id)]
     (when (nil? details)
       (throw (IllegalArgumentException. (str "app, " app-id ", not found"))))
     (when (empty? components)
       (throw  (IllegalArgumentException. (str "no tools associated with app, " app-id))))
-    (cheshire/encode (format-app-details details components groups))))
+    (cheshire/encode (format-app-details details components))))
 
 (defn load-app-ids
   "Loads the identifiers for all apps that refer to valid deployed components from the database."
