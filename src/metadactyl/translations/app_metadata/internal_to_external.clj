@@ -1,5 +1,6 @@
 (ns metadactyl.translations.app-metadata.internal-to-external
   (:use [metadactyl.translations.app-metadata.util]
+        [metadactyl.metadata.reference-genomes :only [get-reference-genomes]]
         [slingshot.slingshot :only [throw+]])
   (:require [clojure-commons.error-codes :as ce]
             [clojure.string :as string]
@@ -35,20 +36,28 @@
   [args]
   (first (filter #(Boolean/parseBoolean (str (:isDefault %))) args)))
 
+(defn- ref-gen-info
+  "Obtains information about the reference genome with the given UUID."
+  [uuid]
+  (if (string/blank? uuid)
+    ""
+    (first (get-reference-genomes uuid))))
+
 (defn get-default-value
   "Gets the default value for a property and a set of list of selectable arguments."
   ([property args]
      (let [default-value (:value property)]
-       (or (cond
-            (not (seq args))        default-value
-            (map? default-value)    default-value
-            (vector? default-value) default-value
-            :else                   (find-default-arg args)))))
+       (cond
+        (not (seq args))        default-value
+        (map? default-value)    default-value
+        (vector? default-value) default-value
+        :else                   (find-default-arg args))))
   ([property args data-object]
-     (let [output-filename (:output_filename data-object)]
-       (if (string/blank? output-filename)
-         (get-default-value property args)
-         output-filename))))
+     (let [info-type       (:file_info_type data-object)
+           output-filename (:output_filename data-object)]
+       (cond (ref-genome-property-types info-type) (ref-gen-info (:value property))
+             (string/blank? output-filename)       (get-default-value property args)
+             :else                                 output-filename))))
 
 (defn translate-property
   "Translates a property from its internal format to its external format."

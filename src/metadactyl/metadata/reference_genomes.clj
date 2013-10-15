@@ -16,16 +16,24 @@
     :created_on        (date->long (:created_on genome) "")
     :last_modified_on  (date->long (:last_modified_on genome) "")))
 
+(defn- reference-genome-base-query
+  "The base query used to list reference genomes."
+  []
+  (-> (select* genome_reference)
+      (fields :uuid :name :path :deleted :created_on :last_modified_on
+              [:created_by.username :created_by]
+              [:last_modified_by.username :last_modified_by])
+      (join created_by)
+      (join last_modified_by)))
+
 (defn get-reference-genomes
   "Lists all of the reference genomes in the database."
-  []
+  [& uuids]
   (map format-reference-genome
-       (select genome_reference
-               (fields :uuid :name :path :deleted :created_on :last_modified_on
-                       [:created_by.username :created_by]
-                       [:last_modified_by.username :last_modified_by])
-               (join created_by)
-               (join last_modified_by))))
+   (if (seq uuids)
+     (select (reference-genome-base-query)
+             (where {:uuid [in uuids]}))
+     (select (reference-genome-base-query)))))
 
 (def ^:prvate required-fields
   [:uuid :name :path :created_by :last_modified_by])

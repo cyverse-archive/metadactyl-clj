@@ -1,7 +1,8 @@
 (ns metadactyl.translations.app-metadata.external-to-internal
   (:use [metadactyl.translations.app-metadata.util]
         [slingshot.slingshot :only [throw+]])
-  (:require [clojure-commons.error-codes :as ce]))
+  (:require [clojure-commons.error-codes :as ce]
+            [clojure.tools.logging :as log]))
 
 (defn build-validator-for-property
   "Builds a validator for a property in its external format."
@@ -16,8 +17,10 @@
 (defn get-default-value
   "Takes a property in its external format and determines what its default value should be
    after it's been translated to its internal format."
-  [{args :arguments default-value :defaultValue}]
-  (if (seq args) nil default-value))
+  [{prop-type :type args :arguments default-value :defaultValue}]
+  (cond (ref-genome-property-types prop-type) (:uuid default-value)
+        (seq args)                            nil
+        :else                                 default-value))
 
 (defn populate-data-object
   "Populates a data object with information from its parent property."
