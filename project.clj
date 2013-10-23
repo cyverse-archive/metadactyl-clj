@@ -1,4 +1,4 @@
-(defproject metadactyl "1.3.1-SNAPSHOT"
+(defproject metadactyl "1.8.4-SNAPSHOT"
   :description "Framework for hosting DiscoveryEnvironment metadata services."
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [org.clojure/tools.logging "0.2.3"]
