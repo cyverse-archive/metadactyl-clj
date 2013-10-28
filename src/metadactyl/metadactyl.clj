@@ -522,14 +522,6 @@
        first
        success-response))
 
-(defn get-experiments
-  "This service retrieves information about jobs that a user has submitted."
-  [workspace-id params]
-  (let [workspace-id (string->long workspace-id)
-        analyses     (get-analyses-for-workspace-id workspace-id params)
-        timestamp    (str (System/currentTimeMillis))]
-    (success-response (assoc analyses :timestamp timestamp))))
-
 (defn delete-experiments
   "This service marks experiments as deleted so that they no longer show up
    in the Analyses window."
