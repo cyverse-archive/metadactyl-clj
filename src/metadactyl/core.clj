@@ -43,10 +43,6 @@
        [workspace-id :as {params :params}]
        (get-experiments workspace-id params))
 
-  (POST "/workspaces/:workspace-id/executions/list"
-        [workspace-id :as {body :body}]
-        (get-selected-experiments workspace-id body))
-
   (PUT "/workspaces/:workspace-id/executions/delete"
        [workspace-id :as {body :body}]
        (delete-experiments body workspace-id))

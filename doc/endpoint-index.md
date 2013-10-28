@@ -59,7 +59,6 @@
 * [POST /secured/update-workflow](endpoints/app-metadata/admin.md#updating-an-analysis)
 * [PUT /secured/workspaces/{workspace-id}/executions/delete](endpoints/app-execution.md#deleting-jobs)
 * [GET /secured/workspaces/{workspace-id}/executions/list](endpoints/app-execution.md#listing-jobs)
-* [POST /secured/workspaces/{workspace-id}/executions/list](endpoints/app-execution.md#getting-status-information-for-selected-jobs)
 * [PUT /secured/workspaces/{workspace-id}/newexperiment](endpoints/app-execution.md#submitting-a-job-for-execution)
 * [POST /tool-request](endpoints/app-metadata/tool-requests.md#updating-the-status-of-a-tool-request)
 * [GET /tool-request/{uuid}](endpoints/app-metadata/tool-requests.md#obtaining-tool-request-details)

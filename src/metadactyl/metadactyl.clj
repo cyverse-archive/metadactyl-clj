@@ -530,18 +530,6 @@
         timestamp    (str (System/currentTimeMillis))]
     (success-response (assoc analyses :timestamp timestamp))))
 
-(defn get-selected-experiments
-  "This service retrieves information about selected jobs that the user has
-   submitted."
-  [workspace-id body]
-  (let [m            (cheshire/decode-stream (reader body) true)
-        _            (validate-json-array-field m :executions)
-        workspace-id (string->long workspace-id)
-        analyses     (get-selected-analyses workspace-id (:executions m))
-        timestamp    (str (System/currentTimeMillis))]
-    (success-response {:analyses  analyses
-                       :timestamp timestamp})))
-
 (defn delete-experiments
   "This service marks experiments as deleted so that they no longer show up
    in the Analyses window."
