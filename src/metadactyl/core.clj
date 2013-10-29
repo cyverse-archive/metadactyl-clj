@@ -39,10 +39,6 @@
   (PUT "/workspaces/:workspace-id/newexperiment" [workspace-id :as {body :body}]
        (run-experiment body workspace-id))
 
-  (PUT "/workspaces/:workspace-id/executions/delete"
-       [workspace-id :as {body :body}]
-       (delete-experiments body workspace-id))
-
   (POST "/rate-analysis" [:as {body :body}]
         (rate-app body))
 

@@ -4,9 +4,7 @@
         [metadactyl.app-validation]
         [metadactyl.beans]
         [metadactyl.util.config]
-        [metadactyl.metadata.analyses
-         :only [get-analyses-for-workspace-id get-selected-analyses
-                delete-analyses]]
+        [metadactyl.metadata.analyses :only [get-selected-analyses]]
         [metadactyl.metadata.reference-genomes
          :only [get-reference-genomes put-reference-genomes]]
         [metadactyl.metadata.element-listings :only [list-elements]]
@@ -521,14 +519,6 @@
        (get-selected-analyses (string->long workspace-id))
        first
        success-response))
-
-(defn delete-experiments
-  "This service marks experiments as deleted so that they no longer show up
-   in the Analyses window."
-  [body workspace-id]
-  (let [ids (:executions (cheshire/decode-stream (reader body) true))]
-    (delete-analyses (string->long workspace-id) ids)
-    (success-response)))
 
 (defn rate-app
   "This service adds a user's rating to an app."
