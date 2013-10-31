@@ -1,6 +1,7 @@
 (ns metadactyl.translations.app-metadata.internal-to-external
   (:use [metadactyl.translations.app-metadata.util]
         [metadactyl.metadata.reference-genomes :only [get-reference-genomes]]
+        [metadactyl.util.service :only [uuid]]
         [slingshot.slingshot :only [throw+]])
   (:require [clojure-commons.error-codes :as ce]
             [clojure.string :as string]
@@ -12,10 +13,6 @@
   [rules]
   (mapcat (partial map (fn [[k v]] {:type (name k) :params v}))
           (remove :MustContain rules)))
-
-(defn- uuid
-  []
-  (.toUpperCase (str (java.util.UUID/randomUUID))))
 
 (defn- add-default-field-value
   "Adds a field to a map with a default value if that field is not already present in the map."

@@ -1,10 +1,14 @@
-(ns metadactyl.translations.property-values)
+(ns metadactyl.translations.property-values
+  (:use [metadactyl.util.service :only [uuid]]))
 
 (defn- normalize-property-value
   "Normalizes the parameter value within a property in the property value service."
   [prop]
   (if (and (sequential? (:param_value prop)))
-    (map #(assoc prop :param_value {:value %}) (:param_value prop))
+    (map #(assoc prop
+            :param_id    (uuid)
+            :param_value {:value %})
+         (:param_value prop))
     [(update-in prop [:param_value] (fn [v] {:value v}))]))
 
 (defn format-property-values-response

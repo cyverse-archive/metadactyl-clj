@@ -8,16 +8,11 @@
          [get-or-create-user get-or-create-workspace-for-user]]
         [metadactyl.util.config]
         [metadactyl.json :only [to-json from-json]]
-        [metadactyl.util.service :only [success-response]]
+        [metadactyl.util.service :only [success-response uuid]]
         [metadactyl.validation]
         [slingshot.slingshot :only [throw+]])
   (:require [clojure.string :as string])
   (:import [java.util UUID]))
-
-(defn- uuid
-  "Generates a random UUID."
-  []
-  (string/upper-case (str (UUID/randomUUID))))
 
 (defn- build-hierarchy
   "Builds an app group hierarchy from the result of loading the app group

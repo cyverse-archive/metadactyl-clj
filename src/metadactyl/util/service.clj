@@ -5,7 +5,8 @@
         [slingshot.slingshot :only [try+ throw+]])
   (:require [cheshire.core :as cheshire]
             [clojure.tools.logging :as log]
-            [clojure-commons.error-codes :as ce]))
+            [clojure-commons.error-codes :as ce])
+  (:import [java.util UUID]))
 
 (defn empty-response []
   {:status 200})
@@ -92,3 +93,8 @@
     (catch Exception e
       (throw+ {:error_code ce/ERR_INVALID_JSON
                :detail     (str e)}))))
+
+(defn uuid
+  "Generates a random UUID."
+  []
+  (upper-case (str (UUID/randomUUID))))
