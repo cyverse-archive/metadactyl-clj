@@ -612,13 +612,7 @@
     (update-in app [:groups] update-groups)))
 
 (defn get-app-rerun-info
-  "Obtains analysis JSON with the property values from a previous experiment
-   plugged into the appropriate properties."
-  [job-id]
-  (success-response (get-unformatted-app-rerun-info job-id)))
-
-(defn get-new-app-rerun-info
-  "Obtains analysis JSON in the new format required by the DE with the property values from a
+  "Obtains analysis JSON in the format required by the DE with the property values from a
    previous experiment plugged into the appropriate properties."
   [job-id]
   (-> (get-unformatted-app-rerun-info job-id)
