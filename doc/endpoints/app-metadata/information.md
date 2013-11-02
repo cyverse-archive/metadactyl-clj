@@ -238,22 +238,34 @@ This service will fail if the analysis isn't found or is a pipeline (that is, it
 contains multiple steps). Here are some examples:
 
 ```
-$ curl -s http://by-tor:8888/analysis-details/t0eba98231a404e3a927245001b21aa25 | python -mjson.tool
+$ curl -s "http://by-tor:8888/analysis-details/0309394C-37C9-4A64-A806-C12674D2D4F8" | python -mjson.tool
 {
-    "component": "cat",
-    "component_id": "c72c314d1eace461290b9b568d9feb86a",
-    "description": "Test Description for CORE-3750",
-    "edited_date": "1354666971032",
-    "id": "t0eba98231a404e3a927245001b21aa25",
-    "label": "",
-    "name": "Test CORE-3750",
-    "published_date": "1354666971032",
-    "references": [
-        "test another ref",
-        "https://pods.iplantcollaborative.org/jira/browse/CORE-3750"
+    "components": [
+        {
+            "attribution": "Rice P, Longden I, Bleasby A. EMBOSS: the European Molecular Biology Open Software Suite. Trends Genet. 2000 Jun;16(6):276-7",
+            "description": "Needleman-Wunsch global alignment",
+            "id": "c3610c827b37d4c4ba5f18cc1edeb72e5",
+            "location": "/usr/local3/bin/emboss/bin",
+            "name": "needle",
+            "type": "executable",
+            "version": "6.4.0"
+        }
     ],
-    "tito": "t0eba98231a404e3a927245001b21aa25",
-    "type": "executable"
+    "description": "needle reads two input sequences and writes their optimal global sequence alignment to file.",
+    "edited_date": "1334734950952",
+    "groups": [
+        {
+            "id": "4B3A8586-9A55-441C-8ED2-D730D60BF5F1",
+            "name": "EMBOSS"
+        }
+    ],
+    "id": "0309394C-37C9-4A64-A806-C12674D2D4F8",
+    "label": "",
+    "name": "EMBOSS Needle",
+    "published_date": "1334734995546",
+    "references": [],
+    "suggested_groups": [],
+    "tito": "0309394C-37C9-4A64-A806-C12674D2D4F8"
 }
 ```
 
