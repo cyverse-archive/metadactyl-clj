@@ -211,7 +211,7 @@
                         search_term
                         workspace
                         (workspace-favorites-app-group-index)
-                        params)
+                        {})
         search_results (map format-app search_results)]
     (cheshire/encode {:template_count total
                       :templates search_results})))
