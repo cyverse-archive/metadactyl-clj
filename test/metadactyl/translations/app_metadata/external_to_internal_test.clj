@@ -2,16 +2,22 @@
   (:use [clojure.test]
         [metadactyl.translations.app-metadata.external-to-internal]))
 
+(defn mark-default-arg
+  [default n]
+  (if (and (not (nil? default)) (= default n))
+    {:isDefault true :id n :name n :value n :display n}
+    {:id n :name n :value n :display n}))
+
 (defn- external-selection-args
   [& [default]]
-  (mapv (fn [n] {:isDefault (= default n) :name n :value n :display n}) ["foo" "bar" "baz"]))
+  (mapv (partial mark-default-arg default)
+        ["foo" "bar" "baz"]))
 
 (defn- internal-selection-args
   ([]
      (internal-selection-args nil))
   ([default]
-     (map #(assoc % :isDefault (= default (:name %)))
-          (external-selection-args))))
+     (external-selection-args default)))
 
 (deftest build-validator-for-property-test
   (is (= {:required true :rules []}
@@ -37,7 +43,7 @@
           :rules        [{:MustContain (internal-selection-args "foo")}]}
          (build-validator-for-property
           {:arguments    (external-selection-args "foo")
-           :defaultValue {:name "foo" :value "foo" :display "foo"}}))))
+           :defaultValue {:id "foo" :name "foo" :value "foo" :display "foo"}}))))
 
 (deftest translate-property-test
   (is (= {:omit_if_blank false :value "foo" :validator nil :data_object nil :type nil}
