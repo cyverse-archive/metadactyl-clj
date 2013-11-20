@@ -4,14 +4,21 @@
   (:require [clojure-commons.error-codes :as ce]
             [clojure.tools.logging :as log]))
 
+(defn- mark-default-selection-item
+  [default-value item]
+  (if (and (map? default-value) (= (:id default-value) (:id item)))
+    (assoc item :isDefault true)
+    (dissoc item :isDefault)))
+
 (defn build-validator-for-property
   "Builds a validator for a property in its external format."
-  [{rules :validators required :required args :arguments}]
+  [{rules :validators required :required args :arguments default-value :defaultValue}]
   (if (or required (seq rules) (seq args))
-    (let [rules (mapv (fn [{:keys [type params]}] {(keyword type) params}) rules)]
+    (let [rules        (mapv (fn [{:keys [type params]}] {(keyword type) params}) rules)
+          mark-default (partial mark-default-selection-item default-value)]
       {:required (true? required)
        :rules    (if (seq args)
-                   (conj rules {:MustContain args})
+                   (conj rules {:MustContain (map mark-default args)})
                    rules)})))
 
 (defn get-default-value

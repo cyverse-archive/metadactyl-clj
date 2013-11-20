@@ -27,8 +27,7 @@
 (defn get-property-arguments
   "Gets the property arguments from a list of validation rules."
   [rules]
-  (mapv (comp (partial add-default-field-value :id #(uuid))
-              (partial add-default-field-value :isDefault (constantly false)))
+  (mapv (partial add-default-field-value :id #(uuid))
         (:MustContain (first (filter :MustContain rules)) [])))
 
 (defn find-default-arg
