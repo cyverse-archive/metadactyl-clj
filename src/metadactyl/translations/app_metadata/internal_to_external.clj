@@ -44,13 +44,13 @@
 
 (defn get-default-value
   "Gets the default value for a property and a set of list of selectable arguments."
-  ([property args]
-     (let [default-value (:value property)]
-       (cond
-        (not (seq args))        default-value
-        (map? default-value)    default-value
-        (vector? default-value) default-value
-        :else                   (find-default-arg args))))
+  ([{default-value :value prop-type :type} args]
+     (cond
+      (ref-genome-property-types prop-type) (ref-gen-info default-value)
+      (not (seq args))                      default-value
+      (map? default-value)                  default-value
+      (vector? default-value)               default-value
+      :else                                 (find-default-arg args)))
   ([property args data-object]
      (let [info-type       (:file_info_type data-object)
            output-filename (:output_filename data-object)]
