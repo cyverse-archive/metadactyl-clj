@@ -56,7 +56,6 @@
 * [PUT /secured/update-app](endpoints/app-metadata/updated-admin.md#updating-or-importing-a-single-step-app)
 * [POST /secured/update-favorites](endpoints/app-metadata/admin.md#updating-the-favorite-analyses-list)
 * [POST /secured/update-workflow](endpoints/app-metadata/admin.md#updating-an-analysis)
-* [PUT /secured/workspaces/{workspace-id}/executions/delete](endpoints/app-execution.md#deleting-jobs)
 * [GET /secured/workspaces/{workspace-id}/executions/list](endpoints/app-execution.md#listing-jobs)
 * [POST /secured/workspaces/{workspace-id}/executions/list](endpoints/app-execution.md#getting-status-information-for-selected-jobs)
 * [PUT /secured/workspaces/{workspace-id}/newexperiment](endpoints/app-execution.md#submitting-a-job-for-execution)

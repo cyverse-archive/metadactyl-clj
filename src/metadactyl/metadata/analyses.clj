@@ -192,34 +192,3 @@
         analyses   (load-analyses query analysis-from-object)
         app-fields (load-app-fields (set (map :analysis_id analyses)))]
     (map (partial add-extra-app-fields app-fields) analyses)))
-
-(defn- delete-analysis
-  "Deletes a single analysis in the OSM."
-  [{osm-id :object_persistence_uuid
-    state  :state}]
-  (if (:deleted state false)
-    (log/warn "job" (:uuid state) "is already deleted")
-    (osm/update-object (create-osm-client) osm-id
-                       (assoc state :deleted true))))
-
-(defn- delete-analyses-for-job
-  "Marks all analyses associated with a job and a workspace as deleted."
-  [workspace-id analyses-by-job-id id]
-  (let [workspace-id       (str workspace-id)
-        get-workspace-id   #(get-in % [:state :workspace_id])
-        right-workspace-id #(= workspace-id (get-workspace-id %))
-        analyses           (filter right-workspace-id (analyses-by-job-id id))]
-    (if (empty? analyses)
-      (println "attempt to delete non-existent job" id "for workspace"
-                workspace-id "ignored")
-      (dorun (map delete-analysis analyses)))))
-
-(defn delete-analyses
-  "Marks analyses as deleted, provided that they exist and are associated with
-   the given workspace ID."
-  [workspace-id ids]
-  (validate-workspace-id workspace-id)
-  (let [extract-fn #(select-keys % [:object_persistence_uuid :state])
-        analyses   (load-analyses (id-only-analysis-query ids) extract-fn)
-        analyses   (group-by #(get-in % [:state :uuid]) analyses)]
-    (dorun (map (partial delete-analyses-for-job workspace-id analyses) ids))))

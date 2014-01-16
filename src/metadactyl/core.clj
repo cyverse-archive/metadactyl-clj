@@ -47,10 +47,6 @@
         [workspace-id :as {body :body}]
         (get-selected-experiments workspace-id body))
 
-  (PUT "/workspaces/:workspace-id/executions/delete"
-       [workspace-id :as {body :body}]
-       (delete-experiments body workspace-id))
-
   (POST "/rate-analysis" [:as {body :body}]
         (rate-app body))
 

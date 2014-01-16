@@ -6,7 +6,6 @@
     * [Submitting a Job for Execution](#submitting-a-job-for-execution)
     * [Listing Jobs](#listing-jobs)
     * [Getting Status Information for Selected Jobs](#getting-status-information-for-selected-jobs)
-    * [Deleting Jobs](#deleting-jobs)
 
 # App Execution Endpoints
 
@@ -562,51 +561,6 @@ $ curl -sd '
             "wiki_url": "https://pods.iplantcollaborative.org/wiki/display/DEapps/CACE"
         }
     ],
-    "success": true
-}
-```
-
-## Deleting Jobs
-
-*Secured Endpoint:* PUT /secured/workspaces/{workspace-id}/executions/delete
-
-After a job has completed, a user may not want to view the job status
-information in the _Analyses_ window any longer. This service provides a way to
-mark job status information as deleted so that it no longer shows up. The
-request body for this service is in the following format:
-
-```json
-{
-    "executions": [
-        "job-id-1",
-        "job-id-2",
-        ...,
-        "job-id-n"
-    ]
-}
-```
-
-The response body for this endpoint contains only a status flag if the service
-succeeds.
-
-It should be noted that this service does not fail if any of the job identifiers
-refers to a non-existent or deleted job. If the identifier refers to a deleted
-job then the update is essentially a no-op. If a job with the identifier can't
-be found then a warning message is logged in metadactyl-clj's log file, but the
-service does not indicate that a failure has occurred.
-
-Here's an example:
-
-```
-$ curl -X PUT -sd '
-{
-    "executions": [
-        "84DFCC0E-03B9-4DF4-8484-55BFBD6FE841",
-        "FOO"
-    ]
-}
-' "http://by-tor:8888/secured/workspaces/4/executions/delete?user=snow-dog&email=sd@example.org" | python -mjson.tool
-{
     "success": true
 }
 ```
