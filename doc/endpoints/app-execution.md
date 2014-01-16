@@ -3,7 +3,6 @@
 * [App Execution Endpoints](#app-execution-endpoints)
     * [Obtaining Property Values for a Previously Executed Job](#obtaining-property-values-for-a-previously-executed-job)
     * [Obtaining Information to Rerun a Job](#obtaining-information-to-rerun-a-job)
-    * [Obtaining Information to Rerun a Job in the New Format](#obtaining-information-to-rerun-a-job-in-the-new-format)
     * [Submitting a Job for Execution](#submitting-a-job-for-execution)
     * [Listing Jobs](#listing-jobs)
     * [Getting Status Information for Selected Jobs](#getting-status-information-for-selected-jobs)
@@ -142,99 +141,6 @@ $ curl -s http://by-tor:8888/get-property-values/jebf8120d-0ccb-45d1-bae6-849620
 ```
 
 ## Obtaining Information to Rerun a Job
-
-*Unsecured Endpoint:* GET /analysis-rerun-info/{job-id}
-
-It's occasionally nice to be able to rerun a job that was prevously executed,
-possibly with some tweaked values. The UI uses this service to obtain analysis
-information in the same format as the `/get-analysis/{analysis-id}` service with
-the property values from a specific job plugged in. Here's an example:
-
-```
-$ curl -s http://by-tor:8888/analysis-rerun-info/j41bef770-f68c-40a2-8da4-2f53e22d4a9b | python -mjson.tool
-{
-    "disabled": false,
-    "groups": [
-        {
-            "id": "3C17C860-AF27-468F-A8F2-64894B31DA23",
-            "label": "Input and Output",
-            "name": "",
-            "properties": [
-                {
-                    "description": "Select the files to concatenate.",
-                    "id": "Puma_733743D0-42BB-471A-BC53-63E0DBD5F41D",
-                    "isVisible": true,
-                    "label": "Input Files",
-                    "name": "",
-                    "type": "MultiFileSelector",
-                    "validator": {
-                        "label": "",
-                        "name": "",
-                        "required": true
-                    },
-                    "value": [
-                        "/iplant/home/snow-dog/AllButRootHaveDistanceToParent.newick",
-                        "/iplant/home/snow-dog/allNodesNamed.newick"
-                    ]
-                },
-                {
-                    "description": "Specify the name of the output file.",
-                    "id": "Puma_5C540330-9858-460F-B1D4-CD760B99D85F",
-                    "isVisible": true,
-                    "label": "Output File",
-                    "name": "",
-                    "type": "Output",
-                    "validator": {
-                        "label": "",
-                        "name": "",
-                        "required": true
-                    },
-                    "value": "puma.txt"
-                },
-                {
-                    "description": "Specify the name of the error output file.",
-                    "id": "Puma_902B0804-17B7-456F-94D2-D09DC2D2ADE2",
-                    "isVisible": true,
-                    "label": "Error Output File",
-                    "name": "",
-                    "type": "Output",
-                    "validator": {
-                        "label": "",
-                        "name": "",
-                        "required": true
-                    },
-                    "value": "puma.err"
-                }
-            ],
-            "type": ""
-        },
-        {
-            "id": "90B15DA1-9DFF-463C-AA4A-6EB0DE1DA022",
-            "label": "Options",
-            "name": "",
-            "properties": [
-                {
-                    "description": "Indicate whether lines should be numbered in the output file.",
-                    "id": "Puma_FE1F8E52-FECC-462C-B5F8-5E4A8EAC6FBC",
-                    "isVisible": true,
-                    "label": "Number Lines",
-                    "name": "-n",
-                    "type": "Flag",
-                    "value": "true"
-                }
-            ],
-            "type": ""
-        }
-    ],
-    "id": "t55e2377c60724ecbbcfa1a39c9ef1eec",
-    "label": "Puma",
-    "name": "Puma",
-    "success": true,
-    "type": ""
-}
-```
-
-## Obtaining Information to Rerun a Job in the New Format
 
 *Unsecured Endpoint:* GET /app-rerun-info/{job-id}
 
