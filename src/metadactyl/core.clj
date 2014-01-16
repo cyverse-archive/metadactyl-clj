@@ -39,14 +39,6 @@
   (PUT "/workspaces/:workspace-id/newexperiment" [workspace-id :as {body :body}]
        (run-experiment body workspace-id))
 
-  (GET "/workspaces/:workspace-id/executions/list"
-       [workspace-id :as {params :params}]
-       (get-experiments workspace-id params))
-
-  (POST "/workspaces/:workspace-id/executions/list"
-        [workspace-id :as {body :body}]
-        (get-selected-experiments workspace-id body))
-
   (POST "/rate-analysis" [:as {body :body}]
         (rate-app body))
 

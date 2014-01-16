@@ -99,11 +99,6 @@
      (assoc (analysis-query workspace-id)
        :state.uuid {:$in ids})))
 
-(defn- id-only-analysis-query
-  "Builds an OSM query that can be used to retrieve analyses by ID only."
-  [ids]
-  {:state.uuid {:$in ids}})
-
 (defn- load-analyses
   "Retrieves information about analyses from teh OSM."
   ([query]
@@ -126,63 +121,6 @@
       :app_disabled     (or (:disabled app) false))
     (do (log-missing-app app-id)
         analysis)))
-
-(defn- analysis-contains-filter?
-  "Returns true if the filter value is contained in the value of the analysis
-   field that matches the filter field. The comparison is case-insensitive."
-  [{:keys [field value]} analysis]
-  (let [analysis-value (.toLowerCase ((keyword field) analysis))
-        filter-value (.toLowerCase value)]
-    (.contains analysis-value filter-value)))
-
-(defn- analysis-matches-filters?
-  "Returns a non-nil value if one of the analysis fields contains the value in
-   the corresponding field of one of the given filters."
-  [filters analysis]
-  (some
-    #(analysis-contains-filter? % analysis)
-    filters))
-
-(defn- filter-analyses
-  "Filters analyses according to a filter specification."
-  [filt analyses]
-  (if-not (nil? filt)
-    (let [filt (cheshire/decode filt true)]
-      (filter #(analysis-matches-filters? filt %) analyses))
-    analyses))
-
-(defn- get-sort-fn
-  "Obtains the sort function to use for the specified sort order."
-  [sort-order]
-  (condp contains? sort-order
-    #{:desc :DESC} (comp - compare)
-    #{:asc  :ASC}  compare
-    (throw+ {:type       ::invalid-sort-order
-             :sort-order sort-order})))
-
-(defn get-analyses-for-workspace-id
-  "Retrieves information about the analyses that were submitted by the user with
-   the given workspace ID."
-  [workspace-id {:keys [limit offset filter sort-field sort-order]
-                 :or   {limit      0
-                        offset     0
-                        sort-field :startdate
-                        sort-order :desc}}]
-  (validate-workspace-id workspace-id)
-  (let [limit      (if (string? limit) (to-long limit) limit)
-        offset     (if (string? offset) (to-long offset) offset)
-        sort-field (keyword sort-field)
-        sort-fn    (get-sort-fn (keyword sort-order))
-        query      (analysis-query workspace-id)
-        analyses   (load-analyses query analysis-from-object)
-        analyses   (sort-by sort-field sort-fn analyses)
-        analyses   (filter-analyses filter analyses)
-        total      (count analyses)
-        analyses   (if (> offset 0) (drop offset analyses) analyses)
-        analyses   (if (> limit 0) (take limit analyses) analyses)
-        app-fields (load-app-fields (set (map :analysis_id analyses)))]
-    {:analyses  (map (partial add-extra-app-fields app-fields) analyses)
-     :total total}))
 
 (defn get-selected-analyses
   "Retrieves information about selected analyses."

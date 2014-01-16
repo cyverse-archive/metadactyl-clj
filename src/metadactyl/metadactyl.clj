@@ -4,7 +4,7 @@
         [metadactyl.app-validation]
         [metadactyl.beans]
         [metadactyl.util.config]
-        [metadactyl.metadata.analyses :only [get-analyses-for-workspace-id get-selected-analyses]]
+        [metadactyl.metadata.analyses :only [get-selected-analyses]]
         [metadactyl.metadata.reference-genomes :only [get-reference-genomes put-reference-genomes]]
         [metadactyl.metadata.element-listings :only [list-elements]]
         [metadactyl.util.service]
@@ -518,26 +518,6 @@
        (get-selected-analyses (string->long workspace-id))
        first
        success-response))
-
-(defn get-experiments
-  "This service retrieves information about jobs that a user has submitted."
-  [workspace-id params]
-  (let [workspace-id (string->long workspace-id)
-        analyses     (get-analyses-for-workspace-id workspace-id params)
-        timestamp    (str (System/currentTimeMillis))]
-    (success-response (assoc analyses :timestamp timestamp))))
-
-(defn get-selected-experiments
-  "This service retrieves information about selected jobs that the user has
-   submitted."
-  [workspace-id body]
-  (let [m            (cheshire/decode-stream (reader body) true)
-        _            (validate-json-array-field m :executions)
-        workspace-id (string->long workspace-id)
-        analyses     (get-selected-analyses workspace-id (:executions m))
-        timestamp    (str (System/currentTimeMillis))]
-    (success-response {:analyses  analyses
-                       :timestamp timestamp})))
 
 (defn rate-app
   "This service adds a user's rating to an app."
