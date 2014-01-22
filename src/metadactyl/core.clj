@@ -12,6 +12,7 @@
         [metadactyl.metadactyl]
         [metadactyl.metadata.tool-requests]
         [metadactyl.service.app-metadata :only [preview-command-line relabel-app]]
+        [metadactyl.user :only [current-user]]
         [metadactyl.util.service]
         [metadactyl.zoidberg]
         [ring.middleware keyword-params nested-params])

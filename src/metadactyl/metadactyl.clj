@@ -9,6 +9,7 @@
         [metadactyl.metadata.element-listings :only [list-elements]]
         [metadactyl.util.service]
         [metadactyl.transformers]
+        [metadactyl.user :only [current-user]]
         [metadactyl.validation :only [validate-json-array-field]]
         [ring.util.codec :only [url-decode]]
         [slingshot.slingshot :only [throw+ try+]])
@@ -35,7 +36,8 @@
             [clojure.tools.logging :as log]
             [clojure-commons.error-codes :as ce]
             [metadactyl.translations.app-metadata :as app-meta-tx]
-            [metadactyl.translations.property-values :as prop-value-tx]))
+            [metadactyl.translations.property-values :as prop-value-tx]
+            [metadactyl.workspace :as ws]))
 
 (defn- get-property-type-validator
   "Gets an implementation of the TemplateValidator interface that can be used
@@ -53,11 +55,6 @@
   (proxy [TemplateValidator] []
     (validate [template registry]
       (validate-template-deployed-component template))))
-
-(def
-  ^{:doc "The authenticated user or nil if the service is unsecured."
-    :dynamic true}
-   current-user nil)
 
 (def
   ^{:doc "The service used to get information about the authenticated user."}
@@ -545,7 +542,9 @@
 (defn update-favorites
   "This service adds apps to or removes apps from a user's favorites list."
   [body]
-  (.updateFavorite (analysis-categorization-service) (slurp body)))
+  (let [workspace (ws/get-or-create-workspace (.getUsername current-user))
+        request   (assoc (parse-json body) :workspace_id (:id workspace))]
+    (.updateFavorite (analysis-categorization-service) (cheshire/encode request))))
 
 (defn edit-app
   "This service makes an app available in Tito for editing."

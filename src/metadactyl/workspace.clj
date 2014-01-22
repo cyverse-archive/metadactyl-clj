@@ -3,7 +3,7 @@
         [kameleon.core]
         [kameleon.queries]
         [kameleon.app-groups]
-        [metadactyl.metadactyl :only [current-user]]
+        [metadactyl.user :only [current-user]]
         [metadactyl.util.config])
   (:require [cheshire.core :as cheshire]))
 

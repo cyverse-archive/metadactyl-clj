@@ -2,8 +2,8 @@
   (:use [korma.core]
         [kameleon.core]
         [kameleon.entities]
-        [metadactyl.metadactyl :only [current-user
-                                      update-workflow-from-json]]
+        [metadactyl.metadactyl :only [update-workflow-from-json]]
+        [metadactyl.user :only [current-user]]
         [slingshot.slingshot :only [throw+]])
   (:require [cheshire.core :as cheshire]
             [clojure-commons.error-codes :as cc-errs]))
