@@ -805,6 +805,8 @@ The response body for this service is in the following format:
     "template_count": "number-of-analyses-in-group-and-descendents",
     "templates": [
         {
+            "can_favor": "analysis-can-favor-flag",
+            "can_rate": "analysis-can-rate-flag",
             "can_run": "analysis-can-run-flag",
             "deleted": "analysis-deleted-flag",
             "description": "analysis-description",
@@ -836,7 +838,6 @@ Here's an example:
 ```
 $ curl -s "http://by-tor:8888/secured/get-analyses-in-group/6A1B9EBD-4950-4F3F-9CAB-DD12A1046D9A?user=snow-dog&email=sd@example.org&limit=1&sortField=name&sortDir=DESC" | python -mjson.tool
 {
-    "can_run": true,
     "description": "",
     "id": "C3DED4E2-EC99-4A54-B0D8-196112D1BB7B",
     "is_public": true,
@@ -844,6 +845,9 @@ $ curl -s "http://by-tor:8888/secured/get-analyses-in-group/6A1B9EBD-4950-4F3F-9
     "template_count": 100,
     "templates": [
         {
+            "can_favor": true,
+            "can_rate": true,
+            "can_run": true,
             "deleted": false,
             "description": "Some app description.",
             "disabled": false,

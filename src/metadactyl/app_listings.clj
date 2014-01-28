@@ -5,10 +5,10 @@
         [kameleon.entities]
         [kameleon.app-groups]
         [kameleon.app-listing]
-        [metadactyl.metadactyl :only [current-user]]
-        [metadactyl.workspace]
+        [metadactyl.user :only [current-user]]
         [metadactyl.util.config]
-        [metadactyl.util.conversions :only [to-long date->long]])
+        [metadactyl.util.conversions :only [to-long date->long]]
+        [metadactyl.workspace])
   (:require [cheshire.core :as cheshire]
             [clojure.tools.logging :as log]))
 
@@ -149,12 +149,12 @@
 (defn- format-app
   "Formats certain app fields into types more suitable for the client."
   [app]
-  (-> app
-      (assoc :can_run (= (:step_count app) (:component_count app)))
+  (-> (assoc app :can_run (= (:step_count app) (:component_count app)))
       (dissoc :component_count)
       (format-app-timestamps)
       (format-app-ratings)
-      (format-app-pipeline-eligibility)))
+      (format-app-pipeline-eligibility)
+      (assoc :can_favor true :can_rate true)))
 
 (defn- list-apps-in-virtual-group
   "Formats a listing for a virtual group."

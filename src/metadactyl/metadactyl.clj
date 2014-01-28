@@ -4,14 +4,12 @@
         [metadactyl.app-validation]
         [metadactyl.beans]
         [metadactyl.util.config]
-        [metadactyl.metadata.analyses
-         :only [get-analyses-for-workspace-id get-selected-analyses
-                delete-analyses]]
-        [metadactyl.metadata.reference-genomes
-         :only [get-reference-genomes put-reference-genomes]]
+        [metadactyl.metadata.analyses :only [get-selected-analyses]]
+        [metadactyl.metadata.reference-genomes :only [get-reference-genomes put-reference-genomes]]
         [metadactyl.metadata.element-listings :only [list-elements]]
         [metadactyl.util.service]
         [metadactyl.transformers]
+        [metadactyl.user :only [current-user]]
         [metadactyl.validation :only [validate-json-array-field]]
         [ring.util.codec :only [url-decode]]
         [slingshot.slingshot :only [throw+ try+]])
@@ -38,7 +36,8 @@
             [clojure.tools.logging :as log]
             [clojure-commons.error-codes :as ce]
             [metadactyl.translations.app-metadata :as app-meta-tx]
-            [metadactyl.translations.property-values :as prop-value-tx]))
+            [metadactyl.translations.property-values :as prop-value-tx]
+            [metadactyl.workspace :as ws]))
 
 (defn- get-property-type-validator
   "Gets an implementation of the TemplateValidator interface that can be used
@@ -56,11 +55,6 @@
   (proxy [TemplateValidator] []
     (validate [template registry]
       (validate-template-deployed-component template))))
-
-(def
-  ^{:doc "The authenticated user or nil if the service is unsecured."
-    :dynamic true}
-   current-user nil)
 
 (def
   ^{:doc "The service used to get information about the authenticated user."}
@@ -522,34 +516,6 @@
        first
        success-response))
 
-(defn get-experiments
-  "This service retrieves information about jobs that a user has submitted."
-  [workspace-id params]
-  (let [workspace-id (string->long workspace-id)
-        analyses     (get-analyses-for-workspace-id workspace-id params)
-        timestamp    (str (System/currentTimeMillis))]
-    (success-response (assoc analyses :timestamp timestamp))))
-
-(defn get-selected-experiments
-  "This service retrieves information about selected jobs that the user has
-   submitted."
-  [workspace-id body]
-  (let [m            (cheshire/decode-stream (reader body) true)
-        _            (validate-json-array-field m :executions)
-        workspace-id (string->long workspace-id)
-        analyses     (get-selected-analyses workspace-id (:executions m))
-        timestamp    (str (System/currentTimeMillis))]
-    (success-response {:analyses  analyses
-                       :timestamp timestamp})))
-
-(defn delete-experiments
-  "This service marks experiments as deleted so that they no longer show up
-   in the Analyses window."
-  [body workspace-id]
-  (let [ids (:executions (cheshire/decode-stream (reader body) true))]
-    (delete-analyses (string->long workspace-id) ids)
-    (success-response)))
-
 (defn rate-app
   "This service adds a user's rating to an app."
   [body]
@@ -576,7 +542,9 @@
 (defn update-favorites
   "This service adds apps to or removes apps from a user's favorites list."
   [body]
-  (.updateFavorite (analysis-categorization-service) (slurp body)))
+  (let [workspace (ws/get-or-create-workspace (.getUsername current-user))
+        request   (assoc (parse-json body) :workspace_id (:id workspace))]
+    (.updateFavorite (analysis-categorization-service) (cheshire/encode request))))
 
 (defn edit-app
   "This service makes an app available in Tito for editing."
