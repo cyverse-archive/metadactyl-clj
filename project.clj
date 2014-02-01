@@ -1,14 +1,23 @@
-(defproject metadactyl "1.8.4-SNAPSHOT"
+(defproject org.iplantc/metadactyl "1.8.4-SNAPSHOT"
   :description "Framework for hosting DiscoveryEnvironment metadata services."
+  :url "http://www.iplantcollaborative.org"
+  :license {:name "BSD"
+            :url "http://iplantcollaborative.org/sites/default/files/iPLANT-LICENSE.txt"}
+  :scm {:connection "scm:git:git@github.com:iPlantCollaborativeOpenSource/metadactyl-clj.git"
+        :developerConnection "scm:git:git@github.com:iPlantCollaborativeOpenSource/metadactyl-clj.git"
+        :url "git@github.com:iPlantCollaborativeOpenSource/metadactyl-clj.git"}
+  :pom-addition [:developers
+                 [:developer
+                  [:url "https://github.com/orgs/iPlantCollaborativeOpenSource/teams/iplant-devs"]]]
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [org.clojure/tools.logging "0.2.3"]
                  [cheshire "5.0.1"]
                  [clj-time "0.4.4"]
                  [c3p0/c3p0 "0.9.1.2"]
                  [compojure "1.1.5"]
-                 [org.iplantc/clojure-commons "1.4.1-SNAPSHOT"]
+                 [org.iplantc/clojure-commons "1.4.8-SNAPSHOT"]
                  [org.iplantc/kameleon "1.8.4-SNAPSHOT"]
-                 [org.iplantc.core/metadactyl "dev-SNAPSHOT"]
+                 [org.iplantc.core/metadactyl "1.8.4-SNAPSHOT"]
                  [org.springframework/spring-orm "3.1.0.RELEASE"]
                  [korma "0.3.0-RC5"]
                  [ring "1.1.8"]
@@ -16,7 +25,7 @@
                  [org.slf4j/slf4j-log4j12 "1.5.8"]
                  [net.sf.json-lib/json-lib "2.4" :classifier "jdk15"]
                  [slingshot "0.10.3"]]
-  :plugins [[org.iplantc/lein-iplant-rpm "1.4.1-SNAPSHOT"]
+  :plugins [[org.iplantc/lein-iplant-rpm "1.4.3-SNAPSHOT"]
             [lein-ring "0.8.5"]
             [lein-swank "1.4.4"]]
   :profiles {:dev {:resource-paths ["conf/test"]}}
@@ -30,5 +39,7 @@
                :config-files ["log4j.properties"]
                :config-path "conf/main"}
   :uberjar-exclusions [#"(?i)META-INF/[^/]*[.](SF|DSA|RSA)"]
-  :repositories {"iplantCollaborative"
-                 "http://projects.iplantcollaborative.org/archiva/repository/internal/"})
+  :repositories [["sonatype-nexus-snapshots"
+                  {:url "https://oss.sonatype.org/content/repositories/snapshots"}]
+                 ["sonatype-nexus-staging"
+                  {:url "https://oss.sonatype.org/service/local/staging/deploy/maven2/"}]])
