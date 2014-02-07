@@ -1,4 +1,4 @@
-(defproject org.iplantc/metadactyl "1.8.4-SNAPSHOT"
+(defproject org.iplantc/metadactyl "1.8.6-SNAPSHOT"
   :description "Framework for hosting DiscoveryEnvironment metadata services."
   :url "http://www.iplantcollaborative.org"
   :license {:name "BSD"
