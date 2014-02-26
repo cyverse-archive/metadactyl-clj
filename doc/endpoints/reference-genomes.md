@@ -43,7 +43,9 @@ $ curl -s "http://by-tor:8888/secured/reference-genomes?user=snow-dog&email=sd@e
 This service can be used to import reference genomes into the discovery
 environment. The request body for this service should be in the same format as
 the response body for the endpoint to export the reference genomes. Note that
-the success flag, if present in the request body, will be ignored.
+the success flag, if present in the request body, will be ignored. This endpoint
+replaces *ALL* of the reference genomes in the discovery environment, so if a
+genome is not listed in the body of this request, it will not show up in the DE.
 
 Here's an example:
 
