@@ -264,11 +264,8 @@ of the results can be controlled by query-string parameters:
             <td>status</td>
             <td>
                 The name of a status code to include in the results. The
-                name of the status code is case sensitive. Please see
-                <a href="#updating-the-status-of-a-tool-request">Updating the
-                Status of a Tool Request</a> below for a list of known status
-                codes. This parameter may be specified multiple times to list
-                tool requests in multiple states.
+                name of the status code is case sensitive. If the status code
+                isn't already defined, it will be added to the database.
             </td>
         </tr>
     </tbody>
@@ -332,108 +329,8 @@ status of a tool request. The request body is in the following format:
 }
 ```
 
-The fields are all fairly self-explanatory except that the transitions that the
-status code can make are limited. The valid status codes and status code
-transitions are listed in the following table:
-
-<table>
-    <thead>
-        <tr>
-            <th>Status Code</th>
-            <th>Description</th>
-            <th>Reachable From</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td rowspan="2">Submitted</td>
-            <td rowspan="2">
-                This is the initial status code for all tool requests.
-            </td>
-            <td>Submitted</td>
-        </tr>
-        <tr>
-            <td>Pending</td>
-        </tr>
-        <tr>
-            <td rowspan="5">Pending</td>
-            <td rowspan="5">
-                Indicates that the support team is awaiting more information
-                from the user who submitted the request.
-            </td>
-            <td>Submitted</td>
-        </tr>
-        <tr>
-            <td>Pending</td>
-        </tr>
-        <tr>
-            <td>Evaluation</td>
-        </tr>
-        <tr>
-            <td>Installation</td>
-        </tr>
-        <tr>
-            <td>Validation</td>
-        </tr>
-        <tr>
-            <td rowspan="3">Evaluation</td>
-            <td rowspan="3">
-                Indicates that the support team is evaluating the tool for
-                installation.
-            </td>
-            <td>Submitted</td>
-        </tr>
-        <tr>
-            <td>Evaluation</td>
-        </tr>
-        <tr>
-            <td>Pending</td>
-        </tr>
-        <tr>
-            <td rowspan="3">Installation</td>
-            <td rowspan="3">
-                Indicates that the support team is installing the tool.
-            </td>
-            <td>Evaluation</td>
-        </tr>
-        <tr>
-            <td>Installation</td>
-        </tr>
-        <tr>
-            <td>Pending</td>
-        </tr>
-        <tr>
-            <td rowspan="2">Validation</td>
-            <td rowspan="2">
-                Indicates that the support team is verifying that the tool was
-                installed correctly.
-            </td>
-            <td>Installation</td>
-        </tr>
-        <tr>
-            <td>Validation</td>
-        </tr>
-        <tr>
-            <td>Completion</td>
-            <td>Indicates that the tool was installed successfully.</td>
-            <td>Validation</td>
-        </tr>
-        <tr>
-            <td rowspan="4">Failed</td>
-            <td rowspan="4">Indicates that the tool could not be installed.</td>
-            <td>Submitted</td>
-        </tr>
-        <tr>
-            <td>Evaluation</td>
-        </tr>
-        <tr>
-            <td>Installation</td>
-        </tr>
-        <tr>
-            <td>Validation</td>
-        </tr>
-    </tbody>
-</table>
+The status code is case-sensitive, and if the status code isn't defined in the
+database already then it will be added to the list of known status codes.
 
 The respose body is in the same format as the GET /tool-request service. Please
 see the documentation for that service for more information.
