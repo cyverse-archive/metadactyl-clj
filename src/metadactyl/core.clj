@@ -231,6 +231,9 @@
   (GET "/tool-requests" [:as {params :params}]
        (trap #(list-tool-requests params)))
 
+  (GET "/tool-request-status-codes" [:as {params :params}]
+       (trap #(list-tool-request-status-codes params)))
+
   (POST "/arg-preview" [:as {body :body}]
        (ce/trap "arg-preview" #(preview-command-line body)))
 

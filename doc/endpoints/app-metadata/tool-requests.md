@@ -455,3 +455,66 @@ $ curl -s http://by-tor:8888/tool-request/7C5ACB09-8675-4F04-B323-78431B801226 |
     "version": "1.0.0"
 }
 ```
+
+## Listing Tool Request Status Codes
+
+Unsecured Endpoint: GET /tool-request-status-codes
+
+Tool request status codes are largely arbitrary, but once they've been used
+once, They're stored in the database so that they can be reused easily. This
+endpoint allows the caller to list the known status codes. The response body
+looks like this:
+
+```json
+{
+    "statusCodes": [
+       {
+           "description": "status code description",
+           "id": "status code ID",
+           "name": "status code Name"
+       },
+       ...
+    ],
+    "success": true
+}
+```
+
+In the default case, the endpoint just lists all of the status codes:
+
+```
+$ curl -s http://by-tor:8888/tool-request-status-codes | python -mjson.tool
+{
+    "status_codes": [
+        {
+            "description": "The tool has been installed successfully.",
+            "id": "5ed94200-7565-45d8-b576-d7ff839e9993",
+            "name": "Completion"
+        },
+        ...
+    ],
+    "success": true
+}
+```
+
+If the `filter` query parameter is used then only the status codes that contain
+the string passed in the query parameter will be listed. This is a
+case-insensitive search:
+
+```
+$ curl -s http://localhost:3000/tool-request-status-codes?filter=some | python -mjson.tool
+{
+    "status_codes": [
+        {
+            "description": "Some Other Status",
+            "id": "0538ee26-f728-4d39-92e8-31c3ca7900be",
+            "name": "Some Other Status"
+        },
+        {
+            "description": "Some Status",
+            "id": "4fb01a4c-67d3-4f18-ba52-16e4627ba799",
+            "name": "Some Status"
+        }
+    ],
+    "success": true
+}
+```

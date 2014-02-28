@@ -229,11 +229,28 @@
 
 (defn list-tool-requests
   "Lists tool requests."
-  ([params]
-     (success-response
-      {:tool_requests
-       (map #(assoc %
-               :uuid           (format-uuid (:uuid %))
-               :date_submitted (format-timestamp (:date_submitted %))
-               :date_updated   (format-timestamp (:date_updated %)))
-            (get-tool-request-list params))})))
+  [params]
+  (success-response
+   {:tool_requests
+    (map #(assoc %
+            :uuid           (format-uuid (:uuid %))
+            :date_submitted (format-timestamp (:date_submitted %))
+            :date_updated   (format-timestamp (:date_updated %)))
+         (get-tool-request-list params))}))
+
+(defn- add-filter
+  [query field filter]
+  (if filter
+    (where query {(sqlfn :lower field) [like (str "%" (string/lower-case filter) "%")]})
+    query))
+
+(defn list-tool-request-status-codes
+  "Lists the known tool request status codes."
+  [{:keys [filter]}]
+  (success-response
+   {:status_codes
+    (-> (select* tool_request_status_codes)
+        (fields :id :name :description)
+        (order :name :ASC)
+        (add-filter :name filter)
+        (select))}))
