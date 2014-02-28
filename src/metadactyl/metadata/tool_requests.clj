@@ -12,13 +12,7 @@
   (:import [java.util UUID]))
 
 ;; Status codes.
-(def ^:private status-submitted "Submitted")
-(def ^:private status-pending "Pending")
-(def ^:private status-evaluation "Evaluation")
-(def ^:private status-installation "Installation")
-(def ^:private status-validation "Validation")
-(def ^:private status-completion "Completion")
-(def ^:private status-failed "Failed")
+(def ^:private initial-status-code "Submitted")
 
 (defn- required-field
   "Extracts a required field from a map."
@@ -87,36 +81,9 @@
 
      (insert tool_request_statuses
              (values {:tool_request_id             (tool-request-subselect uuid)
-                      :tool_request_status_code_id (status-code-subselect status-submitted)
+                      :tool_request_status_code_id (status-code-subselect initial-status-code)
                       :updater_id                  user-id}))
      uuid)))
-
-(def ^:private valid-status-transitions
-  #{[status-submitted    status-submitted]
-    [status-submitted    status-failed]
-    [status-submitted    status-evaluation]
-    [status-submitted    status-pending]
-    [status-evaluation   status-evaluation]
-    [status-evaluation   status-failed]
-    [status-evaluation   status-installation]
-    [status-evaluation   status-pending]
-    [status-installation status-installation]
-    [status-installation status-failed]
-    [status-installation status-validation]
-    [status-installation status-pending]
-    [status-validation   status-validation]
-    [status-validation   status-failed]
-    [status-validation   status-completion]
-    [status-validation   status-pending]
-    [status-pending      status-submitted]
-    [status-pending      status-evaluation]
-    [status-pending      status-installation]
-    [status-pending      status-pending]})
-
-(defn- valid-status-transition?
-  "Determines if a status transition is valid."
-  [old-status new-status]
-  (contains? valid-status-transitions [old-status new-status]))
 
 (defn- get-tool-req
   "Loads a tool request from the database."
@@ -154,14 +121,6 @@
                :status status-code}))
     status))
 
-(defn- validate-status-transition
-  "Validates a transition from one status code to another."
-  [old-status new-status]
-  (when-not (valid-status-transition? old-status new-status)
-    (throw+ {:code       ::invalild_tool_request_status_transition
-             :old_status old-status
-             :new_status new-status})))
-
 (defn- handle-tool-request-update
   "Updates a tool request."
   [uid-domain update]
@@ -171,7 +130,6 @@
          prev-status (get-most-recent-status uuid)
          status      (:status update prev-status)
          status-id   (:id (load-status-code status))
-         _           (validate-status-transition prev-status status)
          username    (required-field update :username)
          username    (if (re-find #"@" username) username (str username "@" uid-domain))
          user-id     (queries/get-user-id username)
