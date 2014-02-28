@@ -112,14 +112,33 @@
                :uuid (string/upper-case (.toString uuid))}))
     status))
 
-(defn- load-status-code
-  "Gets the status code for a status code name."
+(defn- get-status-code
+  "Attempts to retrieve a status code from the database."
   [status-code]
-  (let [status (first (select tool_request_status_codes (where {:name status-code})))]
-    (when (nil? status)
-      (throw+ {:code   ::unrecognized_status_code
-               :status status-code}))
-    status))
+  (first
+   (select tool_request_status_codes
+           (fields :id :name :description)
+           (where {:name status-code}))))
+
+(defn- new-status-code-record
+  "Creates a new status code record."
+  [status-code]
+  {:id          (UUID/randomUUID)
+   :name        status-code
+   :description status-code})
+
+(defn- add-status-code
+  "Adds a new status code."
+  [status-code]
+  (let [rec (new-status-code-record status-code)]
+    (insert tool_request_status_codes (values rec))
+    rec))
+
+(defn- load-status-code
+  "Gets status code information from the database, adding a new entry if necessary."
+  [status-code]
+  (or (get-status-code status-code)
+      (add-status-code status-code)))
 
 (defn- handle-tool-request-update
   "Updates a tool request."
