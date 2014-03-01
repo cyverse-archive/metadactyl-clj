@@ -58,6 +58,7 @@
 * [POST /secured/update-workflow](endpoints/app-metadata/admin.md#updating-an-analysis)
 * [PUT /secured/workspaces/{workspace-id}/newexperiment](endpoints/app-execution.md#submitting-a-job-for-execution)
 * [POST /tool-request](endpoints/app-metadata/tool-requests.md#updating-the-status-of-a-tool-request)
+* [GET /tool-request-status-codes](endpoints/app-metadata/tool-requests.md#listing-tool-request-status-codes)
 * [GET /tool-request/{uuid}](endpoints/app-metadata/tool-requests.md#obtaining-tool-request-details)
 * [GET /tool-requests](endpoints/app-metadata/tool-requests.md#listing-tool-requests)
 * [POST /update-analysis](endpoints/app-metadata/admin.md#updating-top-level-analysis-information)

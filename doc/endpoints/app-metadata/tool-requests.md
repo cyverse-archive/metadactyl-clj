@@ -5,6 +5,7 @@
     * [Listing Tool Requests](#listing-tool-requests)
     * [Updating the Status of a Tool Request](#updating-the-status-of-a-tool-request)
     * [Obtaining Tool Request Details](#obtaining-tool-request-details)
+    * [Listing Tool Request Status Codes](#listing-tool-request-status-codes)
 
 # Tool Request Services
 
