@@ -19,7 +19,7 @@
                  [compojure "1.1.5"]
                  [org.iplantc/clojure-commons "1.4.8"]
                  [org.iplantc/kameleon "1.8.6-SNAPSHOT"]
-                 [org.iplantc.core/metadactyl "1.8.4"]
+                 [org.iplantc.core/metadactyl "1.8.6-SNAPSHOT"]
                  [org.springframework/spring-orm "3.1.0.RELEASE"]
                  [korma "0.3.0-RC5"]
                  [ring "1.1.8"]
