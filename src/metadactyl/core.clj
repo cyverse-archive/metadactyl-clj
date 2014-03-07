@@ -178,7 +178,7 @@
         (ce/trap "permanently-delete-workflow " #(app-metadata/permanently-delete-apps body)))
 
   (POST "/delete-workflow" [:as {body :body}]
-        (trap #(delete-workflow body)))
+        (ce/trap "delete-workflow" #(app-metadata/delete-apps body)))
 
   (POST "/preview-template" [:as {body :body}]
         (trap #(preview-template body)))

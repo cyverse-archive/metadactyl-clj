@@ -232,11 +232,6 @@
      (.setTemplateValidator (build-private-template-validator)))))
 
 (register-bean
-  (defbean analysis-deletion-service
-    "Handles workflow/metadactyl deletion actions."
-    (AnalysisDeletionService. (session-factory))))
-
-(register-bean
   (defbean analysis-edit-service
     "Services to make apps available for editing in Tito."
     (doto (AnalysisEditService.)
@@ -445,12 +440,6 @@
    Vetted workflows may be updated."
   [body {:keys [update-mode]}]
   (.forceUpdateWorkflow (workflow-import-service) (slurp body) update-mode))
-
-(defn delete-workflow
-  "This service will logically remove a workflow from the DE."
-  [body]
-  (.deleteAnalysis (analysis-deletion-service) (slurp body))
-  (empty-response))
 
 (defn- validate-param
   [param-value param-name]

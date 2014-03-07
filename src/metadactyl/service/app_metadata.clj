@@ -21,7 +21,12 @@
     (transaction (amp/update-app-labels req (:hid (amp/get-app (:id req)))))
     (success-response)))
 
-(defn validate-app-ownership
+(defn- validate-app-existence
+  "Verifies that apps exist."
+  [app-id]
+  (amp/get-app app-id))
+
+(defn- validate-app-ownership
   "Verifies that a user owns an app."
   [username app-id]
   (when-not (every? (partial = username) (amp/app-accessible-by app-id))
@@ -38,6 +43,7 @@
   (when (and (nil? (:full_username req)) (not (:root_deletion_request req)))
     (throw+ {:error_code ce/ERR_BAD_REQUEST
              :reason     "no username provided for non-root deletion request"}))
+  (dorun (map validate-app-existence (:analysis_ids req)))
   (when-not (:root_deletion_request req)
     (dorun (map (partial validate-app-ownership (:full_username req)) (:analysis_ids req)))))
 
@@ -47,6 +53,14 @@
   (let [req (parse-json body)]
     (validate-deletion-request req)
     (transaction (dorun (map amp/permanently-delete-app (:analysis_ids req)))))
+  {})
+
+(defn delete-apps
+  "This service marks existing apps as deleted in the database."
+  [body]
+  (let [req (parse-json body)]
+    (validate-deletion-request req)
+    (transaction (dorun (map amp/delete-app (:analysis_ids req)))))
   {})
 
 (defn preview-command-line

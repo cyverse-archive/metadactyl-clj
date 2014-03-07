@@ -39,3 +39,10 @@
   "Permanently removes an app from the metadata database."
   [app-id]
   (delete/permanently-delete-app ((comp :hid get-app) app-id)))
+
+(defn delete-app
+  "Marks an app as deleted in the metadata database."
+  [app-id]
+  (update :transformation_activity
+          (set-fields {:deleted true})
+          (where {:id app-id})))

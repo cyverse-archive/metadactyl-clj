@@ -3145,16 +3145,6 @@ using the app identifiers, the request body should be in the following format:
 }
 ```
 
-To mark one or more private apps as deleted using the app names, the request
-body should be in the following format:
-
-```json
-{
-    "analysis_names": ["some-analysis-name", "another-name", ...],
-    "full_username": "somebody@example.org"
-}
-```
-
 To mark one or more public apps as deleted using the app identifiers, the
 request body should be in the following format:
 
@@ -3165,17 +3155,9 @@ request body should be in the following format:
 }
 ```
 
-To mark one or more public apps as deleted using the app names, the request body
-should be in the following format:
-
-```json
-{
-    "analysis_names": ["some-analysis-name", "another-name", ...],
-    "root_deletion_request": true
-}
-```
-
-This service has no response body.
+The response body for this service contains a simple success flag when the
+service succeeds. If the service fails then the response body contains a success
+flag and a brief message indicating the reason for the failure.
 
 ## Previewing Templates
 
