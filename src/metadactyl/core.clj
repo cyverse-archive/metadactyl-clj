@@ -11,7 +11,6 @@
         [metadactyl.kormadb]
         [metadactyl.metadactyl]
         [metadactyl.metadata.tool-requests]
-        [metadactyl.service.app-metadata :only [preview-command-line relabel-app]]
         [metadactyl.user :only [current-user]]
         [metadactyl.util.service]
         [metadactyl.zoidberg]
@@ -21,6 +20,7 @@
             [clojure.tools.logging :as log]
             [clojure-commons.clavin-client :as cl]
             [clojure-commons.error-codes :as ce]
+            [metadactyl.service.app-metadata :as app-metadata]
             [metadactyl.util.config :as config]
             [ring.adapter.jetty :as jetty]))
 
@@ -175,7 +175,7 @@
         (trap #(export-deployed-components body)))
 
   (POST "/permanently-delete-workflow" [:as {body :body}]
-        (trap #(permanently-delete-workflow body)))
+        (ce/trap "permanently-delete-workflow " #(app-metadata/permanently-delete-apps body)))
 
   (POST "/delete-workflow" [:as {body :body}]
         (trap #(delete-workflow body)))
@@ -208,7 +208,7 @@
         (trap #(update-app body)))
 
   (POST "/update-app-labels" [:as {body :body}]
-        (ce/trap "update-app-labels" #(relabel-app body)))
+        (ce/trap "update-app-labels" #(app-metadata/relabel-app body)))
 
   (GET "/get-property-values/:job-id" [job-id]
        (trap #(get-property-values job-id)))
@@ -235,7 +235,7 @@
        (trap #(list-tool-request-status-codes params)))
 
   (POST "/arg-preview" [:as {body :body}]
-       (ce/trap "arg-preview" #(preview-command-line body)))
+       (ce/trap "arg-preview" #(app-metadata/preview-command-line body)))
 
   (context "/secured" [:as {params :params}]
            (store-current-user secured-routes params))

@@ -452,12 +452,6 @@
   (.deleteAnalysis (analysis-deletion-service) (slurp body))
   (empty-response))
 
-(defn permanently-delete-workflow
-  "This service will physically remove a workflow from the DE."
-  [body]
-  (.physicallyDeleteAnalysis (analysis-deletion-service) (slurp body))
-  (empty-response))
-
 (defn- validate-param
   [param-value param-name]
   (when (string/blank? param-value)

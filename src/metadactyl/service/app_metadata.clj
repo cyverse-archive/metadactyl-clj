@@ -1,6 +1,7 @@
 (ns metadactyl.service.app-metadata
   "DE app metadata services."
   (:use [clojure.java.io :only [reader]]
+        [clojure-commons.validators]
         [metadactyl.util.service :only [build-url success-response parse-json]]
         [korma.db :only [transaction]]
         [slingshot.slingshot :only [try+ throw+]])
@@ -18,6 +19,14 @@
   (let [req (parse-json body)]
     (transaction (amp/update-app-labels req (:hid (amp/get-app (:id req)))))
     (success-response)))
+
+(defn permanently-delete-apps
+  "This service removes apps from the database rather than merely marking them as deleted."
+  [body]
+  (let [req (parse-json body)]
+    (validate-map req {:analysis_ids #(and (vector? %) (every? string? %))})
+    (transaction (dorun (map amp/permanently-delete-app (:analysis_ids req)))))
+  (success-response))
 
 (defn preview-command-line
   "This service sends a command-line preview request to the JEX."
