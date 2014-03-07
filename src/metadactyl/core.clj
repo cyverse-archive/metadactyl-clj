@@ -175,7 +175,7 @@
         (trap #(export-deployed-components body)))
 
   (POST "/permanently-delete-workflow" [:as {body :body}]
-        (ce/trap "permanently-delete-workflow " #(app-metadata/permanently-delete-apps body)))
+        (ce/trap "permanently-delete-workflow" #(app-metadata/permanently-delete-apps body)))
 
   (POST "/delete-workflow" [:as {body :body}]
         (ce/trap "delete-workflow" #(app-metadata/delete-apps body)))
