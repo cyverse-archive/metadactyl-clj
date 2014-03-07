@@ -3111,19 +3111,7 @@ following format for the deletion of one or more private analyses:
 ```json
 {
     "analysis_ids": ["some-analysis-id", "another-analysis-id", ...],
-    "full_username": "username"
-}
-```
-
-This service also supports deleting analyses by name, but this practice isn't
-recommended because analysis names are not guaranteed to be unique. When
-deletion by name is requested, the request body is in this format for the
-deletion of one or more private analyses:
-
-```json
-{
-    "analysis_names": ["some-analysis-name", "another-name", ...],
-    "full_username": "username"
+    "full_username": "somebody@example.org"
 }
 ```
 
@@ -3138,17 +3126,9 @@ the deletion of one or more public analyses by ID is in this format:
 }
 ```
 
-Similarly, the request body for the deletion of one or more public analyses by
-name is in this format:
-
-```json
-{
-    "analysis_names": ["some-analysis-name", "another-name", ...],
-    "root_deletion_request": true
-}
-```
-
-This service has no response body.
+The response body for this service contains a simple success flag when the
+service succeeds. If the service fails then the response body contains a success
+flag and a brief message indicating the reason for the failure.
 
 ## Logically Deleting an Analysis
 
