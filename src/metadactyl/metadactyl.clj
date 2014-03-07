@@ -27,8 +27,8 @@
             ExportService InjectableWorkspaceInitializer PipelineService
             TemplateGroupService UserService WorkflowExportService
             AnalysisListingService WorkflowPreviewService WorkflowImportService
-            AnalysisDeletionService RatingService WorkflowElementSearchService
-            PropertyValueService UiAnalysisService]
+            RatingService WorkflowElementSearchService PropertyValueService
+            UiAnalysisService]
            [org.springframework.orm.hibernate3.annotation
             AnnotationSessionFactoryBean])
   (:require [cheshire.core :as cheshire]
