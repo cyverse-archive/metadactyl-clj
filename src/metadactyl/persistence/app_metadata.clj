@@ -19,6 +19,22 @@
   [req app-hid]
   (relabel/update-app-labels req app-hid))
 
+(defn app-accessible-by
+  "Obtains the list of users who can access an app."
+  [app-id]
+  (map :username
+       (select [:transformation_activity :a]
+               (join [:template_group_template :tgt]
+                     {:a.hid :tgt.template_id})
+               (join [:template_group :tg]
+                     {:tgt.template_group_id :tg.hid})
+               (join [:workspace :w]
+                     {:tg.workspace_id :w.id})
+               (join [:users :u]
+                     {:w.user_id :u.id})
+               (fields :u.username)
+               (where {:a.id app-id}))))
+
 (defn permanently-delete-app
   "Permanently removes an app from the metadata database."
   [app-id]

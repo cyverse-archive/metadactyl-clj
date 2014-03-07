@@ -7,6 +7,7 @@
         [slingshot.slingshot :only [try+ throw+]])
   (:require [cheshire.core :as cheshire]
             [clj-http.client :as client]
+            [clojure-commons.error-codes :as ce]
             [clojure.tools.logging :as log]
             [metadactyl.persistence.app-metadata :as amp]
             [metadactyl.translations.app-metadata :as atx]
@@ -20,13 +21,33 @@
     (transaction (amp/update-app-labels req (:hid (amp/get-app (:id req)))))
     (success-response)))
 
+(defn validate-app-ownership
+  "Verifies that a user owns an app."
+  [username app-id]
+  (when-not (every? (partial = username) (amp/app-accessible-by app-id))
+    (throw+ {:error_code ce/ERR_BAD_REQUEST
+             :reason     (str username " does not own app " app-id)})))
+
+(defn- validate-deletion-request
+  "Validates an app deletion request."
+  [req]
+  (validate-map req {:analysis_ids #(and (vector? %) (every? string? %))})
+  (when (empty? (:analysis_ids req))
+    (throw+ {:error_code ce/ERR_BAD_REQUEST
+             :reason     "no analysis identifiers provided"}))
+  (when (and (nil? (:full_username req)) (not (:root_deletion_request req)))
+    (throw+ {:error_code ce/ERR_BAD_REQUEST
+             :reason     "no username provided for non-root deletion request"}))
+  (when-not (:root_deletion_request req)
+    (dorun (map (partial validate-app-ownership (:full_username req)) (:analysis_ids req)))))
+
 (defn permanently-delete-apps
   "This service removes apps from the database rather than merely marking them as deleted."
   [body]
   (let [req (parse-json body)]
-    (validate-map req {:analysis_ids #(and (vector? %) (every? string? %))})
+    (validate-deletion-request req)
     (transaction (dorun (map amp/permanently-delete-app (:analysis_ids req)))))
-  (success-response))
+  {})
 
 (defn preview-command-line
   "This service sends a command-line preview request to the JEX."
