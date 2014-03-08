@@ -16,6 +16,7 @@
                  [cheshire "5.0.1"]
                  [clj-time "0.4.4"]
                  [c3p0/c3p0 "0.9.1.2"]
+                 [com.cemerick/url "0.1.1"]
                  [compojure "1.1.5"]
                  [medley "0.1.5"]
                  [org.iplantc/clojure-commons "1.4.9-SNAPSHOT"]
