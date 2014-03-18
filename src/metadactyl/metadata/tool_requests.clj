@@ -12,13 +12,7 @@
   (:import [java.util UUID]))
 
 ;; Status codes.
-(def ^:private status-submitted "Submitted")
-(def ^:private status-pending "Pending")
-(def ^:private status-evaluation "Evaluation")
-(def ^:private status-installation "Installation")
-(def ^:private status-validation "Validation")
-(def ^:private status-completion "Completion")
-(def ^:private status-failed "Failed")
+(def ^:private initial-status-code "Submitted")
 
 (defn- required-field
   "Extracts a required field from a map."
@@ -87,36 +81,9 @@
 
      (insert tool_request_statuses
              (values {:tool_request_id             (tool-request-subselect uuid)
-                      :tool_request_status_code_id (status-code-subselect status-submitted)
+                      :tool_request_status_code_id (status-code-subselect initial-status-code)
                       :updater_id                  user-id}))
      uuid)))
-
-(def ^:private valid-status-transitions
-  #{[status-submitted    status-submitted]
-    [status-submitted    status-failed]
-    [status-submitted    status-evaluation]
-    [status-submitted    status-pending]
-    [status-evaluation   status-evaluation]
-    [status-evaluation   status-failed]
-    [status-evaluation   status-installation]
-    [status-evaluation   status-pending]
-    [status-installation status-installation]
-    [status-installation status-failed]
-    [status-installation status-validation]
-    [status-installation status-pending]
-    [status-validation   status-validation]
-    [status-validation   status-failed]
-    [status-validation   status-completion]
-    [status-validation   status-pending]
-    [status-pending      status-submitted]
-    [status-pending      status-evaluation]
-    [status-pending      status-installation]
-    [status-pending      status-pending]})
-
-(defn- valid-status-transition?
-  "Determines if a status transition is valid."
-  [old-status new-status]
-  (contains? valid-status-transitions [old-status new-status]))
 
 (defn- get-tool-req
   "Loads a tool request from the database."
@@ -145,22 +112,33 @@
                :uuid (string/upper-case (.toString uuid))}))
     status))
 
-(defn- load-status-code
-  "Gets the status code for a status code name."
+(defn- get-status-code
+  "Attempts to retrieve a status code from the database."
   [status-code]
-  (let [status (first (select tool_request_status_codes (where {:name status-code})))]
-    (when (nil? status)
-      (throw+ {:code   ::unrecognized_status_code
-               :status status-code}))
-    status))
+  (first
+   (select tool_request_status_codes
+           (fields :id :name :description)
+           (where {:name status-code}))))
 
-(defn- validate-status-transition
-  "Validates a transition from one status code to another."
-  [old-status new-status]
-  (when-not (valid-status-transition? old-status new-status)
-    (throw+ {:code       ::invalild_tool_request_status_transition
-             :old_status old-status
-             :new_status new-status})))
+(defn- new-status-code-record
+  "Creates a new status code record."
+  [status-code]
+  {:id          (UUID/randomUUID)
+   :name        status-code
+   :description status-code})
+
+(defn- add-status-code
+  "Adds a new status code."
+  [status-code]
+  (let [rec (new-status-code-record status-code)]
+    (insert tool_request_status_codes (values rec))
+    rec))
+
+(defn- load-status-code
+  "Gets status code information from the database, adding a new entry if necessary."
+  [status-code]
+  (or (get-status-code status-code)
+      (add-status-code status-code)))
 
 (defn- handle-tool-request-update
   "Updates a tool request."
@@ -171,7 +149,6 @@
          prev-status (get-most-recent-status uuid)
          status      (:status update prev-status)
          status-id   (:id (load-status-code status))
-         _           (validate-status-transition prev-status status)
          username    (required-field update :username)
          username    (if (re-find #"@" username) username (str username "@" uid-domain))
          user-id     (queries/get-user-id username)
@@ -252,11 +229,28 @@
 
 (defn list-tool-requests
   "Lists tool requests."
-  ([params]
-     (success-response
-      {:tool_requests
-       (map #(assoc %
-               :uuid           (format-uuid (:uuid %))
-               :date_submitted (format-timestamp (:date_submitted %))
-               :date_updated   (format-timestamp (:date_updated %)))
-            (get-tool-request-list params))})))
+  [params]
+  (success-response
+   {:tool_requests
+    (map #(assoc %
+            :uuid           (format-uuid (:uuid %))
+            :date_submitted (format-timestamp (:date_submitted %))
+            :date_updated   (format-timestamp (:date_updated %)))
+         (get-tool-request-list params))}))
+
+(defn- add-filter
+  [query field filter]
+  (if filter
+    (where query {(sqlfn :lower field) [like (str "%" (string/lower-case filter) "%")]})
+    query))
+
+(defn list-tool-request-status-codes
+  "Lists the known tool request status codes."
+  [{:keys [filter]}]
+  (success-response
+   {:status_codes
+    (-> (select* tool_request_status_codes)
+        (fields :id :name :description)
+        (order :name :ASC)
+        (add-filter :name filter)
+        (select))}))

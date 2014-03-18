@@ -9,7 +9,8 @@
         [metadactyl.util.config]
         [metadactyl.util.conversions :only [to-long date->long]]
         [metadactyl.workspace])
-  (:require [cheshire.core :as cheshire]
+  (:require [cemerick.url :as curl]
+            [cheshire.core :as cheshire]
             [clojure.tools.logging :as log]))
 
 (defn- add-subgroups
@@ -204,7 +205,7 @@
   "This service searches for apps in the user's workspace and all public app
    groups, based on a search term."
   [params]
-  (let [search_term (:search params)
+  (let [search_term (curl/url-decode (:search params))
         workspace (get-or-create-workspace (.getUsername current-user))
         total (count-search-apps-for-user search_term (:id workspace))
         search_results (search-apps-for-user

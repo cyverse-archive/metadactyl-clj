@@ -27,8 +27,8 @@
             ExportService InjectableWorkspaceInitializer PipelineService
             TemplateGroupService UserService WorkflowExportService
             AnalysisListingService WorkflowPreviewService WorkflowImportService
-            AnalysisDeletionService RatingService WorkflowElementSearchService
-            PropertyValueService UiAnalysisService]
+            RatingService WorkflowElementSearchService PropertyValueService
+            UiAnalysisService]
            [org.springframework.orm.hibernate3.annotation
             AnnotationSessionFactoryBean])
   (:require [cheshire.core :as cheshire]
@@ -230,11 +230,6 @@
           (Integer/toString (workspace-favorites-app-group-index))
           (workspace-initializer))
      (.setTemplateValidator (build-private-template-validator)))))
-
-(register-bean
-  (defbean analysis-deletion-service
-    "Handles workflow/metadactyl deletion actions."
-    (AnalysisDeletionService. (session-factory))))
 
 (register-bean
   (defbean analysis-edit-service
@@ -445,18 +440,6 @@
    Vetted workflows may be updated."
   [body {:keys [update-mode]}]
   (.forceUpdateWorkflow (workflow-import-service) (slurp body) update-mode))
-
-(defn delete-workflow
-  "This service will logically remove a workflow from the DE."
-  [body]
-  (.deleteAnalysis (analysis-deletion-service) (slurp body))
-  (empty-response))
-
-(defn permanently-delete-workflow
-  "This service will physically remove a workflow from the DE."
-  [body]
-  (.physicallyDeleteAnalysis (analysis-deletion-service) (slurp body))
-  (empty-response))
 
 (defn- validate-param
   [param-value param-name]

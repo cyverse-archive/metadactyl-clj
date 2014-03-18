@@ -5,6 +5,7 @@
     * [Listing Tool Requests](#listing-tool-requests)
     * [Updating the Status of a Tool Request](#updating-the-status-of-a-tool-request)
     * [Obtaining Tool Request Details](#obtaining-tool-request-details)
+    * [Listing Tool Request Status Codes](#listing-tool-request-status-codes)
 
 # Tool Request Services
 
@@ -264,11 +265,8 @@ of the results can be controlled by query-string parameters:
             <td>status</td>
             <td>
                 The name of a status code to include in the results. The
-                name of the status code is case sensitive. Please see
-                <a href="#updating-the-status-of-a-tool-request">Updating the
-                Status of a Tool Request</a> below for a list of known status
-                codes. This parameter may be specified multiple times to list
-                tool requests in multiple states.
+                name of the status code is case sensitive. If the status code
+                isn't already defined, it will be added to the database.
             </td>
         </tr>
     </tbody>
@@ -332,108 +330,8 @@ status of a tool request. The request body is in the following format:
 }
 ```
 
-The fields are all fairly self-explanatory except that the transitions that the
-status code can make are limited. The valid status codes and status code
-transitions are listed in the following table:
-
-<table>
-    <thead>
-        <tr>
-            <th>Status Code</th>
-            <th>Description</th>
-            <th>Reachable From</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td rowspan="2">Submitted</td>
-            <td rowspan="2">
-                This is the initial status code for all tool requests.
-            </td>
-            <td>Submitted</td>
-        </tr>
-        <tr>
-            <td>Pending</td>
-        </tr>
-        <tr>
-            <td rowspan="5">Pending</td>
-            <td rowspan="5">
-                Indicates that the support team is awaiting more information
-                from the user who submitted the request.
-            </td>
-            <td>Submitted</td>
-        </tr>
-        <tr>
-            <td>Pending</td>
-        </tr>
-        <tr>
-            <td>Evaluation</td>
-        </tr>
-        <tr>
-            <td>Installation</td>
-        </tr>
-        <tr>
-            <td>Validation</td>
-        </tr>
-        <tr>
-            <td rowspan="3">Evaluation</td>
-            <td rowspan="3">
-                Indicates that the support team is evaluating the tool for
-                installation.
-            </td>
-            <td>Submitted</td>
-        </tr>
-        <tr>
-            <td>Evaluation</td>
-        </tr>
-        <tr>
-            <td>Pending</td>
-        </tr>
-        <tr>
-            <td rowspan="3">Installation</td>
-            <td rowspan="3">
-                Indicates that the support team is installing the tool.
-            </td>
-            <td>Evaluation</td>
-        </tr>
-        <tr>
-            <td>Installation</td>
-        </tr>
-        <tr>
-            <td>Pending</td>
-        </tr>
-        <tr>
-            <td rowspan="2">Validation</td>
-            <td rowspan="2">
-                Indicates that the support team is verifying that the tool was
-                installed correctly.
-            </td>
-            <td>Installation</td>
-        </tr>
-        <tr>
-            <td>Validation</td>
-        </tr>
-        <tr>
-            <td>Completion</td>
-            <td>Indicates that the tool was installed successfully.</td>
-            <td>Validation</td>
-        </tr>
-        <tr>
-            <td rowspan="4">Failed</td>
-            <td rowspan="4">Indicates that the tool could not be installed.</td>
-            <td>Submitted</td>
-        </tr>
-        <tr>
-            <td>Evaluation</td>
-        </tr>
-        <tr>
-            <td>Installation</td>
-        </tr>
-        <tr>
-            <td>Validation</td>
-        </tr>
-    </tbody>
-</table>
+The status code is case-sensitive, and if the status code isn't defined in the
+database already then it will be added to the list of known status codes.
 
 The respose body is in the same format as the GET /tool-request service. Please
 see the documentation for that service for more information.
@@ -556,5 +454,68 @@ $ curl -s http://by-tor:8888/tool-request/7C5ACB09-8675-4F04-B323-78431B801226 |
     "test_data_path": "/path/to/test_file",
     "uuid": "7C5ACB09-8675-4F04-B323-78431B801226",
     "version": "1.0.0"
+}
+```
+
+## Listing Tool Request Status Codes
+
+Unsecured Endpoint: GET /tool-request-status-codes
+
+Tool request status codes are largely arbitrary, but once they've been used
+once, They're stored in the database so that they can be reused easily. This
+endpoint allows the caller to list the known status codes. The response body
+looks like this:
+
+```json
+{
+    "statusCodes": [
+       {
+           "description": "status code description",
+           "id": "status code ID",
+           "name": "status code Name"
+       },
+       ...
+    ],
+    "success": true
+}
+```
+
+In the default case, the endpoint just lists all of the status codes:
+
+```
+$ curl -s http://by-tor:8888/tool-request-status-codes | python -mjson.tool
+{
+    "status_codes": [
+        {
+            "description": "The tool has been installed successfully.",
+            "id": "5ed94200-7565-45d8-b576-d7ff839e9993",
+            "name": "Completion"
+        },
+        ...
+    ],
+    "success": true
+}
+```
+
+If the `filter` query parameter is used then only the status codes that contain
+the string passed in the query parameter will be listed. This is a
+case-insensitive search:
+
+```
+$ curl -s http://localhost:3000/tool-request-status-codes?filter=some | python -mjson.tool
+{
+    "status_codes": [
+        {
+            "description": "Some Other Status",
+            "id": "0538ee26-f728-4d39-92e8-31c3ca7900be",
+            "name": "Some Other Status"
+        },
+        {
+            "description": "Some Status",
+            "id": "4fb01a4c-67d3-4f18-ba52-16e4627ba799",
+            "name": "Some Status"
+        }
+    ],
+    "success": true
 }
 ```
